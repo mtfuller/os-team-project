@@ -12,11 +12,11 @@ public class Loader {
     // Create Scanner object to read file.
     Scanner loaderScanner;
     
-    // Initialize new PCB object
-    PCB new_PCB;
+//    // Initialize new PCB object
+//    PCB new_PCB;
     
-    // PCB Queue to hold all PCBs.
-    PCB_Queue pcbQueue = new PCB_Queue();
+//    // PCB Queue to hold all PCBs.
+//    PCB_Queue pcbQueue = new PCB_Queue();
     
     // Current PCB's index in PCB Queue.
     int currentPCB = 0;
