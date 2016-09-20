@@ -10,6 +10,8 @@ import static org.junit.Assert.*;
 public class ALUTest {
     @Test
     public void addTest() {
-        System.out.println(Integer.toBinaryString(-123));
+        for (int i = -5; i < 10; i++) {
+            System.out.println(Integer.toBinaryString(i));
+        }
     }
 }
