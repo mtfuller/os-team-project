@@ -57,7 +57,7 @@ public class Loader {
                 /** The line below can be uncommented when
                  * a Disk method to write to Disk is created.
                  */
-//                new_disk.writeLineToDisk(line, addyCounter);
+//                new_disk.writeLineToDisk(line);
                 addyCounter++;
             }
         }
@@ -70,7 +70,7 @@ public class Loader {
 //            System.out.println("Job # - " + pcbQueue.getPCB(i).getJobID());
 //            System.out.println("# of Job lines - " + pcbQueue.getPCB(i).getJobSize());
 //            System.out.println("Priority - " + pcbQueue.getPCB(i).getPriority());
-//            System.out.println("Current State - " + pcbQueue.getPCB(i).getCurrentState());
+//            System.out.println("Disk Address begin- " + pcbQueue.getPCB(i).getDiskAddress());
 //            System.out.println("Input Buffer size - " + pcbQueue.getPCB(i).getInputBuffer());
 //            System.out.println("Output Buffer size - " + pcbQueue.getPCB(i).getOutputBuffer());
 //            System.out.println("Temp Buffer size - " + pcbQueue.getPCB(i).getTempBuffer());
