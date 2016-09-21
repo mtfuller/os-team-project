@@ -12,11 +12,8 @@ public class Loader {
     // Create Scanner object to read file.
     Scanner loaderScanner;
     
-//    // Initialize new PCB object
-//    PCB new_PCB;
-    
-//    // PCB Queue to hold all PCBs.
-//    PCB_Queue pcbQueue = new PCB_Queue();
+    // Initialize new PCB object
+    PCB new_PCB;
     
     // Current PCB's index in PCB Queue.
     int currentPCB = 0;
@@ -25,7 +22,7 @@ public class Loader {
     int addyCounter = 0;
     
     // Loader takes disk as parameter to write file.
-    public Loader(Disk new_disk) throws Exception {
+    public Loader(Disk simDisk, Kernel simKernel) throws Exception {
         
         this.loaderScanner = new Scanner(file);
         
@@ -38,31 +35,31 @@ public class Loader {
                 // Remove whitespace to extract the job info.
                 String[] lineSplitter = line.split("\\s+");
                 
-//                // Create a new PCB object
-//                new_PCB = new PCB(Integer.parseInt(lineSplitter[2], 16), Integer.parseInt(lineSplitter[3], 16), Integer.parseInt(lineSplitter[4], 16), addyCounter);
-//                // Add PCB to the queue
-//                pcbQueue.addPCB(currentPCB, new_PCB);
+                // Create a new PCB object
+                new_PCB = new PCB(Integer.parseInt(lineSplitter[2], 16), Integer.parseInt(lineSplitter[3], 16), Integer.parseInt(lineSplitter[4], 16), addyCounter);
+                // Add PCB to the queue
+                simKernel.pcbQueue.addPCB(currentPCB, new_PCB);
     
                 // Establish PCB's buffers
             } else if (line.contains("Data")) {
                 String[] lineSplitter = line.split("\\s+");
                 currentPCB++;
-//
-//                // Set this PCB's Data attributes
-//                new_PCB.setInputBuffer(Integer.parseInt(lineSplitter[2], 16));
-//                new_PCB.setOutputBuffer(Integer.parseInt(lineSplitter[3], 16));
-//                new_PCB.setTempBuffer(Integer.parseInt(lineSplitter[4], 16));
-//
-////                 Grab PCB's ending Disk address
+
+                // Set this PCB's Data attributes
+                new_PCB.setInputBuffer(Integer.parseInt(lineSplitter[2], 16));
+                new_PCB.setOutputBuffer(Integer.parseInt(lineSplitter[3], 16));
+                new_PCB.setTempBuffer(Integer.parseInt(lineSplitter[4], 16));
+
+//                 Grab PCB's ending Disk address
             } else if (line.contains("END")) {
-//                new_PCB.setDiskAddressEnd(addyCounter);
-//                // Write line to Disk (minus 0th and 1st elements - only 8 byte Words here)
+                new_PCB.setDiskAddressEnd(addyCounter);
+                // Write line to Disk (minus 0th and 1st elements - only 8 byte Words here)
             } else {
                 // Write the line to Disk.
                 /** The line below can be uncommented when
                  * a Disk method to write to Disk is created.
                  */
-//                new_disk.writeLineToDisk(line.substring(2));
+                simDisk.writeLineToDisk(line.substring(2));
                 addyCounter++;
             }
         }
@@ -71,22 +68,18 @@ public class Loader {
         /** Uncomment the lines below to see each PCB's
          *  attributes. Delete the lines when necessary.
          */
-//        for (int i = 1; i <= pcbQueue.getQueueSize(); i++) {
-//            System.out.println("Job # - " + pcbQueue.getPCB(i).getJobID());
-//            System.out.println("# of Job lines - " + pcbQueue.getPCB(i).getJobSize());
-//            System.out.println("Priority - " + pcbQueue.getPCB(i).getPriority());
-//            System.out.println("Disk Address begin- " + pcbQueue.getPCB(i).getDiskAddressBegin());
-//            System.out.println("Disk Address end- " + pcbQueue.getPCB(i).getDiskAddressEnd());
-//            System.out.println("Input Buffer size - " + pcbQueue.getPCB(i).getInputBuffer());
-//            System.out.println("Output Buffer size - " + pcbQueue.getPCB(i).getOutputBuffer());
-//            System.out.println("Temp Buffer size - " + pcbQueue.getPCB(i).getTempBuffer());
-//            System.out.println("=============");
-//        }
+        for (int i = 0; i < simKernel.pcbQueue.getQueueSize(); i++) {
+            System.out.println("Job # - " + simKernel.pcbQueue.getPCB(i).getJobID());
+            System.out.println("# of Job lines - " + simKernel.pcbQueue.getPCB(i).getJobSize());
+            System.out.println("Priority - " + simKernel.pcbQueue.getPCB(i).getPriority());
+            System.out.println("Disk Address begin- " + simKernel.pcbQueue.getPCB(i).getDiskAddressBegin());
+            System.out.println("Disk Address end- " + simKernel.pcbQueue.getPCB(i).getDiskAddressEnd());
+            System.out.println("Input Buffer size - " + simKernel.pcbQueue.getPCB(i).getInputBuffer());
+            System.out.println("Output Buffer size - " + simKernel.pcbQueue.getPCB(i).getOutputBuffer());
+            System.out.println("Temp Buffer size - " + simKernel.pcbQueue.getPCB(i).getTempBuffer());
+            System.out.println("=============");
+        }
     }
     
-//    // This will allow other components to access the PCBs
-//    public PCB_Queue accessPCBQueue() {
-//        return pcbQueue;
-//    }
 }
 
