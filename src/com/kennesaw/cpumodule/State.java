@@ -2,6 +2,8 @@ package com.kennesaw.cpumodule;
 
 public class State {
     public static final byte NUM_OF_REGISTERS = 16;
+    public static final byte ZERO_REG = 1;
+    public static final byte ACCUMULATOR_REG = 0;
 
     private int pc;
     private Instruction instruction;
