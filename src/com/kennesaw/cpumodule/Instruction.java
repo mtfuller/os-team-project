@@ -20,24 +20,28 @@ public class Instruction {
         opcode = Byte.parseByte(binStr.substring(2,8), 2);
         reg1 = Byte.parseByte(binStr.substring(8,12), 2);
         reg2 = Byte.parseByte(binStr.substring(12,16), 2);
-        bReg = Byte.parseByte(binStr.substring(8,12), 2);
+        bReg = 0;
+        destReg = 0;
+        addr = 0;
         switch (format) {
             case 0:
                 destReg = Byte.parseByte(binStr.substring(16,20), 2);
                 break;
             case 1:
+                bReg = Byte.parseByte(binStr.substring(8,12), 2);
                 destReg = Byte.parseByte(binStr.substring(12,16), 2);
                 addr = Integer.parseInt(binStr.substring(16,32), 2);
+                reg1 = 0;
+                reg2 = 0;
                 break;
             case 2:
                 addr = Integer.parseInt(binStr.substring(8,32), 2);
+                reg1 = 0;
+                reg2 = 0;
                 break;
             case 3:
                 addr = Integer.parseInt(binStr.substring(20,32), 2);
                 break;
-            default:
-                destReg = 0;
-                addr = 0;
         }
     }
 
@@ -67,5 +71,17 @@ public class Instruction {
 
     public int getAddr() {
         return addr;
+    }
+
+    @Override
+    public String toString() {
+        return "Instruction:" +
+                "\n\tFormat:   \t" + getFormat() +
+                "\n\tOpcode:   \t" + getOpcode() +
+                "\n\tReg1:     \t" + getReg1() +
+                "\n\tReg2:     \t" + getReg2() +
+                "\n\tB. Reg:   \t" + getbReg() +
+                "\n\tDest. Reg:\t" + getDestReg() +
+                "\n\tAddress:  \t" + getAddr();
     }
 }

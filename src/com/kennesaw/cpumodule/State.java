@@ -5,12 +5,13 @@ public class State {
 
     private int pc;
     private Instruction instruction;
-    private long reg[];
+    private int reg[];
 
     public State() {
         pc = 0;
         instruction = new Instruction();
-        reg = new long[NUM_OF_REGISTERS];
+        reg = new int[NUM_OF_REGISTERS];
+        for (int i = 0; i < NUM_OF_REGISTERS; i++) reg[i] = 0;
     }
 
     public int getPc() {
@@ -29,11 +30,11 @@ public class State {
         instruction.decodeInstruction(instructionBin);
     }
 
-    public long getReg(byte i) {
+    public int getReg(byte i) {
         return reg[i];
     }
 
-    public void setReg(byte i, long val) {
+    public void setReg(byte i, int val) {
         this.reg[i] = val;
     }
 
@@ -42,7 +43,7 @@ public class State {
         String retStr = "Current State:" +
                 "\n\tPC: " + pc +
                 "\n\tIR: " + instruction.toString();
-        for (byte i = 0; i < NUM_OF_REGISTERS; i++) retStr.concat("\n\tR" + i + ": " + getReg(i));
+        for (byte i = 0; i < NUM_OF_REGISTERS; i++) retStr = retStr.concat("\n\tR" + i + ": \t" + getReg(i));
         return retStr;
     }
 
