@@ -1,7 +1,5 @@
 package com.kennesaw.cpumodule;
 
-import java.util.Arrays;
-
 public class State {
     public static final byte NUM_OF_REGISTERS = 16;
 
