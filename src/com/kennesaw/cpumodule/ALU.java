@@ -25,6 +25,17 @@ public final class ALU {
         return r1 | r2;
     }
 
+    public static boolean equals(int r1, int r2) {
+        return r1 == r2;
+    }
+
+    public static boolean lessThan(int r1, int r2) {
+        return r1 < r2;
+    }
+
+    public static boolean greaterThan(int r1, int r2) {
+        return r1 > r2;
+    }
 
     public static boolean isBranchEqualTo(int bReg, int dReg) {
         return bReg == dReg;
