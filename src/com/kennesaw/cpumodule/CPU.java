@@ -7,16 +7,25 @@ public class CPU {
 
     public CPU() {
         cpuState = new State();
+        dmaChannel = new DmaChannel();
+    }
+
+    public CPU(State state, DmaChannel dc) {
+        cpuState = state;
+        dmaChannel = dc;
     }
 
     public void runProcess() {
-        // Get instruction from memory
-        int instr = fetch();
+        while(cpuState.getPc() < 100) {
+            // Get instruction from memory
+            int instr = fetch(cpuState.getPc());
 
-        // Decode the instruction
-        decode(instr);
-        Instruction instruction = cpuState.getInstruction();
+            // Decode the instruction
+            decode(instr);
+            Instruction instruction = cpuState.getInstruction();
 
+            System.out.println(instruction.toString());
+        /*
         // Execute the instruction
         switch (instruction.getFormat()) {
             case 0:
@@ -34,11 +43,15 @@ public class CPU {
                 executeIO(instruction.getOpcode(), instruction.getReg1(), instruction.getReg2(),
                         instruction.getAddr());
                 break;
+        }*/
+
+            // Increment the PC
+            cpuState.incrementPc();
         }
     }
 
-    private int fetch() {
-        return 0;
+    private int fetch(int addr) {
+        return dmaChannel.readRAM(addr);
     }
 
     private void decode(int instructionBin) {

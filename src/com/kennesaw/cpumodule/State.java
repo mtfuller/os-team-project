@@ -24,6 +24,10 @@ public class State {
         this.pc = pc;
     }
 
+    public void incrementPc() {
+        this.pc++;
+    }
+
     public Instruction getInstruction() {
         return instruction;
     }
