@@ -34,7 +34,7 @@ public class StateTest {
         assertTrue("A new State's IR was not initialized to 0", isCorrect);
 
 
-        long instructionDec = 1326252272;
+        int instructionDec = 1326252272;
         state.setInstruction(instructionDec);
         System.out.println(state.toString());
         isCorrect = (

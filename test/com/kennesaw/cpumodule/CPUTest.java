@@ -13,7 +13,6 @@ public class CPUTest {
         DmaChannel dm = new DmaChannel();
 
         int[] arr = {
-                0x92000000,
                 0xC050005C,
                 0x4B060000,
                 0x4B010000,

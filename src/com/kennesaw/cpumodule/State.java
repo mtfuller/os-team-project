@@ -32,7 +32,7 @@ public class State {
         return instruction;
     }
 
-    public void setInstruction(long instructionBin) {
+    public void setInstruction(int instructionBin) {
         instruction.decodeInstruction(instructionBin);
     }
 

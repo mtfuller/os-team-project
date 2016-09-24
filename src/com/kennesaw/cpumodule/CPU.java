@@ -19,7 +19,7 @@ public class CPU {
     }
 
     public void runProcess() {
-        //while(isRunning) {
+        while(isRunning) {
             // Get instruction from memory
             int instr = fetch(cpuState.getPc());
 
@@ -28,8 +28,6 @@ public class CPU {
             Instruction instruction = cpuState.getInstruction();
 
             System.out.println(toString());
-
-            System.out.println(instruction.getOpcode());
 
             // Execute the instruction
             switch (instruction.getFormat()) {
@@ -52,7 +50,7 @@ public class CPU {
 
             // Increment the PC
             cpuState.incrementPc();
-        //}
+        }
     }
 
     private int fetch(int addr) {
