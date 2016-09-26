@@ -27,8 +27,6 @@ public class CPU {
             decode(instr);
             Instruction instruction = cpuState.getInstruction();
 
-            System.out.println(toString());
-
             // Execute the instruction
             switch (instruction.getFormat()) {
                 case 0:
@@ -48,12 +46,15 @@ public class CPU {
                     break;
             }
 
+            System.out.println(cpuState.toString());
+
             // Increment the PC
             cpuState.incrementPc();
         }
     }
 
     private int fetch(int addr) {
+        addr *= 4;
         return dmaChannel.readRAM(addr);
     }
 
@@ -168,7 +169,8 @@ public class CPU {
     private void executeIO(byte opcode, byte r1, byte r2, int addr) {
         switch (opcode) {
             case 0x00:
-                cpuState.setReg(r1, addr);
+                if (addr == 0) cpuState.setReg(r1, dmaChannel.readRAM(cpuState.getReg(r2)));
+                else cpuState.setReg(r1, dmaChannel.readRAM(addr));
                 break;
             case 0x01:
                 if (r1 == r2) dmaChannel.writeRAM(addr, cpuState.getReg(r1));

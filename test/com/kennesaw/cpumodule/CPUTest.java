@@ -83,7 +83,7 @@ public class CPUTest {
         };
 
         for (int i = 0; i < arr.length; i++) {
-            dm.writeRAM(i, arr[i]);
+            dm.writeRAM(i*4, arr[i]);
         }
         State state = new State();
 
