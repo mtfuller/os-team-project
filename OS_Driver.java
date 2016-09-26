@@ -1,7 +1,3 @@
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 /**
  * Created by Margaret on 9/16/2016.
  */
@@ -17,13 +13,14 @@ public class OS_Driver {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    
-        System.out.println(simMemory.simDisk.getJobChunk(simMemory.simPCB.accessPCBQueue().getPCB(29)).length() / 8);
-        System.out.println(simMemory.simDisk.spaceAvailable());
-    
-        String inst_line = "FFFFFFFF";
-        Long bi = Long.parseLong(inst_line, 16);
-        System.out.println(bi);
         
+        // These lines print out some info about each PCB. Lines can be deleted when necessary
+        for (int i = 0; i < simMemory.simPCB.accessPCBQueue().getQueueSize(); i++) {
+            System.out.println("Job #" + simMemory.simPCB.accessPCBQueue().getPCB(i).getJobID());
+            System.out.println("Priority: " + simMemory.simPCB.accessPCBQueue().getPCB(i).getPriority());
+            System.out.println("Instruction Lines: " + simMemory.simPCB.accessPCBQueue().getPCB(i).getJobSize());
+            System.out.println("Disk address: " + simMemory.simPCB.accessPCBQueue().getPCB(i).getDiskAddressBegin() + "-" + simMemory.simPCB.accessPCBQueue().getPCB(i).getDiskAddressEnd());
+            System.out.println("===========");
+        }
     }
 }
