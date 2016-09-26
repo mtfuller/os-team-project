@@ -9,7 +9,7 @@ public class MemorySystem {
     Kernel simPCB;
     
     public MemorySystem() {
-        this.simDisk = new Disk();
+        this.simDisk = new Disk(2048);
         this.simPCB = new Kernel();
     }
     

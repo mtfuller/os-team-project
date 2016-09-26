@@ -1,28 +1,45 @@
 /**
  * Created by Margaret on 9/16/2016.
  */
+
+// Disk is a String object. But when jobs are scooped from Disk,
+// each instruction line is converted to Long
+    
 public class Disk {
     
-    String newDisk;
+    String[] newDisk;
+    int occupiedSpace;
     
-    public Disk() {
-        this.newDisk  = "";
+    public Disk(int diskLength) {
+        this.newDisk  = new String[diskLength];
+        this.occupiedSpace = 0;
     }
     
-    public void writeLineToDisk(String input) {
-        newDisk += input;
+    // Writes instruction line to Disk as a string
+    public void writeLineToDisk(String input, int index) {
+        newDisk[index] = input;
     }
     
-    public String getJobChunk(PCB pcb){
-        return newDisk.substring((pcb.getDiskAddressBegin() * 8), (pcb.getDiskAddressEnd() * 8));
+    // Returns the job's instruction lines, as an array of Long elements
+    public long[] getJobChunk(PCB pcb){
+        int lengthOfJob = (pcb.getDiskAddressEnd() - pcb.getDiskAddressBegin());
+        long[] jobChunk = new long[lengthOfJob];
+        for (int i = 0; i < lengthOfJob; i++) {
+            Long toHex = Long.parseLong(newDisk[i + pcb.getDiskAddressBegin()], 16);
+            jobChunk[i] = toHex;
+        }
+        return jobChunk;
+    }
+    
+    public int getJobSize(PCB pcb) {
+        return getJobChunk(pcb).length;
+    }
+    
+    public void setOccupiedDiskSpace(int lastElement) {
+        occupiedSpace = (2048 - lastElement);
     }
     
     int getOccupiedDiskSpace() {
-        return newDisk.length() / 8;
-    }
-    
-    // Returns the number of words that can be held on Disk
-    public int spaceAvailable() {
-        return 2048 - getOccupiedDiskSpace();
+        return occupiedSpace;
     }
 }
