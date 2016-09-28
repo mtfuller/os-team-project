@@ -137,13 +137,13 @@ public class CPU {
                 else cpuState.setReg(dr, 0);
                 break;
             case 0x15:
-                if (ALU.isBranchEqualTo(cpuState.getReg(br), cpuState.getReg(dr))) cpuState.setPc(addr);
+                if (ALU.isBranchEqualTo(cpuState.getReg(br), cpuState.getReg(dr))) cpuState.setPc(addr/4);
                 break;
             case 0x16:
-                if (ALU.isBranchInnequalTo(cpuState.getReg(br), cpuState.getReg(dr))) cpuState.setPc(addr);
+                if (ALU.isBranchInnequalTo(cpuState.getReg(br), cpuState.getReg(dr))) cpuState.setPc(addr/4);
                 break;
             case 0x17:
-                if (ALU.isBranchNotZero(cpuState.getReg(br))) cpuState.setPc(addr);
+                if (ALU.isBranchNotZero(cpuState.getReg(br))) cpuState.setPc(addr/4);
                 break;
             case 0x18:
                 break;
