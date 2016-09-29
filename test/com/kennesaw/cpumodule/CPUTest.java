@@ -336,18 +336,12 @@ public class CPUTest {
                 0x00000000
         };
         for (int i = 0; i < correctArr.length; i++) {
-            System.out.println(dm.readRAM(i*4));
-        }
-        for (int i = 0; i < correctArr.length; i++) {
             assertEquals("Incorrect Value at address: "+(i*4), correctArr[i], dm.readRAM(i*4));
         }
-
     }
 
     @Test
     public void Job3Test() {
-        System.out.println("JOB 3!!!");
-
         // Initialize CPU dependencies
         DmaChannel dm = new DmaChannel();
         State state = new State();
@@ -479,7 +473,7 @@ public class CPUTest {
                 0x00000000,
                 0x00000000,
                 0x00000000,
-                0x00000039,
+                0x00000038,// OUTPUT
                 0x00000000,
                 0x00000000,
                 0x00000000,
@@ -491,22 +485,19 @@ public class CPUTest {
                 0x00000000,
                 0x00000000,
                 0x00000000,
-                0x00000000,
-                0x00000000,
-                0x00000000,
-                0x00000000,
-                0x00000000,
-                0x00000000,
-                0x00000000,
-                0x00000000,
-                0x00000000,
-                0x00000000,
+                0x00000006,// TEMP
+                0x0000002C,
+                0x00000045,
+                0x00000001,
+                0x00000009,
+                0x000000B0,
+                0x00000001,
+                0x00000007,
+                0x000000AA,
+                0x00000055,
                 0x00000000,
                 0x00000000
         };
-        for (int i = 0; i < correctArr.length; i++) {
-            System.out.println(dm.readRAM(i*4));
-        }
         for (int i = 0; i < correctArr.length; i++) {
             assertEquals("Incorrect Value at address: "+(i*4), correctArr[i], dm.readRAM(i*4));
         }
@@ -615,7 +606,7 @@ public class CPUTest {
                 0x10658000,
                 0x56810028,
                 0x92000000,
-                0x0000000B,
+                0x0000000B,//Input
                 0x00000000,
                 0x00000000,
                 0x00000000,
@@ -637,7 +628,6 @@ public class CPUTest {
                 0x00000000,
                 0x00000000,// OUTPUT
                 0x00000001,
-                0x00000001,
                 0x00000002,
                 0x00000003,
                 0x00000005,
@@ -646,6 +636,7 @@ public class CPUTest {
                 0x00000015,
                 0x00000022,
                 0x00000037,
+                0x00000059,
                 0x00000000,
                 0x00000000,// TEMP
                 0x00000000,
@@ -660,9 +651,6 @@ public class CPUTest {
                 0x00000000,
                 0x00000000
         };
-        for (int i = 0; i < correctArr.length; i++) {
-            System.out.println(dm.readRAM(i*4));
-        }
         for (int i = 0; i < correctArr.length; i++) {
             assertEquals("Incorrect Value at address: "+(i*4), correctArr[i], dm.readRAM(i*4));
         }

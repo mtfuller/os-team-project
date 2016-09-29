@@ -48,8 +48,6 @@ public class CPU {
                             instruction.getAddr());
                     break;
             }
-
-            //System.out.println(cpuState.toString());
         }
     }
 
@@ -157,7 +155,6 @@ public class CPU {
     private void executeUnconditionalJump(byte opcode, int addr) {
         switch (opcode) {
             case 0x12:
-                System.out.println("PROGRAM ENDED!!!");
                 isRunning = false;
                 break;
             case 0x14:
