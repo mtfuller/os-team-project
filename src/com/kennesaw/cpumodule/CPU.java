@@ -23,6 +23,9 @@ public class CPU {
             // Get instruction from memory
             int instr = fetch(cpuState.getPc());
 
+            // Increment the PC
+            cpuState.incrementPc();
+
             // Decode the instruction
             decode(instr);
             Instruction instruction = cpuState.getInstruction();
@@ -46,10 +49,7 @@ public class CPU {
                     break;
             }
 
-            System.out.println(cpuState.toString());
-
-            // Increment the PC
-            cpuState.incrementPc();
+            //System.out.println(cpuState.toString());
         }
     }
 
@@ -66,7 +66,7 @@ public class CPU {
         int acc;
         switch (opcode) {
             case 0x04:
-                cpuState.setReg(dr, cpuState.getReg(s1));
+                cpuState.setReg(s1, cpuState.getReg(s2));
                 break;
             case 0x05:
                 acc = ALU.add(cpuState.getReg(s1),cpuState.getReg(s2));
@@ -112,7 +112,7 @@ public class CPU {
                 dmaChannel.writeRAM(cpuState.getReg(dr), cpuState.getReg(br));
                 break;
             case 0x03:
-                cpuState.setReg(dr, dmaChannel.readRAM(br));
+                cpuState.setReg(dr, dmaChannel.readRAM(cpuState.getReg(br)));
                 break;
             case 0x0B:
                 cpuState.setReg(dr, addr);
