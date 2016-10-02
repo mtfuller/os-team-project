@@ -2,12 +2,14 @@
  * Created by Margaret on 9/2/2016.
  */
 
+import java.io.File;
 import java.util.Scanner;
 import java.lang.*;
 
 public class Loader {
+    
     // Instruction File.
-    java.io.File file = new java.io.File("ProgramFile.txt");
+    File file = new java.io.File("ProgramFile.txt");
     
     // Create Scanner object to read file.
     Scanner loaderScanner;
@@ -21,10 +23,10 @@ public class Loader {
     // The counter to establish the PCB's beginning and ending Disk addresses
     int addyCounter = 0;
     
-    // Loader takes disk as parameter to write file.
+    // Loader takes disk as parameter to write file and
+    // Kernel to create/access the readyQueue of PCBs.
     public Loader(Disk simDisk, Kernel simKernel) throws Exception {
         this.loaderScanner = new Scanner(file);
-        
         // Read the file
         while (loaderScanner.hasNext()) {
             String line = loaderScanner.nextLine();
@@ -36,7 +38,7 @@ public class Loader {
                 
                 // Create a new PCB object & add to PCB queue
                 new_PCB = new PCB(Integer.parseInt(lineSplitter[2], 16), Integer.parseInt(lineSplitter[3], 16), Integer.parseInt(lineSplitter[4], 16), addyCounter);
-                simKernel.pcbQueue.addPCB(currentPCB, new_PCB);
+                simKernel.addPCB(currentPCB, new_PCB);
     
                 // Establish PCB's buffers
             } else if (line.contains("Data")) {
@@ -54,13 +56,14 @@ public class Loader {
                 new_PCB.setJobSize(addyCounter - new_PCB.getDiskAddressBegin());
                 // Write line to Disk (minus 0th and 1st elements - only 8 byte Words here)
             } else {
-                // Write the line to Disk as a String at a specific index. Will be converted to Long from Disk class.
+                // Write the line to Disk as a String at a specific index.
                 simDisk.writeLineToDisk(line.substring(2), addyCounter);
+                simDisk.setOccupiedDiskSpace(addyCounter);
                 addyCounter++;
             }
         }
         // When all jobs have been written, set total Disk space occupied, close Scanner object
-        simDisk.setOccupiedDiskSpace(addyCounter);
+        simDisk.setOccupiedDiskSpace(addyCounter-1);
         loaderScanner.close();
     }
 }
