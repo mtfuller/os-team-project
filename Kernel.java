@@ -1,28 +1,40 @@
+import java.util.ArrayList;
+
 /**
  * Created by Margaret on 9/20/2016.
  */
 
-// This class holds the PCB queue and will sort based on sorting scheme
+// This class will sort the PCBs based on sorting scheme
 // Work in progress
 public class Kernel {
     
-    PCB_Queue pcbQueue;
-    PCB_Queue readyQueue;
+    ArrayList<PCB> pcbQueue;
+    ArrayList<PCB> readyQueue;
     
     public Kernel() {
-        this.pcbQueue = new PCB_Queue();
-        this.readyQueue = new PCB_Queue();
+        pcbQueue = new ArrayList<>();
+        readyQueue = new ArrayList<>();
     }
     
-    public void sortPCBs(String algo) {
-        // Move PCBs from first queue into this queue, sorted
+    public PCB getPCB(int index) {
+        return readyQueue.get(index);
     }
     
-    public PCB_Queue accessPCBQueue() {
-        return pcbQueue;
+    public void addPCB(int index, PCB newPCB) {
+        readyQueue.add(index, newPCB);
     }
     
-    public PCB_Queue accessReadyQueue() {
+    public int getQueueSize() {
+        return readyQueue.size();
+    }
+    
+//    public void sortPCBs(String algo) {
+//        // Move PCBs from first queue into this queue, sorted
+//        readyQueue = simPCBQueue;
+//        System.out.println(readyQueue);
+//    }
+//
+    public ArrayList<PCB> accessReadyQueue() {
         return readyQueue;
     }
     

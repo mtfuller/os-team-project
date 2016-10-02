@@ -24,6 +24,7 @@ public class PCB {
         jobSize = jobLines;
         priority = prior;
         diskAddressBegin = diskBegin;
+        status = currentState[0];
     }
     
     public int getJobID() {
@@ -43,7 +44,7 @@ public class PCB {
     }
     
     public int getJobSize() {
-        return jobSize;
+        return (getDiskAddressEnd()-getDiskAddressBegin());
     }
     
     public void setJobSize(int jobSize) {
@@ -54,8 +55,8 @@ public class PCB {
         return status;
     }
     
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(int status) {
+        this.status = currentState[status];
     }
     
     public int getDiskAddressBegin() {
