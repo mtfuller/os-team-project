@@ -1,3 +1,5 @@
+import java.lang.reflect.Type;
+
 /**
  * Created by Margaret on 9/16/2016.
  */
@@ -11,8 +13,8 @@ public class Disk {
     int occupiedSpace;
     
     public Disk(int diskLength) {
-        this.newDisk  = new String[diskLength];
-        this.occupiedSpace = 0;
+        newDisk  = new String[diskLength];
+        occupiedSpace = 0;
     }
     
     // Writes instruction line to Disk as a string
@@ -32,11 +34,11 @@ public class Disk {
     }
     
     public int getJobSize(PCB pcb) {
-        return getJobChunk(pcb).length;
+        return pcb.getDiskAddressEnd() - pcb.getDiskAddressBegin();
     }
     
     public void setOccupiedDiskSpace(int lastElement) {
-        occupiedSpace = (2048 - lastElement);
+        occupiedSpace = lastElement;
     }
     
     int getOccupiedDiskSpace() {
