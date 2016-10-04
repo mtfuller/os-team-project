@@ -54,16 +54,14 @@ public class Loader {
                 currentPCB++;
                 new_PCB.setDiskAddressEnd(addyCounter - 1);
                 new_PCB.setJobSize(addyCounter - new_PCB.getDiskAddressBegin());
-                // Write line to Disk (minus 0th and 1st elements - only 8 byte Words here)
             } else {
                 // Write the line to Disk as a String at a specific index.
-                simDisk.writeLineToDisk(line.substring(2), addyCounter);
-                simDisk.setOccupiedDiskSpace(addyCounter);
+                Long toHex = Long.parseLong(line.substring(2), 16);
+                simDisk.writeDisk(addyCounter, toHex);
                 addyCounter++;
             }
         }
-        // When all jobs have been written, set total Disk space occupied, close Scanner object
-        simDisk.setOccupiedDiskSpace(addyCounter-1);
+        // When all jobs have been written, close Scanner object
         loaderScanner.close();
     }
 }
