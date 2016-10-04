@@ -13,9 +13,10 @@ public class Instruction {
     public Instruction() {
     }
 
-    public void decodeInstruction(int instructionBin) {
-        String binStr = Integer.toBinaryString(instructionBin);
-        while (binStr.length() < 32) binStr = "0" + binStr;
+    public void decodeInstruction(long instructionBin) {
+        String binStr = Long.toBinaryString(instructionBin);
+        while (binStr.length() < 64) binStr = "0" + binStr;
+        binStr = binStr.substring(32);
         format = Byte.parseByte(binStr.substring(0,2), 2);
         opcode = Byte.parseByte(binStr.substring(2,8), 2);
         reg1 = Byte.parseByte(binStr.substring(8,12), 2);

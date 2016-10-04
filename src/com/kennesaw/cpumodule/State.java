@@ -7,12 +7,12 @@ public class State {
 
     private int pc;
     private Instruction instruction;
-    private int reg[];
+    private long reg[];
 
     public State() {
         pc = 0;
         instruction = new Instruction();
-        reg = new int[NUM_OF_REGISTERS];
+        reg = new long[NUM_OF_REGISTERS];
         for (int i = 0; i < NUM_OF_REGISTERS; i++) reg[i] = 0;
     }
 
@@ -32,15 +32,15 @@ public class State {
         return instruction;
     }
 
-    public void setInstruction(int instructionBin) {
+    public void setInstruction(long instructionBin) {
         instruction.decodeInstruction(instructionBin);
     }
 
-    public int getReg(byte i) {
+    public long getReg(byte i) {
         return reg[i];
     }
 
-    public void setReg(byte i, int val) {
+    public void setReg(byte i, long val) {
         this.reg[i] = val;
     }
 
