@@ -56,7 +56,7 @@ public class Loader {
                 new_PCB.setJobSize(addyCounter - new_PCB.getDiskAddressBegin());
             } else {
                 // Write the line to Disk as a String at a specific index.
-                Long toHex = Long.parseLong(line.substring(2), 16);
+                long toHex = Long.parseLong(line.substring(2), 16);
                 simDisk.writeDisk(addyCounter, toHex);
                 addyCounter++;
             }
