@@ -1,20 +1,22 @@
+package memory;
+
 /**
  * Created by willw on 9/27/2016.
  */
 public class Disk {
-    int[] diskArray;
+    long[] diskArray;
     int spaceD;
     int count;
     public Disk(){
-        diskArray = new int[2048];
+        diskArray = new long[2048];
         spaceD = 2048;
 
     }
-    public int readDisk(int address){
+    public long readDisk(int address){
         return diskArray[address];
 
     }
-    public void writeDisk(int address, int value){
+    public void writeDisk(int address, long value){
         diskArray[address] = value;
         spaceD--;
         count++;

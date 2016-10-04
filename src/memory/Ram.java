@@ -1,21 +1,23 @@
+package memory;
+
 /**
  * Created by willw on 9/27/2016.
  */
 public class Ram {
-    int[] ramArray;
+    long[] ramArray;
     int spaceR;
     int count;
     public Ram(){
-        ramArray = new int[1024];
+        ramArray = new long[1024];
         spaceR = 1024;
         count = 0;
     }
-    public int readRam(int address){
+    public long readRam(int address){
         return ramArray[address];
 
 
     }
-    public void writeRam(int address, int value){
+    public void writeRam(int address, long value){
 
         ramArray[address] = value;
         spaceR--;

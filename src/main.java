@@ -1,3 +1,6 @@
+import memory.Disk;
+import memory.Ram;
+
 /**
  * Created by willw on 9/29/2016.
  */
@@ -6,7 +9,7 @@ public class main {
         Disk d = new Disk();
         Ram r = new Ram();
 
-        int[] job1 = {
+        long[] job1 = {
                 0xC050005C,
                 0x4B060000,
                 0x4B010000,
@@ -75,23 +78,31 @@ public class main {
                 0x00000000,
                 0x00000000,
         };
+
+
         for(int i = 0; i < job1.length; i++) {
+
             d.writeDisk(i, job1[i]);
         }
         for(int i = 0; i< job1.length; i++) {
             System.out.println(d.readDisk(i));
 
         }
-        System.out.println("kasjhd");
+        System.out.println("");
+        System.out.println("Ram test");
+        System.out.println("");
         for(int i = 0; i< job1.length; i++){
             r.writeRam(i, job1[i]);
         }
         for(int i = 0; i < job1.length; i++){
             System.out.println(r.readRam(i));
         }
+        System.out.println("Disk");
         System.out.println(d.getDiskSpaceAvaliable());
         System.out.println(d.getAmountInDisk());
+        System.out.println("Ram");
         System.out.println(r.getRamSpaceAvaliable());
         System.out.println(r.getAmountInRam());
+
     }
 }
