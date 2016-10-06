@@ -15,6 +15,7 @@ public class PCB {
     private int inputBuffer;
     private int outputBuffer;
     private int tempBuffer;
+    private State state;
     
     public String[] currentState = { "New", "Ready", "Waiting", "Running", "Ended" };
     
@@ -25,6 +26,7 @@ public class PCB {
         priority = prior;
         diskAddressBegin = diskBegin;
         status = currentState[0];
+        state = new State();
     }
     
     public int getJobID() {
@@ -63,10 +65,6 @@ public class PCB {
         return diskAddressBegin;
     }
     
-    public void setDiskAddressBegin(int diskAddressBegin) {
-        this.diskAddressBegin = diskAddressBegin;
-    }
-    
     public int getDiskAddressEnd() {
         return diskAddressEnd;
     }
@@ -75,9 +73,19 @@ public class PCB {
         this.diskAddressEnd = diskAddressEnd;
     }
     
+    public int getBaseAddress() {
+        return state.getBase_addr();
+    }
+    
+    
+    public void setBaseAddress(int addr) {
+        state.setBase_addr(addr);
+    }
+    
     public int getRAMAddressBegin() {
         return RAMAddressBegin;
     }
+    
     
     public void setRAMAddressBegin(int RAMAddressBegin) {
         this.RAMAddressBegin = RAMAddressBegin;
@@ -113,5 +121,13 @@ public class PCB {
     
     public void setTempBuffer(int tempBuffer) {
         this.tempBuffer = tempBuffer;
+    }
+    
+    public State getState() {
+        return state;
+    }
+    
+    public void setState(State state) {
+        this.state = state;
     }
 }
