@@ -6,7 +6,7 @@ public class LongTermScheduler {
     
     int lineCounter;
     int pcbCounter;
-    Kernel simKernel;
+    int ramSpaceCounter;
     Disk simDisk;
     Ram simRAM;
     
@@ -14,22 +14,24 @@ public class LongTermScheduler {
     public LongTermScheduler(Disk thisDisk, Ram thisRAM) {
         lineCounter = 0;
         pcbCounter = 0;
-        simKernel = new Kernel();
         simDisk = thisDisk;
         simRAM = thisRAM;
     }
-    
+
     public void runLTS(Kernel simKernel) {
         simRAM.setOccupiedRAM(0);
+        ramSpaceCounter = 0;
         for (pcbCounter = 0; pcbCounter < simKernel.getQueueSize(); pcbCounter++) {
             lineCounter = 0;
-            simKernel.getPCB(pcbCounter).setRAMAddressBegin(simRAM.getOccupiedRAM() + lineCounter);
             // Only PCBs with a "New" status are written to RAM. Otherwise, they've been written previously.
-            if (simDisk.getJobSize(simKernel.getPCB(pcbCounter)) <= simRAM.getFreeRAMSpace() && (simKernel.getPCB(pcbCounter)).getStatus() == "New") {
+            if ((simKernel.getPCB(pcbCounter).getJobSize() <= simRAM.getFreeRAMSpace()) && (simKernel.getPCB(pcbCounter).getStatus() == "New")) {
+                simKernel.getPCB(pcbCounter).setRAMAddressBegin(simRAM.getOccupiedRAM() + lineCounter);
+                simKernel.getPCB(pcbCounter).setBaseAddress(simRAM.getOccupiedRAM() + lineCounter);
                 while (lineCounter < simDisk.getJobSize(simKernel.getPCB(pcbCounter))) {
-                    long jobSlice = simDisk.getJobChunk(simKernel.getPCB(pcbCounter))[lineCounter];
-                    simRAM.writeToRAM(jobSlice, lineCounter);
+                    long jobSlice = simDisk.readDisk((simKernel.getPCB(pcbCounter).getDiskAddressBegin() + lineCounter));
+                    simRAM.writeRam(ramSpaceCounter, jobSlice);
                     lineCounter++;
+                    ramSpaceCounter++;
                 }
                 simKernel.getPCB(pcbCounter).setRAMAddressEnd(simRAM.getOccupiedRAM() + lineCounter);
                 simKernel.getPCB(pcbCounter).setStatus(2); // Set PCB's status to "Waiting"
@@ -38,16 +40,3 @@ public class LongTermScheduler {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

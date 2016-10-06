@@ -4,28 +4,28 @@ import java.util.ArrayList;
  * Created by Margaret on 9/20/2016.
  */
 
-// This class will sort the PCBs based on sorting scheme
-// Work in progress
+// This class holds all PCBs and sorts when necessary
+    
 public class Kernel {
     
     ArrayList<PCB> pcbQueue;
-    ArrayList<PCB> readyQueue;
+    ArrayList<PCB> sortedReadyQueue;
     
     public Kernel() {
         pcbQueue = new ArrayList<>();
-        readyQueue = new ArrayList<>();
+        sortedReadyQueue = new ArrayList<>();
     }
     
     public PCB getPCB(int index) {
-        return readyQueue.get(index);
+        return sortedReadyQueue.get(index);
     }
     
     public void addPCB(int index, PCB newPCB) {
-        readyQueue.add(index, newPCB);
+        sortedReadyQueue.add(index, newPCB);
     }
     
     public int getQueueSize() {
-        return readyQueue.size();
+        return sortedReadyQueue.size();
     }
     
 //    public void sortPCBs(String algo) {
@@ -35,7 +35,7 @@ public class Kernel {
 //    }
 //
     public ArrayList<PCB> accessReadyQueue() {
-        return readyQueue;
+        return sortedReadyQueue;
     }
     
 }
