@@ -9,7 +9,7 @@ public class InstructionTest {
         Instruction instruction = new Instruction();
 
         // R Format Test
-        int instr1 = 0x05070000;
+        long instr1 = 0x05070000L;
         byte trueFormat = Byte.parseByte("00",2);
         byte trueOpcode = Byte.parseByte("000101",2);
         byte trueReg1 = Byte.parseByte("0000",2);
@@ -33,7 +33,7 @@ public class InstructionTest {
     public void immediateFormatTest() throws Exception {
         Instruction instruction = new Instruction();
 
-        int instr2 = 0x5681003C;
+        long instr2 = 0x5681003CL;
         byte trueFormat = Byte.parseByte("01",2);
         byte trueOpcode = Byte.parseByte("010110",2);
         byte trueBreg = Byte.parseByte("1000",2);
@@ -57,7 +57,7 @@ public class InstructionTest {
     public void jumpFormatTest() throws Exception {
         Instruction instruction = new Instruction();
 
-        int instr2 = 0x94000852;
+        long instr2 = 0x94000852L;
         byte trueFormat = Byte.parseByte("10",2);
         byte trueOpcode = Byte.parseByte("010100",2);
         int trueAddr = Integer.parseInt("000000000000100001010010",2);
@@ -75,14 +75,12 @@ public class InstructionTest {
     public void inputOutputFormatTest() throws Exception {
         Instruction instruction = new Instruction();
 
-        int instr2 = -1068498852;
+        long instr2 = 0xC050005CL;
         byte trueFormat = Byte.parseByte("11",2);
         byte trueOpcode = Byte.parseByte("000000",2);
         byte trueReg1 = Byte.parseByte("0101",2);
         byte trueReg2 = Byte.parseByte("0000",2);
         int trueAddr = Integer.parseInt("0000000001011100",2);
-
-        System.out.println(instr2);
 
         instruction.decodeInstruction(instr2);
         assertTrue("getFormat() should have returned " + trueFormat + ", but returned " + instruction.getFormat(),
