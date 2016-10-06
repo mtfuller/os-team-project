@@ -27,13 +27,7 @@ public class Kernel {
     public int getQueueSize() {
         return sortedReadyQueue.size();
     }
-    
-//    public void sortPCBs(String algo) {
-//        // Move PCBs from first queue into this queue, sorted
-//        readyQueue = simPCBQueue;
-//        System.out.println(readyQueue);
-//    }
-//
+
     public ArrayList<PCB> accessReadyQueue() {
         return sortedReadyQueue;
     }

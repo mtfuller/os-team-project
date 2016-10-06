@@ -35,6 +35,8 @@ public class LongTermScheduler {
                 }
                 simKernel.getPCB(pcbCounter).setRAMAddressEnd(simRAM.getOccupiedRAM() + lineCounter);
                 simKernel.getPCB(pcbCounter).setStatus(2); // Set PCB's status to "Waiting"
+                simDisk.removedJobFromDisk();
+                simRAM.addedJobToRam();
                 simRAM.setOccupiedRAM(simRAM.getOccupiedRAM() + lineCounter + 1);
             }
         }
