@@ -17,14 +17,18 @@ public class CPU {
     }
     
     public void runPCB(PCB pcb) {
-        
-        
-        
+        initializeCPU(pcb);
+        runProcess();
     }
     
     public void initializeCPU(PCB pcb) {
-        
-        
+        State pcbState = pcb.getState();
+        cpuState.setPc(pcbState.getPc());
+        cpuState.setInstruction(pcbState.getPc());
+        cpuState.setBase_addr(pcbState.getBase_addr());
+        for (int i = 0; i < 15; i++) {
+            cpuState.setReg(i, pcbState.getReg(i));
+        }
     }
     
     public void runProcess() {
