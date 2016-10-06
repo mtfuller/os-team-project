@@ -16,6 +16,17 @@ public class Kernel {
         sortedReadyQueue = new ArrayList<>();
     }
     
+    //    public void sortPCBs(String algo) {
+//        ArrayList<PCB> pcbsBefore = new ArrayList<>();
+//        for (int i = 0; i < 10; i++) {
+//            Random ran = new Random();
+//            int x = ran.nextInt(6) + 5;
+//            pcbsBefore.add(new PCB(i + 1, (x + 20), x, (x + 555)));
+//            System.out.println(pcbsBefore.get(i).getJobID());
+//            System.out.println(pcbsBefore.get(i).getPriority());
+//        }
+//    }
+    
     public PCB getPCB(int index) {
         return sortedReadyQueue.get(index);
     }
