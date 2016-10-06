@@ -1,27 +1,24 @@
-/**
- * Created by Margaret on 9/26/2016.
- */
+import java.util.Arrays;
+
 public class Ram {
     
     long[] newRAM;
     int RAMlength;
     int occupiedRAM;
+    int jobsOnRam;
     
     public Ram(int ramSpace) {
         RAMlength = ramSpace;
         newRAM = new long[1024];
         occupiedRAM = 0;
+        jobsOnRam = 0;
     }
     
-    public int getRAMlength() {
-        return RAMlength;
+    public void writeRam(int address, long value) {
+        newRAM[address] = value;
     }
     
-    public void writeToRAM(long input, int index) {
-        newRAM[index] = input;
-    }
-    
-    public long getRAMLine(int index) {
+    public long readRam(int index) {
         return newRAM[index];
     }
     
@@ -34,11 +31,23 @@ public class Ram {
     }
     
     public int getFreeRAMSpace() {
-        return 1024-getOccupiedRAM();
+        return 1024 - getOccupiedRAM();
     }
     
-    public boolean isEnoughSpace(int pcbLength){
-        return (getFreeRAMSpace() >= pcbLength);
+    public int getJobsOnRam() {
+        return jobsOnRam;
+    }
+    
+    public void resetJobCount(){
+        jobsOnRam = 0;
+    }
+    
+    public void addedJobToRam() {
+        jobsOnRam++;
+    }
+    
+    public String toString() {
+        return " RAM: " + Arrays.toString(newRAM);
     }
     
 }
