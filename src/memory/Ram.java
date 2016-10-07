@@ -1,3 +1,5 @@
+package memory;
+
 import java.util.Arrays;
 
 public class Ram {
