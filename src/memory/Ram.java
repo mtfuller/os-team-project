@@ -1,33 +1,55 @@
 package memory;
 
-/**
- * Created by willw on 9/27/2016.
- */
+import java.util.Arrays;
+
 public class Ram {
-    long[] ramArray;
-    int spaceR;
-    int count;
-    public Ram(){
-        ramArray = new long[1024];
-        spaceR = 1024;
-        count = 0;
+    
+    long[] newRAM;
+    int RAMlength;
+    int occupiedRAM;
+    int jobsOnRam;
+    
+    public Ram(int ramSpace) {
+        RAMlength = ramSpace;
+        newRAM = new long[1024];
+        occupiedRAM = 0;
+        jobsOnRam = 0;
     }
-    public long readRam(int address){
-        return ramArray[address];
-
-
+    
+    public void writeRam(int address, long value) {
+        newRAM[address] = value;
     }
-    public void writeRam(int address, long value){
-
-        ramArray[address] = value;
-        spaceR--;
-        count++;
-
+    
+    public long readRam(int index) {
+        return newRAM[index];
     }
-    public int getRamSpaceAvaliable(){
-        return spaceR;
+    
+    public void setOccupiedRAM(int lastElement) {
+        occupiedRAM = lastElement;
     }
-    public int getAmountInRam(){
-        return count;
+    
+    public int getOccupiedRAM() {
+        return occupiedRAM;
     }
+    
+    public int getFreeRAMSpace() {
+        return 1024 - getOccupiedRAM();
+    }
+    
+    public int getJobsOnRam() {
+        return jobsOnRam;
+    }
+    
+    public void resetJobCount(){
+        jobsOnRam = 0;
+    }
+    
+    public void addedJobToRam() {
+        jobsOnRam++;
+    }
+    
+    public String toString() {
+        return " RAM: " + Arrays.toString(newRAM);
+    }
+    
 }

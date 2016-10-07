@@ -1,30 +1,44 @@
 package memory;
 
-/**
- * Created by willw on 9/27/2016.
- */
+import java.util.Arrays;
+    
 public class Disk {
-    long[] diskArray;
-    int spaceD;
-    int count;
-    public Disk(){
-        diskArray = new long[2048];
-        spaceD = 2048;
 
-    }
-    public long readDisk(int address){
-        return diskArray[address];
+    long[] newDisk;
+    int occupiedSpace;
+    int jobsOnDisk;
 
+    public Disk(int diskLength) {
+        newDisk = new long[diskLength];
+        occupiedSpace = 0;
     }
-    public void writeDisk(int address, long value){
-        diskArray[address] = value;
-        spaceD--;
-        count++;
+
+    public void writeDisk(int address, long value) {
+        newDisk[address] = value;
     }
-    public int getDiskSpaceAvaliable(){
-        return spaceD;
+
+    public long readDisk(int address) {
+        return newDisk[address];
     }
-    public int getAmountInDisk(){
-        return count;
+
+    public int getJobSize(PCB pcb) {
+        return pcb.getDiskAddressEnd() - pcb.getDiskAddressBegin();
     }
+
+    public int getJobsOnDisk() {
+        return jobsOnDisk;
+    }
+
+    public void addedJobToDisk() {
+        jobsOnDisk++;
+    }
+
+    public void removedJobFromDisk() {
+        jobsOnDisk--;
+    }
+
+    public String toString() {
+        return Arrays.toString(newDisk);
+    }
+    
 }

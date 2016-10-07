@@ -1,2 +1,3 @@
 # os-team-project
-This is the main repository for the OS Team Project for CS 3502.
+These are the helper files I've created to test the Loader(). 
+Running the Main class will show what a PCB "looks like."
