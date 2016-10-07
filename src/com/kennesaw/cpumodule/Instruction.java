@@ -1,5 +1,7 @@
+package com.kennesaw.cpumodule;
+
 public class Instruction {
-    
+
     private byte format;
     private byte opcode;
     private byte reg1;
@@ -7,10 +9,10 @@ public class Instruction {
     private byte bReg;
     private byte destReg;
     private int addr;
-    
+
     public Instruction() {
     }
-    
+
     public void decodeInstruction(long instructionBin) {
         String binStr = Long.toBinaryString(instructionBin);
         while (binStr.length() < 64) binStr = "0" + binStr;
@@ -43,35 +45,35 @@ public class Instruction {
                 break;
         }
     }
-    
+
     public byte getFormat() {
         return format;
     }
-    
+
     public byte getOpcode() {
         return opcode;
     }
-    
+
     public byte getReg1() {
         return reg1;
     }
-    
+
     public byte getReg2() {
         return reg2;
     }
-    
+
     public byte getbReg() {
         return bReg;
     }
-    
+
     public byte getDestReg() {
         return destReg;
     }
-    
+
     public int getAddr() {
         return addr;
     }
-    
+
     @Override
     public String toString() {
         return "Instruction:" +

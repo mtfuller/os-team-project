@@ -1,48 +1,35 @@
+package com.kennesaw.cpumodule;
+
 public class CPU {
-    
+
     private State cpuState;
     private DmaChannel dmaChannel;
     private boolean isRunning;
-    
-    public CPU(Ram ram) {
+
+    public CPU() {
         cpuState = new State();
-        dmaChannel = new DmaChannel(ram);
+        dmaChannel = new DmaChannel();
         isRunning = true;
     }
-    
-    public CPU(DmaChannel dc) {
-        cpuState = new State();
+
+    public CPU(State state, DmaChannel dc) {
+        cpuState = state;
         dmaChannel = dc;
         isRunning = true;
     }
-    
-    public void runPCB(PCB pcb) {
-        initializeCPU(pcb);
-        runProcess();
-    }
-    
-    public void initializeCPU(PCB pcb) {
-        State pcbState = pcb.getState();
-        cpuState.setPc(pcbState.getPc());
-        cpuState.setInstruction(pcbState.getPc());
-        cpuState.setBase_addr(pcbState.getBase_addr());
-        for (int i = 0; i < 15; i++) {
-            cpuState.setReg(i, pcbState.getReg(i));
-        }
-    }
-    
+
     public void runProcess() {
         while(isRunning) {
             // Get instruction from memory
             long instr = fetch(cpuState.getPc());
-            
+
             // Increment the PC
             cpuState.incrementPc();
-            
+
             // Decode the instruction
             decode(instr);
             Instruction instruction = cpuState.getInstruction();
-            
+
             // Execute the instruction
             switch (instruction.getFormat()) {
                 case 0:
@@ -63,16 +50,16 @@ public class CPU {
             }
         }
     }
-    
+
     private long fetch(int addr) {
         addr *= 4;
         return dmaChannel.readRAM(addr);
     }
-    
+
     private void decode(long instructionBin) {
         cpuState.setInstruction(instructionBin);
     }
-    
+
     private void executeArithmetic(byte opcode, byte s1, byte s2, byte dr) {
         int acc;
         switch (opcode) {
@@ -115,7 +102,7 @@ public class CPU {
                 break;
         }
     }
-    
+
     private void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
         int acc;
         switch (opcode) {
@@ -164,7 +151,7 @@ public class CPU {
                 break;
         }
     }
-    
+
     private void executeUnconditionalJump(byte opcode, int addr) {
         switch (opcode) {
             case 0x12:
@@ -175,7 +162,7 @@ public class CPU {
                 break;
         }
     }
-    
+
     private void executeIO(byte opcode, byte r1, byte r2, int addr) {
         switch (opcode) {
             case 0x00:
@@ -188,7 +175,7 @@ public class CPU {
                 break;
         }
     }
-    
+
     @Override
     public String toString() {
         return "\nCPU:" +

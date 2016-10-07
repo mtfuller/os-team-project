@@ -1,30 +1,32 @@
+package com.kennesaw.cpumodule;
+
 import java.util.Arrays;
 
 public class DmaChannel {
-    private Ram pseudoRAM;
-    
-    public DmaChannel(Ram ram) {
-        pseudoRAM = ram;
+    private long pseudoRAM[];
+
+    public DmaChannel() {
+        pseudoRAM = new long[1024];
     }
-    
+
     private int effectiveAddr(int addr) {
         return addr / 4;
     }
-    
+
     public long readRAM(int addr) {
         addr = effectiveAddr(addr);
-        return pseudoRAM.readRam(addr);
+        return pseudoRAM[addr];
     }
-    
+
     public void writeRAM(int addr, long val) {
         addr = effectiveAddr(addr);
-        pseudoRAM.writeRam(addr, val);
+        pseudoRAM[addr] = val;
     }
-    
+
     @Override
     public String toString() {
         return "DmaChannel{" +
-                "pseudoRAM=" + pseudoRAM.toString() +
+                "pseudoRAM=" + Arrays.toString(pseudoRAM) +
                 '}';
     }
 }
