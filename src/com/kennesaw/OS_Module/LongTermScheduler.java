@@ -1,3 +1,7 @@
+package com.kennesaw.OS_Module;
+
+import memory.*;
+
 /**
  * Created by Margaret on 9/20/2016.
  */

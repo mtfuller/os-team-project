@@ -1,6 +1,12 @@
+package com.kennesaw.OS_Module;
+
 /**
  * Created by Margaret on 9/16/2016.
  */
+
+import memory.*;
+import com.kennesaw.cpumodule.CPU;
+import com.kennesaw.cpumodule.DmaChannel;
 
 public class OS_Driver {
     
@@ -11,7 +17,7 @@ public class OS_Driver {
     DmaChannel simDMA = new DmaChannel(simRAM);
     CPU simCPU = new CPU(simDMA);
     
-    // Loader populates Disk with instructions from ProgramFile.txt
+    // com.kennesaw.OS_Module.Loader populates Disk with instructions from ProgramFile.txt
     public void runDriver() throws Exception {
         try {
             simLoader = new Loader(simDisk, simKernel);

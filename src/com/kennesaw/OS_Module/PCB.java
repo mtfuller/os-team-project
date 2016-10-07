@@ -1,6 +1,10 @@
+package com.kennesaw.OS_Module;
+
 /**
  * Created by Margaret on 9/3/2016.
  */
+
+import com.kennesaw.cpumodule.State;
 
 public class PCB {
     

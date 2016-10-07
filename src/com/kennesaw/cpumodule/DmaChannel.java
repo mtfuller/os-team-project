@@ -1,12 +1,15 @@
 package com.kennesaw.cpumodule;
 
+import memory.Ram;
+
 import java.util.Arrays;
 
 public class DmaChannel {
     private long pseudoRAM[];
+    private Ram memory;
 
-    public DmaChannel() {
-        pseudoRAM = new long[1024];
+    public DmaChannel(Ram mem) {
+        memory = mem;
     }
 
     private int effectiveAddr(int addr) {
@@ -15,12 +18,12 @@ public class DmaChannel {
 
     public long readRAM(int addr) {
         addr = effectiveAddr(addr);
-        return pseudoRAM[addr];
+        return memory.readRam(addr);
     }
 
     public void writeRAM(int addr, long val) {
         addr = effectiveAddr(addr);
-        pseudoRAM[addr] = val;
+        memory.writeRam(addr, val);
     }
 
     @Override

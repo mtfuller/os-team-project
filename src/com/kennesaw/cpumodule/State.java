@@ -6,6 +6,16 @@ public class State {
     public static final byte ACCUMULATOR_REG = 0;
 
     private int pc;
+
+    public int getBase_addr() {
+        return base_Addr;
+    }
+
+    public void setBase_addr(int base_Addr) {
+        this.base_Addr = base_Addr;
+    }
+
+    private int base_Addr;
     private Instruction instruction;
     private long reg[];
 

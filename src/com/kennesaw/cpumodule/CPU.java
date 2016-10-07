@@ -1,27 +1,37 @@
 package com.kennesaw.cpumodule;
 
+import com.kennesaw.OS_Module.PCB;
+
 public class CPU {
 
     private State cpuState;
     private DmaChannel dmaChannel;
     private boolean isRunning;
 
-    public CPU() {
+    public CPU(DmaChannel dc) {
         cpuState = new State();
-        dmaChannel = new DmaChannel();
+        dmaChannel = dc;
         isRunning = true;
     }
 
-    public CPU(State state, DmaChannel dc) {
-        cpuState = state;
-        dmaChannel = dc;
-        isRunning = true;
+    public void runPCB(PCB pcb) {
+        initializeCPU(pcb);
+        runProcess();
+    }
+
+    private void initializeCPU(PCB pcb) {
+        State pcbState = pcb.getState();
+        cpuState.setPc(pcbState.getPc());
+        cpuState.setBase_addr(pcbState.getBase_addr());
+        for(byte i = 0; i < 15; i++) {
+            cpuState.setReg(i, pcbState.getReg(i));
+        }
     }
 
     public void runProcess() {
         while(isRunning) {
             // Get instruction from memory
-            long instr = fetch(cpuState.getPc());
+            long instr = fetch(cpuState.getPc() + cpuState.getBase_addr());
 
             // Increment the PC
             cpuState.incrementPc();

@@ -1,10 +1,14 @@
-/**
+package com.kennesaw.OS_Module; /**
  * Created by Margaret on 9/2/2016.
  */
 
 import java.io.File;
 import java.util.Scanner;
 import java.lang.*;
+
+import com.kennesaw.OS_Module.PCB;
+import com.kennesaw.OS_Module.Kernel;
+import memory.Disk;
 
 public class Loader {
     
@@ -23,7 +27,7 @@ public class Loader {
     // The counter to establish the PCB's beginning and ending Disk addresses
     int addyCounter = 0;
     
-    // Loader takes disk as parameter to write file and
+    // com.kennesaw.OS_Module.Loader takes disk as parameter to write file and
     // Kernel to create/access the readyQueue of PCBs.
     public Loader(Disk simDisk, Kernel simKernel) throws Exception {
         this.loaderScanner = new Scanner(file);

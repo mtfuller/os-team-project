@@ -1,7 +1,9 @@
 package memory;
 
 import java.util.Arrays;
-    
+
+import com.kennesaw.OS_Module.PCB;
+
 public class Disk {
 
     long[] newDisk;
