@@ -21,9 +21,17 @@ public class ShortTermScheduler {
     
     public void runSTS() {
         for (int i = 0; i < simRAM.getJobsOnRam(); i++) {
-            simCPU.runPCB(simKernel.getPCB(i));
+            if (simKernel.getPCB(i).getStatus() == "Waiting") {
+                simCPU.runPCB(simKernel.getPCB(i));
+                simKernel.getPCB(i).setStatus(4);
+            } else {
+                simCPU.runPCB(simKernel.getPCB(i + simRAM.getJobsOnRam()));
+                simKernel.getPCB(i).setStatus(4);
+            }
         }
         simRAM.resetJobCount();
     }
     
 }
+
+

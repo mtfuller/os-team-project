@@ -21,7 +21,7 @@ public class LongTermScheduler {
         simDisk = thisDisk;
         simRAM = thisRAM;
     }
-
+    
     public void runLTS(Kernel simKernel) {
         simRAM.setOccupiedRAM(0);
         ramSpaceCounter = 0;
@@ -31,12 +31,14 @@ public class LongTermScheduler {
             if ((simKernel.getPCB(pcbCounter).getJobSize() <= simRAM.getFreeRAMSpace()) && (simKernel.getPCB(pcbCounter).getStatus() == "New")) {
                 simKernel.getPCB(pcbCounter).setRAMAddressBegin(simRAM.getOccupiedRAM() + lineCounter);
                 simKernel.getPCB(pcbCounter).setBaseAddress(simRAM.getOccupiedRAM() + lineCounter);
-                while (lineCounter < simDisk.getJobSize(simKernel.getPCB(pcbCounter))) {
+                simKernel.getPCB(pcbCounter).getState().setBase_addr(simKernel.getPCB(pcbCounter).getBaseAddress());
+                while (lineCounter <= simDisk.getJobSize(simKernel.getPCB(pcbCounter))) {
                     long jobSlice = simDisk.readDisk((simKernel.getPCB(pcbCounter).getDiskAddressBegin() + lineCounter));
                     simRAM.writeRam(ramSpaceCounter, jobSlice);
                     lineCounter++;
                     ramSpaceCounter++;
                 }
+                lineCounter--;
                 simKernel.getPCB(pcbCounter).setRAMAddressEnd(simRAM.getOccupiedRAM() + lineCounter);
                 simKernel.getPCB(pcbCounter).setStatus(2); // Set PCB's status to "Waiting"
                 simDisk.removedJobFromDisk();

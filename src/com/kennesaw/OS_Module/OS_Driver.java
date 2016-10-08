@@ -8,9 +8,6 @@ import memory.*;
 import com.kennesaw.cpumodule.CPU;
 import com.kennesaw.cpumodule.DmaChannel;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 public class OS_Driver {
     
     Disk simDisk = new Disk(2048);
@@ -27,12 +24,6 @@ public class OS_Driver {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    
-        // Sort the PCBs based on Priority or Length of Job (SJF)
-        // Uncomment preferred sorting method
-        
-//        simKernel.sortPriority();
-//        simKernel.sortSJF();
         
         // Initialize Long-term and Short-term schedulers
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRAM);

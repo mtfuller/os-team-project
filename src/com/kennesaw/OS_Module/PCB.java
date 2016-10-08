@@ -6,6 +6,8 @@ package com.kennesaw.OS_Module;
 
 import com.kennesaw.cpumodule.State;
 
+import java.util.Arrays;
+
 public class PCB {
     
     private int jobID;  // Job ID
@@ -135,17 +137,22 @@ public class PCB {
         this.state = state;
     }
     
+    @Override
     public String toString() {
-        String toReturn = "";
-        
-        toReturn += ("Job # = " + jobID + "\n");
-        toReturn += ("Job Size = " + jobSize + "\n");
-        toReturn += ("Base Address = " + state.getBase_addr() + "\n");
-        toReturn += ("Input Buffer = " + inputBuffer + "\n");
-        toReturn += ("Output Buffer = " + outputBuffer + "\n");
-        toReturn += ("Temp Buffer = " + tempBuffer + "\n");
-        
-        return toReturn;
-        
+        return "PCB{" +
+                "jobID=" + jobID +
+                ", priority=" + priority +
+                ", jobSize=" + jobSize +
+                ", status='" + status + '\'' +
+                ", diskAddressBegin=" + diskAddressBegin +
+                ", diskAddressEnd=" + diskAddressEnd +
+                ", RAMAddressBegin=" + RAMAddressBegin +
+                ", RAMAddressEnd=" + RAMAddressEnd +
+                ", inputBuffer=" + inputBuffer +
+                ", outputBuffer=" + outputBuffer +
+                ", tempBuffer=" + tempBuffer +
+                ", state=" + state +
+                ", currentState=" + Arrays.toString(currentState) +
+                '}';
     }
 }
