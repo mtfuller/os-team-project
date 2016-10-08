@@ -38,9 +38,14 @@ public class Disk {
     public void removedJobFromDisk() {
         jobsOnDisk--;
     }
-
+    
     public String toString() {
-        return Arrays.toString(newDisk);
+        String toReturn = "";
+        
+        for (int i = 0; i < newDisk.length; i++) {
+            toReturn += ("Line # " + (i + 1) + " - " + readDisk(i) + "\n");
+        }
+        return toReturn;
     }
     
 }

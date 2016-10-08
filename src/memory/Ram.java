@@ -49,7 +49,12 @@ public class Ram {
     }
     
     public String toString() {
-        return " RAM: " + Arrays.toString(newRAM);
+        String toReturn = "";
+        
+        for (int i = 0; i < RAMlength; i++) {
+            toReturn += ("Line # " + (i + 1) + " - " + readRam(i) + "\n");
+        }
+        return toReturn;
     }
     
 }
