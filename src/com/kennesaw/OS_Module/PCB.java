@@ -134,4 +134,18 @@ public class PCB {
     public void setState(State state) {
         this.state = state;
     }
+    
+    public String toString() {
+        String toReturn = "";
+        
+        toReturn += ("Job # = " + jobID + "\n");
+        toReturn += ("Job Size = " + jobSize + "\n");
+        toReturn += ("Base Address = " + state.getBase_addr() + "\n");
+        toReturn += ("Input Buffer = " + inputBuffer + "\n");
+        toReturn += ("Output Buffer = " + outputBuffer + "\n");
+        toReturn += ("Temp Buffer = " + tempBuffer + "\n");
+        
+        return toReturn;
+        
+    }
 }
