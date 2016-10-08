@@ -3,22 +3,22 @@ package com.kennesaw.cpumodule;
 import com.kennesaw.OS_Module.PCB;
 
 public class CPU {
-
+    
     private State cpuState;
     private DmaChannel dmaChannel;
     private boolean isRunning;
-
+    
     public CPU(DmaChannel dc) {
         cpuState = new State();
         dmaChannel = dc;
         isRunning = true;
     }
-
+    
     public void runPCB(PCB pcb) {
         initializeCPU(pcb);
         runProcess();
     }
-
+    
     private void initializeCPU(PCB pcb) {
         State pcbState = pcb.getState();
         cpuState.setPc(pcbState.getPc());
@@ -27,19 +27,20 @@ public class CPU {
             cpuState.setReg(i, pcbState.getReg(i));
         }
     }
-
+    
     public void runProcess() {
+        isRunning = true;
         while(isRunning) {
             // Get instruction from memory
-            long instr = fetch(cpuState.getPc() + cpuState.getBase_addr());
-
+            long instr = fetch(cpuState.getPc());
+            
             // Increment the PC
             cpuState.incrementPc();
-
+            
             // Decode the instruction
             decode(instr);
             Instruction instruction = cpuState.getInstruction();
-
+            
             // Execute the instruction
             switch (instruction.getFormat()) {
                 case 0:
@@ -60,16 +61,17 @@ public class CPU {
             }
         }
     }
-
+    
     private long fetch(int addr) {
+        addr = addr + cpuState.getBase_addr();
         addr *= 4;
         return dmaChannel.readRAM(addr);
     }
-
+    
     private void decode(long instructionBin) {
         cpuState.setInstruction(instructionBin);
     }
-
+    
     private void executeArithmetic(byte opcode, byte s1, byte s2, byte dr) {
         int acc;
         switch (opcode) {
@@ -112,15 +114,16 @@ public class CPU {
                 break;
         }
     }
-
+    
     private void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
         int acc;
+        int baseAddr = cpuState.getBase_addr() * 4;
         switch (opcode) {
             case 0x02:
-                dmaChannel.writeRAM((int) cpuState.getReg(dr), cpuState.getReg(br));
+                dmaChannel.writeRAM((int) cpuState.getReg(dr) + baseAddr, cpuState.getReg(br));
                 break;
             case 0x03:
-                cpuState.setReg(dr, dmaChannel.readRAM((int) cpuState.getReg(br)));
+                cpuState.setReg(dr, dmaChannel.readRAM((int) cpuState.getReg(br) + baseAddr));
                 break;
             case 0x0B:
                 cpuState.setReg(dr, addr);
@@ -161,7 +164,7 @@ public class CPU {
                 break;
         }
     }
-
+    
     private void executeUnconditionalJump(byte opcode, int addr) {
         switch (opcode) {
             case 0x12:
@@ -172,20 +175,21 @@ public class CPU {
                 break;
         }
     }
-
+    
     private void executeIO(byte opcode, byte r1, byte r2, int addr) {
+        int baseAddr = cpuState.getBase_addr() * 4;
         switch (opcode) {
             case 0x00:
-                if (addr == 0) cpuState.setReg(r1, dmaChannel.readRAM((int) cpuState.getReg(r2)));
-                else cpuState.setReg(r1, dmaChannel.readRAM(addr));
+                if (addr == 0) cpuState.setReg(r1, dmaChannel.readRAM((int) cpuState.getReg(r2) + baseAddr));
+                else cpuState.setReg(r1, dmaChannel.readRAM(addr + baseAddr));
                 break;
             case 0x01:
-                if (r1 == r2) dmaChannel.writeRAM(addr, cpuState.getReg(r1));
-                else dmaChannel.writeRAM((int) cpuState.getReg(r2), cpuState.getReg(r1));
+                if (r1 == r2) dmaChannel.writeRAM(addr + baseAddr, cpuState.getReg(r1));
+                else dmaChannel.writeRAM((int) cpuState.getReg(r2) + baseAddr, cpuState.getReg(r1));
                 break;
         }
     }
-
+    
     @Override
     public String toString() {
         return "\nCPU:" +
