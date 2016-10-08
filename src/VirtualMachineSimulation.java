@@ -13,8 +13,7 @@ public class VirtualMachineSimulation {
         simDriver.runDriver();
         
         long estimatedTime = System.nanoTime() - startTime;
-        
-    
+            
         System.out.println("Overall Program: " + estimatedTime/1000000 + " ms");
     
     }
