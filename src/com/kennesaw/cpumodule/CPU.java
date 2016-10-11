@@ -5,23 +5,22 @@ import com.kennesaw.cpumodule.*;
 import memory.Ram;
 
 public class CPU extends Thread{
-    
+    public static final int CACHE_SIZE = 32;
+
     private CpuState cpuState;
     private DmaChannel dmaChannel;
     private boolean isRunningProcess;
     private boolean isRunning;
+    private long cache[];
     
     public CPU(Ram ram) {
         cpuState = new CpuState();
         isRunningProcess = false;
         isRunning = true;
+        cache = new long[CACHE_SIZE];
+        for (int i = 0; i < CACHE_SIZE; i++) cache[i] = 0L;
         dmaChannel = new DmaChannel(ram);
         dmaChannel.start();
-        try {
-            dmaChannel.wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -41,11 +40,28 @@ public class CPU extends Thread{
         initializeCPU(pcb);
         isRunningProcess = true;
     }
+
+    public void startProcess() {
+        isRunningProcess = true;
+    }
+
+    public long getInstruction(int addr) {
+        return cache[addr];
+    }
+
+    public void loadInstruction(int addr, long instr) {
+        cache[addr] = instr;
+    }
+
+    public boolean isRunningProcess() {
+        return isRunningProcess;
+    }
     
     private void initializeCPU(PCB pcb) {
         CpuState pcbState = pcb.getState();
         cpuState.setPc(pcbState.getPc());
-        cpuState.setBase_addr(pcbState.getBase_addr());
+        cpuState.setBase_addr(0);
+        //cpuState.setBase_addr(pcbState.getBase_addr());
         for(byte i = 0; i < 15; i++) {
             cpuState.setReg(i, pcbState.getReg(i));
         }
@@ -85,18 +101,8 @@ public class CPU extends Thread{
         }
     }
     
-    private long fetch(int addr) {
-        addr = addr + cpuState.getBase_addr();
-        addr *= 4;
-        dmaChannel.notify();
-        dmaChannel.signalDMA('r',addr);
-        long retLong = dmaChannel.getValue();
-        try {
-            dmaChannel.wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return retLong;
+    private synchronized long fetch(int addr) {
+        return cache[addr];
     }
     
     private void decode(long instructionBin) {
@@ -146,7 +152,7 @@ public class CPU extends Thread{
         }
     }
     
-    private void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
+    private synchronized void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
         int acc;
         int baseAddr = cpuState.getBase_addr() * 4;
         dmaChannel.notify();
@@ -215,7 +221,7 @@ public class CPU extends Thread{
         }
     }
     
-    private void executeIO(byte opcode, byte r1, byte r2, int addr) {
+    private synchronized void executeIO(byte opcode, byte r1, byte r2, int addr) {
         int baseAddr = cpuState.getBase_addr() * 4;
         dmaChannel.notify();
         switch (opcode) {
