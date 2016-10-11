@@ -1,26 +1,49 @@
 package com.kennesaw.cpumodule;
 
 import com.kennesaw.OS_Module.PCB;
+import com.kennesaw.cpumodule.*;
+import memory.Ram;
 
-public class CPU {
+public class CPU extends Thread{
     
-    private State cpuState;
+    private CpuState cpuState;
     private DmaChannel dmaChannel;
+    private boolean isRunningProcess;
     private boolean isRunning;
     
-    public CPU(DmaChannel dc) {
-        cpuState = new State();
-        dmaChannel = dc;
+    public CPU(Ram ram) {
+        cpuState = new CpuState();
+        isRunningProcess = false;
         isRunning = true;
+        dmaChannel = new DmaChannel(ram);
+        dmaChannel.start();
+        try {
+            dmaChannel.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() {
+        while(isRunning) {
+            if(isRunningProcess) {
+                runProcess();
+            }
+        }
+    }
+
+    public void endCPU() {
+        isRunning = false;
     }
     
     public void runPCB(PCB pcb) {
         initializeCPU(pcb);
-        runProcess();
+        isRunningProcess = true;
     }
     
     private void initializeCPU(PCB pcb) {
-        State pcbState = pcb.getState();
+        CpuState pcbState = pcb.getState();
         cpuState.setPc(pcbState.getPc());
         cpuState.setBase_addr(pcbState.getBase_addr());
         for(byte i = 0; i < 15; i++) {
@@ -29,8 +52,8 @@ public class CPU {
     }
     
     public void runProcess() {
-        isRunning = true;
-        while(isRunning) {
+        isRunningProcess = true;
+        while(isRunningProcess) {
             // Get instruction from memory
             long instr = fetch(cpuState.getPc());
             
@@ -65,7 +88,15 @@ public class CPU {
     private long fetch(int addr) {
         addr = addr + cpuState.getBase_addr();
         addr *= 4;
-        return dmaChannel.readRAM(addr);
+        dmaChannel.notify();
+        dmaChannel.signalDMA('r',addr);
+        long retLong = dmaChannel.getValue();
+        try {
+            dmaChannel.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return retLong;
     }
     
     private void decode(long instructionBin) {
@@ -118,12 +149,15 @@ public class CPU {
     private void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
         int acc;
         int baseAddr = cpuState.getBase_addr() * 4;
+        dmaChannel.notify();
         switch (opcode) {
             case 0x02:
-                dmaChannel.writeRAM((int) cpuState.getReg(dr) + baseAddr, cpuState.getReg(br));
+                dmaChannel.signalDMA('w',((int) cpuState.getReg(dr) + baseAddr),(cpuState.getReg(br)));
                 break;
             case 0x03:
-                cpuState.setReg(dr, dmaChannel.readRAM((int) cpuState.getReg(br) + baseAddr));
+                dmaChannel.signalDMA('r',((int) cpuState.getReg(br) + baseAddr));
+                long val = dmaChannel.getValue();
+                cpuState.setReg(dr, val);
                 break;
             case 0x0B:
                 cpuState.setReg(dr, addr);
@@ -163,12 +197,17 @@ public class CPU {
             case 0x1A:
                 break;
         }
+        try {
+            dmaChannel.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     
     private void executeUnconditionalJump(byte opcode, int addr) {
         switch (opcode) {
             case 0x12:
-                isRunning = false;
+                isRunningProcess = false;
                 break;
             case 0x14:
                 cpuState.setPc(addr);
@@ -178,15 +217,33 @@ public class CPU {
     
     private void executeIO(byte opcode, byte r1, byte r2, int addr) {
         int baseAddr = cpuState.getBase_addr() * 4;
+        dmaChannel.notify();
         switch (opcode) {
             case 0x00:
-                if (addr == 0) cpuState.setReg(r1, dmaChannel.readRAM((int) cpuState.getReg(r2) + baseAddr));
-                else cpuState.setReg(r1, dmaChannel.readRAM(addr + baseAddr));
+                long val;
+                if (addr == 0) {
+                    dmaChannel.signalDMA('r',((int) cpuState.getReg(r2) + baseAddr));
+                    val = dmaChannel.getValue();
+                    cpuState.setReg(r1, val);
+                } else {
+                    dmaChannel.signalDMA('r',(addr + baseAddr));
+                    val = dmaChannel.getValue();
+                    cpuState.setReg(r1, val);
+                }
                 break;
             case 0x01:
-                if (r1 == r2) dmaChannel.writeRAM(addr + baseAddr, cpuState.getReg(r1));
-                else dmaChannel.writeRAM((int) cpuState.getReg(r2) + baseAddr, cpuState.getReg(r1));
+                if (r1 == r2) {
+                    dmaChannel.signalDMA('w',(addr + baseAddr),(cpuState.getReg(r1)));
+                }
+                else {
+                    dmaChannel.signalDMA('w',((int) cpuState.getReg(r2) + baseAddr),(cpuState.getReg(r1)));
+                }
                 break;
+        }
+        try {
+            dmaChannel.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
     

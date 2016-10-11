@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class StateTest {
     @Test
     public void pcTest() {
-        State state = new State();
+        CpuState state = new CpuState();
         assertTrue("A new State's PC did not equal 0", state.getPc() == 0);
 
         int value = 23492;
@@ -20,7 +20,7 @@ public class StateTest {
 
     @Test
     public void instructionTest() {
-        State state = new State();
+        CpuState state = new CpuState();
         Instruction ir = state.getInstruction();
         boolean isCorrect = (
                     ir.getAddr() == 0 &&
@@ -51,7 +51,7 @@ public class StateTest {
 
     @Test
     public void registerTest() {
-        State state = new State();
+        CpuState state = new CpuState();
         byte index = 3;
         assertTrue("A new State's REG"+index+" did not equal 0", state.getReg(index) == 0);
 

@@ -19,7 +19,7 @@ public class MainOSTest {
         Kernel simKernel = new Kernel();
         Loader simLoader;
         DmaChannel simDMA = new DmaChannel(simRAM);
-        CPU simCPU = new CPU(simDMA);
+        CPU simCPU = new CPU(simRAM);
 
         try {
             simLoader = new Loader(simDisk, simKernel);

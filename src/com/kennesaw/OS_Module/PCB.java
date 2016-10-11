@@ -4,7 +4,7 @@ package com.kennesaw.OS_Module;
  * Created by Margaret on 9/3/2016.
  */
 
-import com.kennesaw.cpumodule.State;
+import com.kennesaw.cpumodule.CpuState;
 
 import java.util.Arrays;
 
@@ -21,7 +21,7 @@ public class PCB {
     private int inputBuffer;
     private int outputBuffer;
     private int tempBuffer;
-    private State state;
+    private CpuState state;
     
     public String[] currentState = { "New", "Ready", "Waiting", "Running", "Ended" };
     
@@ -32,7 +32,7 @@ public class PCB {
         priority = prior;
         diskAddressBegin = diskBegin;
         status = currentState[0];
-        state = new State();
+        state = new CpuState();
     }
     
     public int getJobID() {
@@ -129,11 +129,11 @@ public class PCB {
         this.tempBuffer = tempBuffer;
     }
     
-    public State getState() {
+    public CpuState getState() {
         return state;
     }
     
-    public void setState(State state) {
+    public void setState(CpuState state) {
         this.state = state;
     }
     

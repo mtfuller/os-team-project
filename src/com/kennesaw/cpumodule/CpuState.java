@@ -1,6 +1,6 @@
 package com.kennesaw.cpumodule;
 
-public class State {
+public class CpuState {
     public static final byte NUM_OF_REGISTERS = 16;
     public static final byte ZERO_REG = 1;
     public static final byte ACCUMULATOR_REG = 0;
@@ -19,7 +19,7 @@ public class State {
     private Instruction instruction;
     private long reg[];
 
-    public State() {
+    public CpuState() {
         pc = 0;
         instruction = new Instruction();
         reg = new long[NUM_OF_REGISTERS];
