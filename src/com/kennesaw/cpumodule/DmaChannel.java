@@ -4,85 +4,52 @@ import memory.Ram;
 
 import java.util.Arrays;
 
-public class DmaChannel extends Thread {
+public class DmaChannel {
+    public static final int CACHE_SIZE = 72;
     private Ram memory;
-    private boolean foundValue;
-    private char operation;
-    private int address;
-    private long value;
+    private long cache[];
 
     public DmaChannel(Ram mem) {
         memory = mem;
-        operation = 'X';
-        foundValue = false;
-    }
-
-    public boolean isValueFound() {
-        return foundValue;
-    }
-
-    public void signalDMA(char op, int a) {
-        signalDMA(op, a, 0L);
-    }
-
-    public void signalDMA(char op, int a, long v) {
-        operation = op;
-        address = a;
-        value = v;
-        foundValue = false;
-        this.notify();
-    }
-
-    public long getValue() {
-        while(!isValueFound());
-        return value;
+        cache = new long[CACHE_SIZE];
+        for (int i = 0; i < CACHE_SIZE; i++) cache[i] = 0L;
     }
 
     private int effectiveAddr(int addr) {
         return addr / 4;
     }
 
-    private long readRAM(int addr) {
+    public long readCache(int addr) {
         addr = effectiveAddr(addr);
-        return memory.readRam(addr);
+        return cache[addr];
     }
 
-    private void writeRAM(int addr, long val) {
+    public void writeCache(int addr, long instr) {
+        addr = effectiveAddr(addr);
+        cache[addr] = instr;
+    }
+
+    public long readRAM(int addr) {
+        aquireLock();
+        addr = effectiveAddr(addr);
+        long val = memory.readRam(addr);
+        releaseLock();
+        return val;
+    }
+
+    public void writeRAM(int addr, long val) {
+        aquireLock();
         addr = effectiveAddr(addr);
         memory.writeRam(addr, val);
+        releaseLock();
     }
 
-    @Override
-    public String toString() {
-        return "DmaChannel";
+    private void aquireLock() {
+        while(memory.isLocked());
+        memory.lock();
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            switch(operation) {
-                case 'r':
-                    value = readRAM(address);
-                    foundValue = true;
-                    operation = 'X';
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case 'w':
-                    writeRAM(address, value);
-                    operation = 'X';
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
+    private void releaseLock() {
+        memory.unlock();
     }
 }

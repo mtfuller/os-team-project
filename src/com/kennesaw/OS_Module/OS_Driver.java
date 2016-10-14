@@ -12,9 +12,10 @@ public class OS_Driver {
     
     Disk simDisk = new Disk(2048);
     Ram simRAM = new Ram(1024);
+    DmaChannel simDMA = new DmaChannel(simRAM);
     Kernel simKernel = new Kernel();
     Loader simLoader;
-    CPU simCPU = new CPU(simRAM);
+    CPU simCPU = new CPU(simDMA);
     
     // com.kennesaw.OS_Module.Loader populates Disk with instructions from ProgramFile.txt
     public void runDriver() throws Exception {

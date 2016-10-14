@@ -1,26 +1,18 @@
 package com.kennesaw.cpumodule;
 
 import com.kennesaw.OS_Module.PCB;
-import com.kennesaw.cpumodule.*;
-import memory.Ram;
 
 public class CPU extends Thread{
-    public static final int CACHE_SIZE = 32;
-
     private CpuState cpuState;
     private DmaChannel dmaChannel;
     private boolean isRunningProcess;
     private boolean isRunning;
-    private long cache[];
     
-    public CPU(Ram ram) {
+    public CPU(DmaChannel dma) {
         cpuState = new CpuState();
+        dmaChannel = dma;
         isRunningProcess = false;
         isRunning = true;
-        cache = new long[CACHE_SIZE];
-        for (int i = 0; i < CACHE_SIZE; i++) cache[i] = 0L;
-        dmaChannel = new DmaChannel(ram);
-        dmaChannel.start();
     }
 
     @Override
@@ -45,23 +37,14 @@ public class CPU extends Thread{
         isRunningProcess = true;
     }
 
-    public long getInstruction(int addr) {
-        return cache[addr];
-    }
-
-    public void loadInstruction(int addr, long instr) {
-        cache[addr] = instr;
-    }
-
     public boolean isRunningProcess() {
         return isRunningProcess;
     }
-    
+
     private void initializeCPU(PCB pcb) {
         CpuState pcbState = pcb.getState();
         cpuState.setPc(pcbState.getPc());
         cpuState.setBase_addr(0);
-        //cpuState.setBase_addr(pcbState.getBase_addr());
         for(byte i = 0; i < 15; i++) {
             cpuState.setReg(i, pcbState.getReg(i));
         }
@@ -102,7 +85,7 @@ public class CPU extends Thread{
     }
     
     private synchronized long fetch(int addr) {
-        return cache[addr];
+        return dmaChannel.readCache(addr*4);
     }
     
     private void decode(long instructionBin) {
@@ -117,32 +100,26 @@ public class CPU extends Thread{
                 break;
             case 0x05:
                 acc = ALU.add((int) cpuState.getReg(s1), (int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x06:
                 acc = ALU.sub((int) cpuState.getReg(s1),(int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x07:
                 acc = ALU.mult((int) cpuState.getReg(s1),(int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x08:
                 acc = ALU.div((int) cpuState.getReg(s1),(int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x09:
                 acc = ALU.and((int) cpuState.getReg(s1), (int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x0A:
                 acc = ALU.or((int) cpuState.getReg(s1), (int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x10:
@@ -154,16 +131,13 @@ public class CPU extends Thread{
     
     private synchronized void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
         int acc;
-        int baseAddr = cpuState.getBase_addr() * 4;
-        dmaChannel.notify();
+        //int baseAddr = cpuState.getBase_addr() * 4;
         switch (opcode) {
             case 0x02:
-                dmaChannel.signalDMA('w',((int) cpuState.getReg(dr) + baseAddr),(cpuState.getReg(br)));
+                dmaChannel.writeCache(((int) cpuState.getReg(dr)), cpuState.getReg(br));
                 break;
             case 0x03:
-                dmaChannel.signalDMA('r',((int) cpuState.getReg(br) + baseAddr));
-                long val = dmaChannel.getValue();
-                cpuState.setReg(dr, val);
+                cpuState.setReg(dr, dmaChannel.readCache((int) cpuState.getReg(br)));
                 break;
             case 0x0B:
                 cpuState.setReg(dr, addr);
@@ -203,11 +177,6 @@ public class CPU extends Thread{
             case 0x1A:
                 break;
         }
-        try {
-            dmaChannel.wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
     
     private void executeUnconditionalJump(byte opcode, int addr) {
@@ -222,34 +191,16 @@ public class CPU extends Thread{
     }
     
     private synchronized void executeIO(byte opcode, byte r1, byte r2, int addr) {
-        int baseAddr = cpuState.getBase_addr() * 4;
-        dmaChannel.notify();
+        //int baseAddr = cpuState.getBase_addr() * 4;
         switch (opcode) {
             case 0x00:
-                long val;
-                if (addr == 0) {
-                    dmaChannel.signalDMA('r',((int) cpuState.getReg(r2) + baseAddr));
-                    val = dmaChannel.getValue();
-                    cpuState.setReg(r1, val);
-                } else {
-                    dmaChannel.signalDMA('r',(addr + baseAddr));
-                    val = dmaChannel.getValue();
-                    cpuState.setReg(r1, val);
-                }
+                if (addr == 0) cpuState.setReg(r1, dmaChannel.readCache((int) cpuState.getReg(r2)));
+                else cpuState.setReg(r1, dmaChannel.readCache(addr));
                 break;
             case 0x01:
-                if (r1 == r2) {
-                    dmaChannel.signalDMA('w',(addr + baseAddr),(cpuState.getReg(r1)));
-                }
-                else {
-                    dmaChannel.signalDMA('w',((int) cpuState.getReg(r2) + baseAddr),(cpuState.getReg(r1)));
-                }
+                if (r1 == r2) dmaChannel.writeCache(addr, cpuState.getReg(r1));
+                else dmaChannel.writeCache((int) cpuState.getReg(r2), cpuState.getReg(r1));
                 break;
-        }
-        try {
-            dmaChannel.wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
     
