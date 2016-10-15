@@ -52,7 +52,7 @@ public class OS_Driver {
         }
     
         if ((int)cpus == 0) {
-            System.out.println("\n One CPU was created.");
+            System.out.println("\nOne CPU was created.");
         } else {
             System.out.println("\n" + (int)(Math.pow(2, cpus)) + " CPUs were created.");
         }

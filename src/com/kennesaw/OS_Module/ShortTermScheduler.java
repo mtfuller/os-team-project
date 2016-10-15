@@ -21,35 +21,38 @@ public class ShortTermScheduler {
         simKernel = kernel;
         for (int i = 0; i < numCPUs; i++) {
             cpuBank.add(new CPU(new DmaChannel(simRAM)));
+            cpuBank.get(i).start();
         }
+    }
+    
+    public int findCPU() {
+        int indexFinder = 0;
+        boolean searching = true;
+        if (cpuBank.size() == 1) {
+            return indexFinder;
+        } else {
+            while (searching) {
+                System.out.println(indexFinder % cpuBank.size());
+                if (cpuBank.get(indexFinder % cpuBank.size()).isRunningProcess()) {
+                    indexFinder++;
+                } else {
+                    searching = false;
+                }
+            }
+        }
+        return (indexFinder % cpuBank.size());
     }
     
     public void runSTS() {
         for (int i = 0; i < simRAM.getJobsOnRam(); i++) {
+            int cpuIndex = findCPU();
+            System.out.println("In STS: " + i + " .... " + cpuIndex);
             if (simKernel.getPCB(i).getStatus() == "Waiting") {
-                cpuBank.get(0).runPCB(simKernel.getPCB(i));
+                cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i));
                 simKernel.getPCB(i).setStatus(4);
-//                System.out.println("// Job number: " + simKernel.getPCB(i).getJobID());
-//                for (int j = simKernel.getPCB(i).getRAMAddressBegin(); j < simKernel.getPCB(i).getRAMAddressEnd(); j++) {
-//                    String converted = Long.toHexString(simRAM.readRam(j)).toUpperCase();
-//                    System.out.print("0x");
-//                    for (int k = 8; k > converted.length(); k--) {
-//                        System.out.print("0");
-//                    }
-//                    System.out.println(converted);
-//                }
             } else {
-                cpuBank.get(0).runPCB(simKernel.getPCB(i + simRAM.getJobsOnRam()));
+                cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i + simRAM.getJobsOnRam()));
                 simKernel.getPCB(i).setStatus(4);
-//                System.out.println("// Job number: " + simKernel.getPCB(i + simRAM.getJobsOnRam()).getJobID());
-//                for (int j = simKernel.getPCB(i + simRAM.getJobsOnRam()).getRAMAddressBegin(); j < simKernel.getPCB(i + simRAM.getJobsOnRam()).getRAMAddressEnd(); j++) {
-//                    String converted = Long.toHexString(simRAM.readRam(j)).toUpperCase();
-//                    System.out.print("0x");
-//                    for (int k = 8; k > converted.length(); k--) {
-//                        System.out.print("0");
-//                    }
-//                    System.out.println(converted);
-//                }
             }
         }
         simRAM.resetJobCount();
