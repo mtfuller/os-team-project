@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fbb17c67-36e6-4818-b27f-50255d247c0d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/com/kennesaw/cpumodule/DmaChannelTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/kennesaw/cpumodule/CPU.java" afterPath="$PROJECT_DIR$/src/com/kennesaw/cpumodule/CPU.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/kennesaw/OS_Module/MainOSTest.java" afterPath="$PROJECT_DIR$/test/com/kennesaw/OS_Module/MainOSTest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/com/kennesaw/cpumodule/CPUTest.java" afterPath="$PROJECT_DIR$/test/com/kennesaw/cpumodule/CPUTest.java" />
     </list>
     <ignored path="os-team-project.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -26,18 +22,7 @@
     <favorites_list name="os-team-project" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="DmaChannel.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/kennesaw/cpumodule/DmaChannel.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="6" column="16" selection-start-line="6" selection-start-column="16" selection-end-line="6" selection-end-column="16" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -232,32 +217,6 @@
       <patterns />
       <method />
     </configuration>
-    <configuration default="false" name="CPUTest.Job1Test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="com.kennesaw.cpumodule.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <module name="os-team-project" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" value="com.kennesaw.cpumodule" />
-      <option name="MAIN_CLASS_NAME" value="com.kennesaw.cpumodule.CPUTest" />
-      <option name="METHOD_NAME" value="Job1Test" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <envs />
-      <patterns />
-      <method />
-    </configuration>
     <configuration default="false" name="DmaChannelTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -324,6 +283,27 @@
       <option name="MAIN_CLASS_NAME" value="com.kennesaw.cpumodule.DmaChannelTest" />
       <option name="METHOD_NAME" value="multiDmaTest" />
       <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="false" name="All in os-team-project" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="os-team-project" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="package" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
@@ -582,18 +562,18 @@
     </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="JUnit.CPUTest" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.CPUTest.Job1Test" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.DmaChannelTest" />
-      <item index="3" class="java.lang.String" itemvalue="JUnit.DmaChannelTest.singleDmaTest" />
-      <item index="4" class="java.lang.String" itemvalue="JUnit.DmaChannelTest.multiDmaTest" />
+      <item index="1" class="java.lang.String" itemvalue="JUnit.DmaChannelTest" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.DmaChannelTest.singleDmaTest" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.DmaChannelTest.multiDmaTest" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.All in os-team-project" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="JUnit.DmaChannelTest" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.DmaChannelTest.multiDmaTest" />
-        <item index="2" class="java.lang.String" itemvalue="JUnit.DmaChannelTest.singleDmaTest" />
-        <item index="3" class="java.lang.String" itemvalue="JUnit.CPUTest" />
-        <item index="4" class="java.lang.String" itemvalue="JUnit.CPUTest.Job1Test" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.All in os-team-project" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.DmaChannelTest.multiDmaTest" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.DmaChannelTest.singleDmaTest" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.CPUTest" />
       </list>
     </recent_temporary>
   </component>
@@ -614,14 +594,8 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="DmaChannelTest - 2016.10.15 at 16h 12m 46s.xml">
-      <configuration name="DmaChannelTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="DmaChannelTest - 2016.10.15 at 16h 13m 06s.xml">
-      <configuration name="DmaChannelTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="DmaChannelTest - 2016.10.15 at 16h 13m 57s.xml">
-      <configuration name="DmaChannelTest" configurationId="JUnit" />
+    <history-entry file="All_in_os-team-project - 2016.10.15 at 16h 25m 53s.xml">
+      <configuration name="All in os-team-project" configurationId="JUnit" />
     </history-entry>
     <history-entry file="DmaChannelTest - 2016.10.15 at 16h 14m 34s.xml">
       <configuration name="DmaChannelTest" configurationId="JUnit" />
@@ -635,11 +609,17 @@
     <history-entry file="DmaChannelTest - 2016.10.15 at 16h 23m 48s.xml">
       <configuration name="DmaChannelTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="DmaChannelTest_multiDmaTest - 2016.10.15 at 16h 09m 54s.xml">
-      <configuration name="DmaChannelTest.multiDmaTest" configurationId="JUnit" />
+    <history-entry file="DmaChannelTest - 2016.10.15 at 16h 27m 03s.xml">
+      <configuration name="DmaChannelTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="DmaChannelTest_multiDmaTest - 2016.10.15 at 16h 10m 56s.xml">
-      <configuration name="DmaChannelTest.multiDmaTest" configurationId="JUnit" />
+    <history-entry file="DmaChannelTest - 2016.10.15 at 16h 27m 13s.xml">
+      <configuration name="DmaChannelTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DmaChannelTest - 2016.10.15 at 16h 28m 05s.xml">
+      <configuration name="DmaChannelTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="DmaChannelTest - 2016.10.15 at 16h 28m 25s.xml">
+      <configuration name="DmaChannelTest" configurationId="JUnit" />
     </history-entry>
     <history-entry file="DmaChannelTest_multiDmaTest - 2016.10.15 at 16h 17m 21s.xml">
       <configuration name="DmaChannelTest.multiDmaTest" configurationId="JUnit" />
@@ -647,7 +627,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -657,7 +637,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5008183" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5253683" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -723,18 +703,6 @@
           <line>42</line>
           <properties />
           <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/test/com/kennesaw/cpumodule/DmaChannelTest.java</url>
-          <line>237</line>
-          <properties />
-          <option name="timeStamp" value="24" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/test/com/kennesaw/cpumodule/DmaChannelTest.java</url>
-          <line>278</line>
-          <properties />
-          <option name="timeStamp" value="25" />
         </line-breakpoint>
       </breakpoints>
       <option name="time" value="26" />
@@ -1007,9 +975,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="35258">
           <caret line="2074" column="0" selection-start-line="2074" selection-start-column="0" selection-end-line="2077" selection-end-column="65" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1076,16 +1042,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="363">
           <caret line="42" column="4" selection-start-line="42" selection-start-column="4" selection-end-line="42" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/kennesaw/OS_Module/LoaderTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="2074" column="0" selection-start-line="2074" selection-start-column="0" selection-end-line="2077" selection-end-column="65" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1163,31 +1119,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/kennesaw/cpumodule/CPUTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3229">
-          <caret line="655" column="30" selection-start-line="655" selection-start-column="30" selection-end-line="655" selection-end-column="30" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/kennesaw/cpumodule/CPU.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-255">
           <caret line="26" column="32" selection-start-line="26" selection-start-column="32" selection-end-line="26" selection-end-column="32" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/kennesaw/OS_Module/MainOSTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="4171" column="32" selection-start-line="4171" selection-start-column="32" selection-end-line="4171" selection-end-column="32" />
-          <folding>
-            <element signature="e#277#288#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1202,21 +1138,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/com/kennesaw/cpumodule/DmaChannelTest.java">
+    <entry file="file://$PROJECT_DIR$/src/com/kennesaw/cpumodule/DmaChannel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3893">
-          <caret line="229" column="109" selection-start-line="229" selection-start-column="109" selection-end-line="229" selection-end-column="109" />
+        <state relative-caret-position="68">
+          <caret line="6" column="16" selection-start-line="6" selection-start-column="16" selection-end-line="6" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/kennesaw/OS_Module/MainOSTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="4171" column="32" selection-start-line="4171" selection-start-column="32" selection-end-line="4171" selection-end-column="32" />
+          <folding>
+            <element signature="e#277#288#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/kennesaw/OS_Module/LoaderTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4592">
+          <caret line="2074" column="0" selection-start-line="2074" selection-start-column="0" selection-end-line="2077" selection-end-column="65" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/com/kennesaw/cpumodule/CPUTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="11" column="16" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/kennesaw/cpumodule/DmaChannel.java">
+    <entry file="file://$PROJECT_DIR$/test/com/kennesaw/cpumodule/DmaChannelTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="6" column="16" selection-start-line="6" selection-start-column="16" selection-end-line="6" selection-end-column="16" />
-          <folding />
+        <state relative-caret-position="4029">
+          <caret line="237" column="19" selection-start-line="237" selection-start-column="19" selection-end-line="237" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
