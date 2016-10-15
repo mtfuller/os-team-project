@@ -5,12 +5,15 @@ import com.kennesaw.OS_Module.PCB;
 public class CPU extends Thread{
     private CpuState cpuState;
     private DmaChannel dmaChannel;
+    private PCB currentPCB;
+    private boolean cacheOnly;
     private boolean isRunningProcess;
     private boolean isRunning;
     
     public CPU(DmaChannel dma) {
         cpuState = new CpuState();
         dmaChannel = dma;
+        cacheOnly = false;
         isRunningProcess = false;
         isRunning = true;
     }
@@ -18,33 +21,43 @@ public class CPU extends Thread{
     @Override
     public void run() {
         while(isRunning) {
-            runProcess();
+            if (isRunningProcess) {
+                if (!cacheOnly) initializeCPU();
+                runProcess();
+                if (!cacheOnly) exportOutput();
+            }
         }
-    }
-
-    public void endCPU() {
-        isRunning = false;
-    }
-    
-    public void runPCB(PCB pcb) {
-        initializeCPU(pcb);
-        isRunningProcess = true;
-    }
-
-    public void startProcess() {
-        isRunningProcess = true;
     }
 
     public boolean isRunningProcess() {
         return isRunningProcess;
     }
 
-    private void initializeCPU(PCB pcb) {
-        CpuState pcbState = pcb.getState();
+    public void endCPU() {
+        isRunning = false;
+    }
+
+    public void runCacheOnlyCPU() {
+        cacheOnly = true;
+        isRunningProcess = true;
+    }
+
+    public void runPCB(PCB pcb) {
+        currentPCB = pcb;
+        isRunningProcess = true;
+    }
+
+    private void initializeCPU() {
+        CpuState pcbState = currentPCB.getState();
         cpuState.setPc(pcbState.getPc());
         cpuState.setBase_addr(0);
         for(byte i = 0; i < 15; i++) {
             cpuState.setReg(i, pcbState.getReg(i));
+        }
+        int addr = currentPCB.getRAMAddressBegin();
+        int size = currentPCB.getJobSize();
+        for (int i = 0; i < size; i++) {
+            dmaChannel.writeCache(i, dmaChannel.readRAM(addr+i));
         }
     }
     
@@ -78,6 +91,14 @@ public class CPU extends Thread{
                             instruction.getAddr());
                     break;
             }
+        }
+    }
+
+    private void exportOutput() {
+        int addr = currentPCB.getRAMAddressBegin();
+        int size = currentPCB.getJobSize();
+        for (int i = 0; i < size; i++) {
+            dmaChannel.writeRAM(i+addr, dmaChannel.readCache(i));
         }
     }
     

@@ -99,7 +99,7 @@ public class CPUTest {
         // Create a new CPU
         cpu.start();
 
-        cpu.startProcess();
+        cpu.runCacheOnlyCPU();
 
         try {
             Thread.sleep(1200);
@@ -286,7 +286,7 @@ public class CPUTest {
         // Create a new CPU
         cpu.start();
 
-        cpu.startProcess();
+        cpu.runCacheOnlyCPU();
 
         try {
             Thread.sleep(1200);
@@ -474,7 +474,7 @@ public class CPUTest {
         // Create a new CPU
         cpu.start();
 
-        cpu.startProcess();
+        cpu.runCacheOnlyCPU();
 
         try {
             Thread.sleep(1200);
@@ -653,7 +653,7 @@ public class CPUTest {
         // Create a new CPU
         cpu.start();
 
-        cpu.startProcess();
+        cpu.runCacheOnlyCPU();
 
         try {
             Thread.sleep(1200);
