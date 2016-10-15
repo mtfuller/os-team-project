@@ -29,7 +29,7 @@ public class MainOSTest {
 
         // Initialize Long-term and Short-term schedulers
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRAM);
-        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simCPU, simKernel);
+        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, 4);
 
         long[] correctBegin1 = {
                 3226468444L,
