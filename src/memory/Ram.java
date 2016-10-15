@@ -8,12 +8,26 @@ public class Ram {
     int RAMlength;
     int occupiedRAM;
     int jobsOnRam;
+    private boolean mutexLock;
     
     public Ram(int ramSpace) {
         RAMlength = ramSpace;
         newRAM = new long[1024];
         occupiedRAM = 0;
         jobsOnRam = 0;
+        mutexLock = false;
+    }
+    
+    public boolean isLocked() {
+        return mutexLock;
+    }
+    
+    public void lock() {
+        mutexLock = true;
+    }
+    
+    public void unlock() {
+        mutexLock = false;
     }
     
     public void writeRam(int address, long value) {
