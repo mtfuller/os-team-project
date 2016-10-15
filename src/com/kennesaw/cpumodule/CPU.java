@@ -18,9 +18,7 @@ public class CPU extends Thread{
     @Override
     public void run() {
         while(isRunning) {
-            if(isRunningProcess) {
-                runProcess();
-            }
+            runProcess();
         }
     }
 
@@ -51,7 +49,6 @@ public class CPU extends Thread{
     }
     
     public void runProcess() {
-        isRunningProcess = true;
         while(isRunningProcess) {
             // Get instruction from memory
             long instr = fetch(cpuState.getPc());
