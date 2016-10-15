@@ -2,35 +2,67 @@ package com.kennesaw.cpumodule;
 
 import com.kennesaw.OS_Module.PCB;
 
-public class CPU {
-    
-    private State cpuState;
+public class CPU extends Thread{
+    private CpuState cpuState;
     private DmaChannel dmaChannel;
+    private PCB currentPCB;
+    private boolean cacheOnly;
+    private boolean isRunningProcess;
     private boolean isRunning;
     
-    public CPU(DmaChannel dc) {
-        cpuState = new State();
-        dmaChannel = dc;
+    public CPU(DmaChannel dma) {
+        cpuState = new CpuState();
+        dmaChannel = dma;
+        cacheOnly = false;
+        isRunningProcess = false;
         isRunning = true;
     }
     
-    public void runPCB(PCB pcb) {
-        initializeCPU(pcb);
-        runProcess();
+    @Override
+    public void run() {
+        while(isRunning) {
+            if (isRunningProcess) {
+                if (!cacheOnly) initializeCPU();
+                runProcess();
+                if (!cacheOnly) exportOutput();
+            }
+        }
     }
     
-    private void initializeCPU(PCB pcb) {
-        State pcbState = pcb.getState();
+    public boolean isRunningProcess() {
+        return isRunningProcess;
+    }
+    
+    public void endCPU() {
+        isRunning = false;
+    }
+    
+    public void runCacheOnlyCPU() {
+        cacheOnly = true;
+        isRunningProcess = true;
+    }
+    
+    public void runPCB(PCB pcb) {
+        currentPCB = pcb;
+        isRunningProcess = true;
+    }
+    
+    private void initializeCPU() {
+        CpuState pcbState = currentPCB.getState();
         cpuState.setPc(pcbState.getPc());
-        cpuState.setBase_addr(pcbState.getBase_addr());
+        cpuState.setBase_addr(0);
         for(byte i = 0; i < 15; i++) {
             cpuState.setReg(i, pcbState.getReg(i));
+        }
+        int addr = currentPCB.getRAMAddressBegin();
+        int size = currentPCB.getJobSize();
+        for (int i = 0; i < size; i++) {
+            dmaChannel.writeCache(i, dmaChannel.readRAM(addr+i));
         }
     }
     
     public void runProcess() {
-        isRunning = true;
-        while(isRunning) {
+        while(isRunningProcess) {
             // Get instruction from memory
             long instr = fetch(cpuState.getPc());
             
@@ -62,10 +94,16 @@ public class CPU {
         }
     }
     
-    private long fetch(int addr) {
-        addr = addr + cpuState.getBase_addr();
-        addr *= 4;
-        return dmaChannel.readRAM(addr);
+    private void exportOutput() {
+        int addr = currentPCB.getRAMAddressBegin();
+        int size = currentPCB.getJobSize();
+        for (int i = 0; i < size; i++) {
+            dmaChannel.writeRAM(i+addr, dmaChannel.readCache(i));
+        }
+    }
+    
+    private synchronized long fetch(int addr) {
+        return dmaChannel.readCache(addr*4);
     }
     
     private void decode(long instructionBin) {
@@ -80,32 +118,26 @@ public class CPU {
                 break;
             case 0x05:
                 acc = ALU.add((int) cpuState.getReg(s1), (int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x06:
                 acc = ALU.sub((int) cpuState.getReg(s1),(int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x07:
                 acc = ALU.mult((int) cpuState.getReg(s1),(int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x08:
                 acc = ALU.div((int) cpuState.getReg(s1),(int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x09:
                 acc = ALU.and((int) cpuState.getReg(s1), (int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x0A:
                 acc = ALU.or((int) cpuState.getReg(s1), (int) cpuState.getReg(s2));
-                //cpuState.setReg(State.ACCUMULATOR_REG, acc);
                 cpuState.setReg(dr, acc);
                 break;
             case 0x10:
@@ -115,15 +147,15 @@ public class CPU {
         }
     }
     
-    private void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
+    private synchronized void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
         int acc;
-        int baseAddr = cpuState.getBase_addr() * 4;
+        //int baseAddr = cpuState.getBase_addr() * 4;
         switch (opcode) {
             case 0x02:
-                dmaChannel.writeRAM((int) cpuState.getReg(dr) + baseAddr, cpuState.getReg(br));
+                dmaChannel.writeCache(((int) cpuState.getReg(dr)), cpuState.getReg(br));
                 break;
             case 0x03:
-                cpuState.setReg(dr, dmaChannel.readRAM((int) cpuState.getReg(br) + baseAddr));
+                cpuState.setReg(dr, dmaChannel.readCache((int) cpuState.getReg(br)));
                 break;
             case 0x0B:
                 cpuState.setReg(dr, addr);
@@ -168,7 +200,7 @@ public class CPU {
     private void executeUnconditionalJump(byte opcode, int addr) {
         switch (opcode) {
             case 0x12:
-                isRunning = false;
+                isRunningProcess = false;
                 break;
             case 0x14:
                 cpuState.setPc(addr);
@@ -176,16 +208,16 @@ public class CPU {
         }
     }
     
-    private void executeIO(byte opcode, byte r1, byte r2, int addr) {
-        int baseAddr = cpuState.getBase_addr() * 4;
+    private synchronized void executeIO(byte opcode, byte r1, byte r2, int addr) {
+        //int baseAddr = cpuState.getBase_addr() * 4;
         switch (opcode) {
             case 0x00:
-                if (addr == 0) cpuState.setReg(r1, dmaChannel.readRAM((int) cpuState.getReg(r2) + baseAddr));
-                else cpuState.setReg(r1, dmaChannel.readRAM(addr + baseAddr));
+                if (addr == 0) cpuState.setReg(r1, dmaChannel.readCache((int) cpuState.getReg(r2)));
+                else cpuState.setReg(r1, dmaChannel.readCache(addr));
                 break;
             case 0x01:
-                if (r1 == r2) dmaChannel.writeRAM(addr + baseAddr, cpuState.getReg(r1));
-                else dmaChannel.writeRAM((int) cpuState.getReg(r2) + baseAddr, cpuState.getReg(r1));
+                if (r1 == r2) dmaChannel.writeCache(addr, cpuState.getReg(r1));
+                else dmaChannel.writeCache((int) cpuState.getReg(r2), cpuState.getReg(r1));
                 break;
         }
     }
