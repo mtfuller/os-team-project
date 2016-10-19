@@ -57,7 +57,7 @@ public class CPU extends Thread{
         int addr = currentPCB.getRAMAddressBegin();
         int size = currentPCB.getJobSize();
         for (int i = 0; i < size; i++) {
-            dmaChannel.writeCache(i, dmaChannel.readRAM(addr+i));
+            dmaChannel.writeCache(i*4, dmaChannel.readRAM((addr+i)*4));
         }
     }
     
