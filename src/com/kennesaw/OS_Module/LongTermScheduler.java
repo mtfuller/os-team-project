@@ -34,7 +34,9 @@ public class LongTermScheduler {
                 simKernel.getPCB(pcbCounter).getState().setBase_addr(simKernel.getPCB(pcbCounter).getBaseAddress());
                 while (lineCounter <= simDisk.getJobSize(simKernel.getPCB(pcbCounter))) {
                     long jobSlice = simDisk.readDisk((simKernel.getPCB(pcbCounter).getDiskAddressBegin() + lineCounter));
+                    aquireLock();
                     simRAM.writeRam(ramSpaceCounter, jobSlice);
+                    releaseLock();
                     lineCounter++;
                     ramSpaceCounter++;
                 }
@@ -46,5 +48,14 @@ public class LongTermScheduler {
                 simRAM.setOccupiedRAM(simRAM.getOccupiedRAM() + lineCounter + 1);
             }
         }
+    }
+
+    private void aquireLock() {
+        while(simRAM.isLocked());
+        simRAM.lock();
+    }
+
+    private void releaseLock() {
+        simRAM.unlock();
     }
 }

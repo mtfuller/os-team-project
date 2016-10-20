@@ -6,8 +6,10 @@ public class CPU extends Thread{
     private CpuState cpuState;
     private DmaChannel dmaChannel;
     private PCB currentPCB;
+    private volatile boolean mutexLock;
     private boolean cacheOnly;
-    private boolean isRunningProcess;
+    private volatile boolean isRunningProcess;
+    private boolean isSpinning;
     private boolean isRunning;
     
     public CPU(DmaChannel dma) {
@@ -16,15 +18,37 @@ public class CPU extends Thread{
         cacheOnly = false;
         isRunningProcess = false;
         isRunning = true;
+        mutexLock = false;
+        isSpinning = false;
+    }
+
+    public boolean isLocked() {
+        return mutexLock;
+    }
+
+    public void lock() {
+        mutexLock = true;
+    }
+
+    public void unlock() {
+        mutexLock = false;
     }
     
     @Override
     public void run() {
         while(isRunning) {
             if (isRunningProcess) {
+                System.out.println("DEBUG | CPU | Running Job #"+currentPCB.getJobID());
                 if (!cacheOnly) initializeCPU();
                 runProcess();
+                System.out.println("DEBUG | CPU | Spun CPU with Process");
                 if (!cacheOnly) exportOutput();
+                System.out.println("DEBUG | CPU | Exported output");
+                while (isLocked());
+                lock();
+                isRunningProcess = false;
+                unlock();
+                System.out.println("DEBUG | CPU | Set isRunningProcess to false");
             }
         }
     }
@@ -43,6 +67,7 @@ public class CPU extends Thread{
     }
     
     public void runPCB(PCB pcb) {
+        System.out.println("DEBUG | CPU | Setting pcb to PCB #"+pcb.getJobID());
         currentPCB = pcb;
         isRunningProcess = true;
     }
@@ -62,7 +87,8 @@ public class CPU extends Thread{
     }
     
     public void runProcess() {
-        while(isRunningProcess) {
+        isSpinning = true;
+        while(isSpinning) {
             // Get instruction from memory
             long instr = fetch(cpuState.getPc());
             
@@ -91,15 +117,24 @@ public class CPU extends Thread{
                             instruction.getAddr());
                     break;
             }
+            if (cpuState.getBase_addr() > 72) {
+                isSpinning = false;
+                break;
+            }
         }
     }
     
     private void exportOutput() {
-        int addr = currentPCB.getRAMAddressBegin();
-        int size = currentPCB.getJobSize();
-        for (int i = 0; i < size; i++) {
-            dmaChannel.writeRAM(i+addr, dmaChannel.readCache(i));
+//        int addr = currentPCB.getRAMAddressBegin();
+//        int size = currentPCB.getJobSize();
+//        for (int i = 0; i < size; i++) {
+//            dmaChannel.writeRAM(i+addr, dmaChannel.readCache(i));
+//        }
+        System.out.println("DEBUG | CPU | CACHE DUMP:");
+        for (int i = 0; i < currentPCB.getJobSize(); i++) {
+            System.out.println(dmaChannel.readCache(i*4));
         }
+        System.out.println("DEBUG | CPU | END CACHE DUMP");
     }
     
     private synchronized long fetch(int addr) {
@@ -149,7 +184,6 @@ public class CPU extends Thread{
     
     private synchronized void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
         int acc;
-        //int baseAddr = cpuState.getBase_addr() * 4;
         switch (opcode) {
             case 0x02:
                 dmaChannel.writeCache(((int) cpuState.getReg(dr)), cpuState.getReg(br));
@@ -200,7 +234,7 @@ public class CPU extends Thread{
     private void executeUnconditionalJump(byte opcode, int addr) {
         switch (opcode) {
             case 0x12:
-                isRunningProcess = false;
+                isSpinning = false;
                 break;
             case 0x14:
                 cpuState.setPc(addr);

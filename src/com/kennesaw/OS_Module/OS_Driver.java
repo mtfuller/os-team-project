@@ -76,5 +76,9 @@ public class OS_Driver {
             simLTS.runLTS(simKernel);
             simSTS.runSTS();
         }
+
+        for (CPU cpu : simSTS.cpuBank) {
+            cpu.endCPU();
+        }
     }
 }
