@@ -28,15 +28,14 @@ public class LongTermScheduler {
         for (pcbCounter = 0; pcbCounter < simKernel.getQueueSize(); pcbCounter++) {
             lineCounter = 0;
             // Only PCBs with a "New" status are written to RAM. Otherwise, they've been written previously.
+            aquireLock();
             if ((simKernel.getPCB(pcbCounter).getJobSize() <= simRAM.getFreeRAMSpace()) && (simKernel.getPCB(pcbCounter).getStatus() == "New")) {
                 simKernel.getPCB(pcbCounter).setRAMAddressBegin(simRAM.getOccupiedRAM() + lineCounter);
                 simKernel.getPCB(pcbCounter).setBaseAddress(simRAM.getOccupiedRAM() + lineCounter);
                 simKernel.getPCB(pcbCounter).getState().setBase_addr(simKernel.getPCB(pcbCounter).getBaseAddress());
                 while (lineCounter <= simDisk.getJobSize(simKernel.getPCB(pcbCounter))) {
                     long jobSlice = simDisk.readDisk((simKernel.getPCB(pcbCounter).getDiskAddressBegin() + lineCounter));
-                    aquireLock();
                     simRAM.writeRam(ramSpaceCounter, jobSlice);
-                    releaseLock();
                     lineCounter++;
                     ramSpaceCounter++;
                 }
@@ -47,6 +46,7 @@ public class LongTermScheduler {
                 simRAM.addedJobToRam();
                 simRAM.setOccupiedRAM(simRAM.getOccupiedRAM() + lineCounter + 1);
             }
+            releaseLock();
         }
     }
 

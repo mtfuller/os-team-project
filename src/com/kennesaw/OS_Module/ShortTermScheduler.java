@@ -15,6 +15,7 @@ public class ShortTermScheduler {
     Ram simRAM;
     Kernel simKernel;
     ArrayList<CPU> cpuBank = new ArrayList<>();
+    private int cpuIndexPtr = 0;
     
     public ShortTermScheduler(Ram ram, Kernel kernel, int numCPUs) {
         simRAM = ram;
@@ -36,26 +37,29 @@ public class ShortTermScheduler {
     }
     
     public int findCPU() {
-        int index = 0;
         boolean openCpuFound = false;
         while (!openCpuFound) {
-            aquireLock(index);
-            openCpuFound = (!cpuBank.get(index).isRunningProcess());
-            releaseLock(index);
+            aquireLock(cpuIndexPtr);
+            openCpuFound = (!cpuBank.get(cpuIndexPtr).isRunningProcess());
+            releaseLock(cpuIndexPtr);
             if (openCpuFound) {
                 break;
             } else {
-                ++index;
-                index = index % cpuBank.size();
+                ++cpuIndexPtr;
+                cpuIndexPtr = cpuIndexPtr % cpuBank.size();
             }
         }
-        return index;
+        return cpuIndexPtr;
     }
     
     public void runSTS() {
         int cpuIndex = 0;
-        //CPU tempCPU = cpuBank.get(cpuIndex);
+        while(simRAM.isLocked());
+        simRAM.lock();
+        int size = simRAM.getJobsOnRam();
+        simRAM.unlock();
         for (int i = 0; i < simRAM.getJobsOnRam(); i++) {
+            cpuIndex = findCPU();
             System.out.println("DEBUG | STS | Working Job #"+(i+1));
             System.out.println("DEBUG | STS | WATCH (tempCPU.isLocked): "+cpuBank.get(cpuIndex).isLocked());
             while (cpuBank.get(cpuIndex).isRunningProcess());
@@ -65,16 +69,22 @@ public class ShortTermScheduler {
             if (simKernel.getPCB(i).getStatus() == "Waiting") {
                 System.out.println("DEBUG | STS | Found \'Waiting\' Job");
                 cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i));
-                System.out.println("DEBUG | STS | Running Job on CPU");
+                System.out.println("DEBUG | STS | Running Job on CPU #"+cpuIndex);
                 simKernel.getPCB(i).setStatus(4);
             } else {
+                while(simRAM.isLocked());
+                simRAM.lock();
                 cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i + simRAM.getJobsOnRam()));
+                simRAM.unlock();
                 simKernel.getPCB(i).setStatus(4);
             }
             releaseLock(cpuIndex);
             System.out.println("DEBUG | STS | Released lock on CPU");
         }
+        while(simRAM.isLocked());
+        simRAM.lock();
         simRAM.resetJobCount();
+        simRAM.unlock();
     }
     
 }

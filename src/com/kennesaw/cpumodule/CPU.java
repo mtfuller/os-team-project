@@ -66,8 +66,9 @@ public class CPU extends Thread{
         isRunningProcess = true;
     }
     
-    public void runPCB(PCB pcb) {
+    public synchronized void runPCB(PCB pcb) {
         System.out.println("DEBUG | CPU | Setting pcb to PCB #"+pcb.getJobID());
+        while (isSpinning);
         currentPCB = pcb;
         isRunningProcess = true;
     }
@@ -130,11 +131,6 @@ public class CPU extends Thread{
 //        for (int i = 0; i < size; i++) {
 //            dmaChannel.writeRAM(i+addr, dmaChannel.readCache(i));
 //        }
-        System.out.println("DEBUG | CPU | CACHE DUMP:");
-        for (int i = 0; i < currentPCB.getJobSize(); i++) {
-            System.out.println(dmaChannel.readCache(i*4));
-        }
-        System.out.println("DEBUG | CPU | END CACHE DUMP");
     }
     
     private synchronized long fetch(int addr) {
