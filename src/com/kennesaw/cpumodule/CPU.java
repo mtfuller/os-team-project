@@ -1,18 +1,21 @@
 package com.kennesaw.cpumodule;
 
+import com.kennesaw.Analyzer.Analysis;
 import com.kennesaw.OS_Module.PCB;
 
 public class CPU extends Thread{
     private CpuState cpuState;
     private DmaChannel dmaChannel;
     private PCB currentPCB;
+    private int cpuId;
     private volatile boolean mutexLock;
     private boolean cacheOnly;
     private volatile boolean isRunningProcess;
     private boolean isSpinning;
     private boolean isRunning;
     
-    public CPU(DmaChannel dma) {
+    public CPU(DmaChannel dma, int id) {
+        cpuId = id;
         cpuState = new CpuState();
         dmaChannel = dma;
         cacheOnly = false;
@@ -85,10 +88,14 @@ public class CPU extends Thread{
         for (int i = 0; i < size; i++) {
             dmaChannel.writeCache(i*4, dmaChannel.readRAM((addr+i)*4));
         }
+        double used = (double) size / DmaChannel.CACHE_SIZE;
+        Analysis.recordCPU((currentPCB.getJobID()-1), cpuId, used);
     }
     
     public void runProcess() {
         isSpinning = true;
+        int ioInstructs = 0;
+        int jobId = currentPCB.getJobID() - 1;
         while(isSpinning) {
             // Get instruction from memory
             long instr = fetch(cpuState.getPc());
@@ -107,6 +114,7 @@ public class CPU extends Thread{
                             instruction.getDestReg());
                     break;
                 case 1:
+                    if (instruction.getOpcode() == 0x02) ioInstructs++;
                     executeConditionBranch(instruction.getOpcode(), instruction.getbReg(), instruction.getDestReg(),
                             instruction.getAddr());
                     break;
@@ -116,6 +124,7 @@ public class CPU extends Thread{
                 case 3:
                     executeIO(instruction.getOpcode(), instruction.getReg1(), instruction.getReg2(),
                             instruction.getAddr());
+                    ioInstructs++;
                     break;
             }
             if (cpuState.getBase_addr() > 72) {
@@ -123,6 +132,7 @@ public class CPU extends Thread{
                 break;
             }
         }
+        Analysis.recordIO(jobId, ioInstructs);
     }
     
     private void exportOutput() {

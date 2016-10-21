@@ -21,7 +21,7 @@ public class ShortTermScheduler {
         simRAM = ram;
         simKernel = kernel;
         for (int i = 0; i < numCPUs; i++) {
-            cpuBank.add(new CPU(new DmaChannel(simRAM)));
+            cpuBank.add(new CPU(new DmaChannel(simRAM), i));
             cpuBank.get(i).start();
         }
     }

@@ -11,34 +11,43 @@ public class Analysis {
     private static ArrayList<Integer> jobID1 = new ArrayList<>();
     private static ArrayList<Long> completeTimes = new ArrayList<>();
     private static ArrayList<Integer> io= new ArrayList<>();
-    private static ArrayList<Integer> cpuSpace = new ArrayList<>();
+    private static ArrayList<Double> cpuSpace = new ArrayList<>();
     private static ArrayList<Integer> cpuID1= new ArrayList<>();
-    private static ArrayList<Integer> ramSpace1 = new ArrayList<>();
+    private static ArrayList<Double> ramSpace1 = new ArrayList<>();
+
+    public static void initializeDataTables() {
+        for (int i = 0; i < 30; i++) {
+            io.add(0);
+            cpuSpace.add(0.0);
+            cpuID1.add(0);
+            ramSpace1.add(0.0);
+        }
+    }
 
     public static void recordNumOFJobs(int jobID){
         jobID1.add(jobID,jobID);
     }
-    public static void recordCreateTime(int jobID, long time){
-        createTimes.add(jobID, time);
+    public static void recordCreateTime(int jobID){
+        createTimes.add(jobID, System.nanoTime());
 
     }
-    public static void recordWaitTime(int jobID, long time){
-        waitTimes.add(jobID,time);
+    public static void recordWaitTime(int jobID){
+        waitTimes.add(jobID,System.nanoTime());
 
 
     }
-    public static void recordCompleteTime(int jobID, long time){
-        completeTimes.add(jobID, time);
+    public static void recordCompleteTime(int jobID){
+        completeTimes.add(jobID, System.nanoTime());
 
     }
     public static void recordIO(int jobID, int numOFIO){
-        io.add(jobID, numOFIO);
+        io.set(jobID, numOFIO);
     }
-    public static void recordCPU(int jobID, int cpuID, int cacheUsedSize){
-        cpuSpace.add(jobID, cacheUsedSize);
-        cpuID1.add(jobID, cpuID);
+    public static void recordCPU(int jobID, int cpuID, double cacheUsedSize){
+        cpuSpace.set(jobID, cacheUsedSize);
+        cpuID1.set(jobID, cpuID);
     }
-    public static void recordRamSpace(int jobID, int ramSpace){
+    public static void recordRamSpace(int jobID, double ramSpace){
         ramSpace1.add(jobID, ramSpace);
     }
 
