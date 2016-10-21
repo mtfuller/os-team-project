@@ -4,6 +4,7 @@ package com.kennesaw.OS_Module;
  * Created by Margaret on 9/20/2016.
  */
 
+import com.kennesaw.Analyzer.Analysis;
 import com.kennesaw.cpumodule.CPU;
 import com.kennesaw.cpumodule.DmaChannel;
 import memory.Ram;
@@ -25,13 +26,13 @@ public class ShortTermScheduler {
             cpuBank.get(i).start();
         }
     }
-
+    
     private void aquireLock(int index) {
         CPU temp = cpuBank.get(index);
         while(temp.isLocked());
         temp.lock();
     }
-
+    
     private void releaseLock(int index) {
         cpuBank.get(index).unlock();
     }
@@ -60,26 +61,30 @@ public class ShortTermScheduler {
         simRAM.unlock();
         for (int i = 0; i < simRAM.getJobsOnRam(); i++) {
             cpuIndex = findCPU();
-            System.out.println("DEBUG | STS | Working Job #"+(i+1));
-            System.out.println("DEBUG | STS | WATCH (tempCPU.isLocked): "+cpuBank.get(cpuIndex).isLocked());
+//            System.out.println("DEBUG | STS | Working Job #"+(i+1));
+//            System.out.println("DEBUG | STS | WATCH (tempCPU.isLocked): "+cpuBank.get(cpuIndex).isLocked());
             while (cpuBank.get(cpuIndex).isRunningProcess());
-            System.out.println("DEBUG | STS | CPU is ready for a job");
+//            System.out.println("DEBUG | STS | CPU is ready for a job");
             aquireLock(cpuIndex);
-            System.out.println("DEBUG | STS | Aquired lock for CPU");
+//            System.out.println("DEBUG | STS | Aquired lock for CPU");
             if (simKernel.getPCB(i).getStatus() == "Waiting") {
-                System.out.println("DEBUG | STS | Found \'Waiting\' Job");
+//                System.out.println("DEBUG | STS | Found \'Waiting\' Job");
+                Analysis.recordWaitTime(simKernel.getPCB(i).getJobID()-1);
                 cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i));
-                System.out.println("DEBUG | STS | Running Job on CPU #"+cpuIndex);
+                Analysis.recordCompleteTime(simKernel.getPCB(i).getJobID()-1);
+//                System.out.println("DEBUG | STS | Running Job on CPU #"+cpuIndex);
                 simKernel.getPCB(i).setStatus(4);
             } else {
                 while(simRAM.isLocked());
                 simRAM.lock();
+                Analysis.recordWaitTime(simKernel.getPCB(i + simRAM.getJobsOnRam()).getJobID()-1);
                 cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i + simRAM.getJobsOnRam()));
+                Analysis.recordCompleteTime(simKernel.getPCB(i + simRAM.getJobsOnRam()).getJobID()-1);
                 simRAM.unlock();
                 simKernel.getPCB(i).setStatus(4);
             }
             releaseLock(cpuIndex);
-            System.out.println("DEBUG | STS | Released lock on CPU");
+//            System.out.println("DEBUG | STS | Released lock on CPU");
         }
         while(simRAM.isLocked());
         simRAM.lock();
@@ -88,5 +93,3 @@ public class ShortTermScheduler {
     }
     
 }
-
-

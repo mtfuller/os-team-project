@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Scanner;
 import java.lang.*;
 
+import com.kennesaw.Analyzer.Analysis;
 import com.kennesaw.OS_Module.PCB;
 import com.kennesaw.OS_Module.Kernel;
 import memory.Disk;
@@ -42,6 +43,8 @@ public class Loader {
                 
                 // Create a new PCB object & add to PCB queue
                 new_PCB = new PCB(Integer.parseInt(lineSplitter[2], 16), Integer.parseInt(lineSplitter[3], 16), Integer.parseInt(lineSplitter[4], 16), addyCounter);
+                Analysis.recordNumOFJobs(new_PCB.getJobID()-1);
+                Analysis.recordCreateTime(new_PCB.getJobID()-1);
                 simKernel.addPCB(currentPCB, new_PCB);
     
                 // Establish PCB's buffers

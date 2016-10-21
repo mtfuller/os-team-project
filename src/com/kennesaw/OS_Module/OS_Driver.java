@@ -22,7 +22,7 @@ public class OS_Driver {
     // Ask user how many CPUs should be created
     Frame frame = new Frame();
     
-    Object[] cpuOptions = {"   1   ", "   2   ", "   4   ", "   8   "};
+    Object[] cpuOptions = {"   1   ", "   2   ", "   4   "};
     double cpus = JOptionPane.showOptionDialog(frame,
             "How many CPUs should be created?",
             "OS Simulator",
@@ -59,12 +59,24 @@ public class OS_Driver {
         
         if (sorting == 1) {
             simKernel.sortPriority();
-            System.out.println("PCBs were sorted based on their priority.\n");
+            System.out.print("PCBs were sorted based on their priority.\nJobs in order are: ");
+            for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
+                System.out.print(simKernel.getPCB(i).getJobID()+ "   ");
+            }
+            System.out.println();
 //        } else if (sorting == 2) {
 //            simKernel.sortSJF();
-//            System.out.println("\nPCBs were sorted based on their job length.\n");
+//            System.out.print("\nPCBs were sorted based on their job length.\nJobs in order are: ");
+//            for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
+//                System.out.print(simKernel.getPCB(i).getJobID()+ "   ");
+//            }
+//            System.out.println();
         } else {
-            System.out.println("PCBs were left in FIFO order.\n");
+            System.out.print("PCBs were left in FIFO order.\nJobs in order are: ");
+            for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
+                System.out.print(simKernel.getPCB(i).getJobID()+ "   ");
+            }
+            System.out.println();
         }
         
         // Initialize Long-term and Short-term schedulers
