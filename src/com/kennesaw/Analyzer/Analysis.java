@@ -71,12 +71,12 @@ public class Analysis {
         //printout into table format all arraylists must have same size to work
 
         System.out.println(String.format("%5s %15s %15s %15s %15s %15s %15s", "JobID", "Wait Times",
-               "Complete Times", "# of IO", "CPUID", "CPU Space", "RAM Space"));
+               "    Complete Times", "# of IO", "CPUID", "CPU Space", "RAM Space"));
         for(int i = 0; i < 30; i ++) {
-            DecimalFormat df = new DecimalFormat("#.##");
+            DecimalFormat df = new DecimalFormat("#.####");
             String real_wait = df.format(realWait.get(i)/1000000.00);
-            String real_complete = df.format(realComplete.get(i)/1000000.00);
-            System.out.println(String.format("%5s    | %9s ms    | %15s", jobID1.get(i), real_wait, realComplete.get(i)));
+            String real_complete = df.format(realComplete.get(i)/1000000.0000);
+            System.out.println(String.format("%5s    | %9s ms    | %9s", jobID1.get(i), real_wait, real_complete));
             //io.get(i)));
             //cpuID1.get(i), cpuSpace.get(i), ramSpace1.get(i)));
             
@@ -93,7 +93,11 @@ public class Analysis {
             totalWait += realWait.get(i);
         }
         avgWait = totalWait/size;
-        System.out.println("Average Wait Time: " + avgWait);
+        System.out.println("====================");
+        System.out.println();
+        DecimalFormat df = new DecimalFormat("#.####");
+        String avg_wait = df.format(avgWait/1000000.00);
+        System.out.println("Average Wait Time: " + avg_wait + " ms");
         
         //calc avg complete
         
@@ -101,10 +105,11 @@ public class Analysis {
         int size1 = completeTimes.size();
         long avgComplete = 0;
         for(int i = 0; i < 30; i++){
-            totalComplete += completeTimes.get(i);
+            totalComplete += realComplete.get(i);
         }
         avgComplete = totalComplete/size1;
-        System.out.println("Average Complete Time: " + avgComplete);
+        String avg_complete = df.format(avgComplete/1000000.0000);
+        System.out.println("Average Complete Time: " + avg_complete + " ms");
         
     }
     
