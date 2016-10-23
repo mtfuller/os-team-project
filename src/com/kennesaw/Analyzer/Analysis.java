@@ -29,7 +29,7 @@ public class Analysis {
     }
     
     public static void recordNumOFJobs(int jobID){
-        jobID1.add(jobID,jobID + 1);
+            jobID1.add(jobID,jobID+1);
     }
     public static void recordCreateTime(int jobID){
         createTimes.set(jobID, System.nanoTime());
@@ -67,18 +67,27 @@ public class Analysis {
             realWait.add(waitTimes.get(i) - createTimes.get(i));
             realComplete.add(completeTimes.get(i) - waitTimes.get(i));
         }
-        
+
         //printout into table format all arraylists must have same size to work
 
-        System.out.println(String.format("%5s %15s %15s %15s %15s %15s %15s", "JobID", "Wait Times",
-               "    Complete Times", "# of IO", "CPUID", "CPU Space", "RAM Space"));
+        System.out.println(String.format("%5s    | %5s      |%5s  |%9s   |%9s      | %9s       |%9s", "JobID", "Wait Times",
+               "    Complete Times", "Number of IO", "CPUID", "CPU Space", " Ram Space Used "));
         for(int i = 0; i < 30; i ++) {
             DecimalFormat df = new DecimalFormat("#.####");
             String real_wait = df.format(realWait.get(i)/1000000.00);
             String real_complete = df.format(realComplete.get(i)/1000000.0000);
-            System.out.println(String.format("%5s    | %9s ms    | %9s", jobID1.get(i), real_wait, real_complete));
-            //io.get(i)));
-            //cpuID1.get(i), cpuSpace.get(i), ramSpace1.get(i)));
+
+            DecimalFormat dfCpu = new DecimalFormat("#.###");
+            String prctCPU = dfCpu.format(cpuSpace.get(i));
+            String prctRam = dfCpu.format(ramSpace1.get(i));
+            System.out.println(String.format("%5s    | %9s ms    | %9s ms       | %9s     | %9s     | %9s       | %9s", jobID1.get(i),
+                    real_wait,
+                    real_complete,
+                    io.get(i),
+                    cpuID1.get(i),
+                    prctCPU,
+                    prctRam));
+
             
         }
         

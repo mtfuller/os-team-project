@@ -25,6 +25,10 @@ public class ShortTermScheduler {
             cpuBank.add(new CPU(new DmaChannel(simRAM), i));
             cpuBank.get(i).start();
         }
+        for(int i = 0; i < 30; i++) {
+            double used = (double)simKernel.getPCB(i).getJobSize() / 1024.00;
+            Analysis.recordRamSpace(i, used);
+        }
     }
     
     private void aquireLock(int index) {
