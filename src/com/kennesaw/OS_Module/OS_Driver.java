@@ -32,7 +32,7 @@ public class OS_Driver {
             cpuOptions,
             cpuOptions[0]);
 //
-    Object[] sortingOptions = {"FIFO", "Priority"};
+    Object[] sortingOptions = {"FIFO", "Priority", "SJF"};
     int sorting = JOptionPane.showOptionDialog(frame,
             "How should the PCBs be sorted? ",
             "OS Simulator",
@@ -64,13 +64,13 @@ public class OS_Driver {
                 System.out.print(simKernel.getPCB(i).getJobID()+ "   ");
             }
             System.out.println();
-//        } else if (sorting == 2) {
-//            simKernel.sortSJF();
-//            System.out.print("\nPCBs were sorted based on their job length.\nJobs in order are: ");
-//            for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
-//                System.out.print(simKernel.getPCB(i).getJobID()+ "   ");
-//            }
-//            System.out.println();
+        } else if (sorting == 2) {
+            simKernel.sortSJF();
+            System.out.print("\nPCBs were sorted based on their job length.\nJobs in order are: ");
+            for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
+                System.out.print(simKernel.getPCB(i).getJobID()+ "   ");
+            }
+            System.out.println();
         } else {
             System.out.print("PCBs were left in FIFO order.\nJobs in order are: ");
             for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
