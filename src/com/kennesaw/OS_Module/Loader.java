@@ -3,6 +3,7 @@ package com.kennesaw.OS_Module; /**
  */
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Scanner;
 import java.lang.*;
 
@@ -14,7 +15,7 @@ import memory.Disk;
 public class Loader {
     
     // Instruction File.
-    File file = new java.io.File("ProgramFile.txt");
+    //File file = new java.io.File("ProgramFile.txt");
     
     // Create Scanner object to read file.
     Scanner loaderScanner;
@@ -31,7 +32,8 @@ public class Loader {
     // com.kennesaw.OS_Module.Loader takes disk as parameter to write file and
     // Kernel to create/access the readyQueue of PCBs.
     public Loader(Disk simDisk, Kernel simKernel) throws Exception {
-        this.loaderScanner = new Scanner(file);
+        InputStream fileIo = this.getClass().getResourceAsStream("/ProgramFile.txt");
+        this.loaderScanner = new Scanner(fileIo);
         // Read the file
         while (loaderScanner.hasNext()) {
             String line = loaderScanner.nextLine();
