@@ -30,26 +30,13 @@ public class DmaChannel {
     }
     
     public long readRAM(int addr) {
-        aquireLock();
         addr = effectiveAddr(addr);
         long val = memory.readRam(addr);
-        releaseLock();
         return val;
     }
     
     public void writeRAM(int addr, long val) {
-        aquireLock();
         addr = effectiveAddr(addr);
         memory.writeRam(addr, val);
-        releaseLock();
-    }
-    
-    private void aquireLock() {
-        while(memory.isLocked());
-        memory.lock();
-    }
-    
-    private void releaseLock() {
-        memory.unlock();
     }
 }

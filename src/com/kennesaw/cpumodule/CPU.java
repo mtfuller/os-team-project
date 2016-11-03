@@ -8,7 +8,6 @@ public class CPU extends Thread{
     private DmaChannel dmaChannel;
     private PCB currentPCB;
     private int cpuId;
-    private volatile boolean mutexLock;
     private boolean cacheOnly;
     private volatile boolean isRunningProcess;
     private boolean isSpinning;
@@ -21,20 +20,7 @@ public class CPU extends Thread{
         cacheOnly = false;
         isRunningProcess = false;
         isRunning = true;
-        mutexLock = false;
         isSpinning = false;
-    }
-
-    public boolean isLocked() {
-        return mutexLock;
-    }
-
-    public void lock() {
-        mutexLock = true;
-    }
-
-    public void unlock() {
-        mutexLock = false;
     }
     
     @Override
@@ -47,10 +33,7 @@ public class CPU extends Thread{
                 System.out.println("DEBUG | CPU | Spun CPU with Process");
                 if (!cacheOnly) exportOutput();
                 System.out.println("DEBUG | CPU | Exported output");
-                while (isLocked());
-                lock();
                 isRunningProcess = false;
-                unlock();
                 System.out.println("DEBUG | CPU | Set isRunningProcess to false");
             }
         }
