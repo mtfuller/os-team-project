@@ -60,13 +60,15 @@ public class ShortTermScheduler {
                 Analysis.recordCompleteTime(simKernel.getPCB(i).getJobID()-1);
                 simKernel.getPCB(i).setStatus(4);
             } else {
-                while(simRAM.isLocked());
-                simRAM.lock();
-                Analysis.recordWaitTime(simKernel.getPCB(i + simRAM.getJobsOnRam()).getJobID()-1);
-                cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i + simRAM.getJobsOnRam()));
-                Analysis.recordCompleteTime(simKernel.getPCB(i + simRAM.getJobsOnRam()).getJobID()-1);
-                simRAM.unlock();
-                simKernel.getPCB(i).setStatus(4);
+                if (simKernel.getPCB(i).getStatus() != "Ended") {
+                    while(simRAM.isLocked());
+                    simRAM.lock();
+                    Analysis.recordWaitTime(simKernel.getPCB(i + simRAM.getJobsOnRam()).getJobID()-1);
+                    cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i + simRAM.getJobsOnRam()));
+                    Analysis.recordCompleteTime(simKernel.getPCB(i + simRAM.getJobsOnRam()).getJobID()-1);
+                    simRAM.unlock();
+                    simKernel.getPCB(i).setStatus(4);
+                }
             }
         }
         while(simRAM.isLocked());
