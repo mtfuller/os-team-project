@@ -4,15 +4,14 @@ package com.kennesaw.OS_Module;
  * Created by Margaret on 9/20/2016.
  */
 
+import java.util.ArrayList;
+
 import com.kennesaw.Analyzer.Analysis;
 import com.kennesaw.cpumodule.CPU;
 import com.kennesaw.cpumodule.DmaChannel;
 import memory.Ram;
 
-import java.util.ArrayList;
-
 public class ShortTermScheduler {
-    
     Ram simRAM;
     Kernel simKernel;
     ArrayList<CPU> cpuBank = new ArrayList<>();
@@ -33,20 +32,23 @@ public class ShortTermScheduler {
     
     public int findCPU() {
         boolean openCpuFound = false;
+
+        // Spin until a free CPU is found in the CPU Bank
         while (!openCpuFound) {
             openCpuFound = (!cpuBank.get(cpuIndexPtr).isRunningProcess());
             if (openCpuFound) {
                 break;
             } else {
-                ++cpuIndexPtr;
-                cpuIndexPtr = cpuIndexPtr % cpuBank.size();
+                cpuIndexPtr = (++cpuIndexPtr) % cpuBank.size();
             }
         }
         return cpuIndexPtr;
     }
     
     public void runSTS() {
-        int cpuIndex = 0;
+        int cpuIndex;
+
+        // Continue to spin as long as the Kernel has ready jobs
         while (simKernel.hasReadyJobs()) {
             PCB nextJob = simKernel.getJobFromReadyQueue();
             cpuIndex = findCPU();
@@ -57,13 +59,13 @@ public class ShortTermScheduler {
                 simKernel.removeFromReadyQueue(nextJob);
             }
         }
-        while(simRAM.isLocked());
-        simRAM.lock();
+
+        // Resets the number of jobs in RAM
         simRAM.resetJobCount();
-        simRAM.unlock();
+
+        // Spin until all cpus have finished processing
         for (CPU cpu : cpuBank) {
             while (cpu.isRunningProcess());
         }
     }
-    
 }

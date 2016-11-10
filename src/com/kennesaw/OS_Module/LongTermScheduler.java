@@ -23,12 +23,19 @@ public class LongTermScheduler {
     }
     
     public void runLTS(Kernel simKernel) {
+        // Logically sets RAM to be "empty" and sets "RAM iterator" to 0
         simRAM.setOccupiedRAM(0);
         ramSpaceCounter = 0;
+
+        // Walk through each PCB in the Kernel
         for (pcbCounter = 0; pcbCounter < simKernel.getQueueSize(); pcbCounter++) {
-            lineCounter = 0;
+            // Gets the current PCB and sets "line iterator" to 0
             PCB currentPCB = simKernel.getPCB(pcbCounter);
+            lineCounter = 0;
+
             aquireLock();
+
+            // If a new Job can fit on RAM, we will add it in
             if (currentPCB.getJobSize() <= simRAM.getFreeRAMSpace() && currentPCB.getStatus() == "New") {
                 int ramOffset = simRAM.getOccupiedRAM() + lineCounter;
                 currentPCB.setRAMAddressBegin(ramOffset);

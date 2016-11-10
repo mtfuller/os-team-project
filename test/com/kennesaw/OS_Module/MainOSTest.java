@@ -86,9 +86,6 @@ public class MainOSTest {
 
         for (CPU cpu : simSTS.cpuBank) {
             cpu.endCPU();
-        }
-
-        for (CPU cpu : simSTS.cpuBank) {
             cpu.join();
         }
 
@@ -169,9 +166,6 @@ public class MainOSTest {
 
         for (CPU cpu : simSTS.cpuBank) {
             cpu.endCPU();
-        }
-
-        for (CPU cpu : simSTS.cpuBank) {
             cpu.join();
         }
 
@@ -252,9 +246,6 @@ public class MainOSTest {
 
         for (CPU cpu : simSTS.cpuBank) {
             cpu.endCPU();
-        }
-
-        for (CPU cpu : simSTS.cpuBank) {
             cpu.join();
         }
 

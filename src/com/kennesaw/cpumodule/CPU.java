@@ -48,11 +48,6 @@ public class CPU extends Thread{
         isRunning = false;
     }
     
-    public void runCacheOnlyCPU() {
-        cacheOnly = true;
-        isRunningProcess = true;
-    }
-    
     public synchronized void runPCB(PCB pcb) {
         logMessage("Setting pcb to PCB #"+pcb.getJobID());
         while (isSpinning);
@@ -76,10 +71,13 @@ public class CPU extends Thread{
         Analysis.recordCPU((currentPCB.getJobID()-1), cpuId, used);
     }
     
-    public void runProcess() {
+    private void runProcess() {
+        // Initial Settings
         isSpinning = true;
         int ioInstructs = 0;
         int jobId = currentPCB.getJobID() - 1;
+
+        // Main Loop
         while(isSpinning) {
             // Get instruction from memory
             long instr = fetch(cpuState.getPc());

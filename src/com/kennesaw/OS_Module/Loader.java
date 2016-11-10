@@ -2,14 +2,11 @@ package com.kennesaw.OS_Module; /**
  * Created by Margaret on 9/2/2016.
  */
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.Scanner;
 import java.lang.*;
 
 import com.kennesaw.Analyzer.Analysis;
-import com.kennesaw.OS_Module.PCB;
-import com.kennesaw.OS_Module.Kernel;
 import memory.Disk;
 
 public class Loader {

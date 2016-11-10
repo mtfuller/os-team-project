@@ -2,8 +2,6 @@ package com.kennesaw.cpumodule;
 
 import memory.Ram;
 
-import java.util.Arrays;
-
 public class DmaChannel {
     public static final int CACHE_SIZE = 72;
     private Ram memory;

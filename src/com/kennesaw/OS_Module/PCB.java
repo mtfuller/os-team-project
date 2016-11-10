@@ -4,9 +4,9 @@ package com.kennesaw.OS_Module;
  * Created by Margaret on 9/3/2016.
  */
 
-import com.kennesaw.cpumodule.CpuState;
-
 import java.util.Arrays;
+
+import com.kennesaw.cpumodule.CpuState;
 
 public class PCB {
     public static final int NEW_STATE = 0;

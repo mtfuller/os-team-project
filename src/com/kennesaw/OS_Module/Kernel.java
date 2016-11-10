@@ -21,8 +21,6 @@ public class Kernel {
     
     public void sortPriority() {
         for (int j = 1; j < pcbQueue.size(); j++) {
-            for (int q = 0; q < pcbQueue.size(); q++) {
-            }
             PCB key = pcbQueue.get(j);
             int i = j - 1;
             while ((i > -1) && (pcbQueue.get(i).getPriority() > key.getPriority())) {
@@ -35,8 +33,6 @@ public class Kernel {
     
     public void sortSJF() {
         for (int j = 1; j < pcbQueue.size(); j++) {
-            for (int q = 0; q < pcbQueue.size(); q++) {
-            }
             PCB key = pcbQueue.get(j);
             int i = j - 1;
             while ((i > -1) && (pcbQueue.get(i).getJobSize() > key.getJobSize())) {
@@ -74,9 +70,4 @@ public class Kernel {
     public int getQueueSize() {
         return pcbQueue.size();
     }
-
-    public ArrayList<PCB> accessReadyQueue() {
-        return pcbQueue;
-    }
-    
 }

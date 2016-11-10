@@ -4,13 +4,11 @@ package com.kennesaw.OS_Module;
  * Created by Margaret on 9/16/2016.
  */
 
-import memory.*;
-import com.kennesaw.cpumodule.CPU;
-import com.kennesaw.cpumodule.DmaChannel;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.Scanner;
+
+import memory.*;
+import com.kennesaw.cpumodule.CPU;
 
 public class OS_Driver {
     
@@ -31,7 +29,7 @@ public class OS_Driver {
             null,
             cpuOptions,
             cpuOptions[0]);
-//
+
     Object[] sortingOptions = {"FIFO", "Priority", "SJF"};
     int sorting = JOptionPane.showOptionDialog(frame,
             "How should the PCBs be sorted? ",
@@ -45,18 +43,22 @@ public class OS_Driver {
     // com.kennesaw.OS_Module.Loader populates Disk with instructions from ProgramFile.txt
     public void runDriver() throws Exception {
         frame.dispose();
+
+        // Call Loader to prepare Disk and Kernel
         try {
             simLoader = new Loader(simDisk, simKernel);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    
+
+        // Create the CPUs
         if ((int)cpus == 0) {
             System.out.println("\nOne CPU was created.");
         } else {
             System.out.println("\n" + (int)(Math.pow(2, cpus)) + " CPUs were created.");
         }
-        
+
+        // Sorts the PCBs with the specified algorithm
         if (sorting == 1) {
             simKernel.sortPriority();
             System.out.print("PCBs were sorted based on their priority.\nJobs in order are: ");
@@ -89,11 +91,9 @@ public class OS_Driver {
             simSTS.runSTS();
         }
 
+        // Waits for all CPUs to finish executing
         for (CPU cpu : simSTS.cpuBank) {
             cpu.endCPU();
-        }
-
-        for (CPU cpu : simSTS.cpuBank) {
             cpu.join();
         }
     }
