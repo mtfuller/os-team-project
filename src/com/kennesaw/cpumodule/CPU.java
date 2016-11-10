@@ -12,6 +12,7 @@ public class CPU extends Thread{
     private volatile boolean isRunningProcess;
     private boolean isSpinning;
     private boolean isRunning;
+    private boolean debugMode;
     
     public CPU(DmaChannel dma, int id) {
         cpuId = id;
@@ -21,20 +22,20 @@ public class CPU extends Thread{
         isRunningProcess = false;
         isRunning = true;
         isSpinning = false;
+        debugMode = true;
     }
     
     @Override
     public void run() {
         while(isRunning) {
             if (isRunningProcess) {
-                System.out.println("DEBUG | CPU | Running Job #"+currentPCB.getJobID());
+                logMessage("Running Job #"+currentPCB.getJobID());
                 if (!cacheOnly) initializeCPU();
                 runProcess();
-                System.out.println("DEBUG | CPU | Spun CPU with Process");
                 if (!cacheOnly) exportOutput();
-                System.out.println("DEBUG | CPU | Exported output");
+                logMessage("Exported output");
                 isRunningProcess = false;
-                System.out.println("DEBUG | CPU | Set isRunningProcess to false");
+                logMessage("Set isRunningProcess to false");
             }
         }
     }
@@ -53,7 +54,7 @@ public class CPU extends Thread{
     }
     
     public synchronized void runPCB(PCB pcb) {
-        System.out.println("DEBUG | CPU | Setting pcb to PCB #"+pcb.getJobID());
+        logMessage("Setting pcb to PCB #"+pcb.getJobID());
         while (isSpinning);
         currentPCB = pcb;
         isRunningProcess = true;
@@ -115,11 +116,14 @@ public class CPU extends Thread{
                 break;
             }
         }
+        logMessage("Spun CPU with Process #"+(currentPCB.getJobID()+1));
+        Analysis.recordCompleteTime(currentPCB.getJobID()-1);
         Analysis.recordIO(jobId, ioInstructs);
+        currentPCB.setStatus(4);
     }
     
     private synchronized void exportOutput() {
-        System.out.println("DEBUG | CPU | Exporting output for Job #"+currentPCB.getJobID());
+        logMessage("Exporting output for Job #"+currentPCB.getJobID());
         int addr = currentPCB.getRAMAddressBegin();
         int size = currentPCB.getJobSize();
         for (int i = 0; i < size; i++) {
@@ -251,5 +255,9 @@ public class CPU extends Thread{
         return "\nCPU:" +
                 "\n\n" +
                 cpuState.toString();
+    }
+
+    private void logMessage(String message) {
+        if (debugMode) System.out.println("DEBUG | CPU "+cpuId+" | "+message);
     }
 }

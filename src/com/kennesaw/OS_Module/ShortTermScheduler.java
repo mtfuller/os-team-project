@@ -47,28 +47,14 @@ public class ShortTermScheduler {
     
     public void runSTS() {
         int cpuIndex = 0;
-        while(simRAM.isLocked());
-        simRAM.lock();
-        int size = simRAM.getJobsOnRam();
-        simRAM.unlock();
-        for (int i = 0; i < simRAM.getJobsOnRam(); i++) {
+        while (simKernel.hasReadyJobs()) {
+            PCB nextJob = simKernel.getJobFromReadyQueue();
             cpuIndex = findCPU();
             while (cpuBank.get(cpuIndex).isRunningProcess());
-            if (simKernel.getPCB(i).getStatus() == "Waiting") {
-                Analysis.recordWaitTime(simKernel.getPCB(i).getJobID()-1);
-                cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i));
-                Analysis.recordCompleteTime(simKernel.getPCB(i).getJobID()-1);
-                simKernel.getPCB(i).setStatus(4);
-            } else {
-                if (simKernel.getPCB(i).getStatus() != "Ended") {
-                    while(simRAM.isLocked());
-                    simRAM.lock();
-                    Analysis.recordWaitTime(simKernel.getPCB(i + simRAM.getJobsOnRam()).getJobID()-1);
-                    cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i + simRAM.getJobsOnRam()));
-                    Analysis.recordCompleteTime(simKernel.getPCB(i + simRAM.getJobsOnRam()).getJobID()-1);
-                    simRAM.unlock();
-                    simKernel.getPCB(i).setStatus(4);
-                }
+            if (nextJob.getStatus() == "Waiting") {
+                Analysis.recordWaitTime(nextJob.getJobID()-1);
+                cpuBank.get(cpuIndex).runPCB(nextJob);
+                simKernel.removeFromReadyQueue(nextJob);
             }
         }
         while(simRAM.isLocked());

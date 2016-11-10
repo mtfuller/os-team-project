@@ -27,24 +27,27 @@ public class LongTermScheduler {
         ramSpaceCounter = 0;
         for (pcbCounter = 0; pcbCounter < simKernel.getQueueSize(); pcbCounter++) {
             lineCounter = 0;
-            // Only PCBs with a "New" status are written to RAM. Otherwise, they've been written previously.
+            PCB currentPCB = simKernel.getPCB(pcbCounter);
             aquireLock();
-            if ((simKernel.getPCB(pcbCounter).getJobSize() <= simRAM.getFreeRAMSpace()) && (simKernel.getPCB(pcbCounter).getStatus() == "New")) {
-                simKernel.getPCB(pcbCounter).setRAMAddressBegin(simRAM.getOccupiedRAM() + lineCounter);
-                simKernel.getPCB(pcbCounter).setBaseAddress(simRAM.getOccupiedRAM() + lineCounter);
-                simKernel.getPCB(pcbCounter).getState().setBase_addr(simKernel.getPCB(pcbCounter).getBaseAddress());
-                while (lineCounter <= simDisk.getJobSize(simKernel.getPCB(pcbCounter))) {
-                    long jobSlice = simDisk.readDisk((simKernel.getPCB(pcbCounter).getDiskAddressBegin() + lineCounter));
+            if (currentPCB.getJobSize() <= simRAM.getFreeRAMSpace() && currentPCB.getStatus() == "New") {
+                int ramOffset = simRAM.getOccupiedRAM() + lineCounter;
+                currentPCB.setRAMAddressBegin(ramOffset);
+                currentPCB.setBaseAddress(ramOffset);
+                currentPCB.getState().setBase_addr(currentPCB.getBaseAddress());
+                while (lineCounter <= simDisk.getJobSize(currentPCB)) {
+                    long jobSlice = simDisk.readDisk((currentPCB.getDiskAddressBegin() + lineCounter));
                     simRAM.writeRam(ramSpaceCounter, jobSlice);
                     lineCounter++;
                     ramSpaceCounter++;
                 }
                 lineCounter--;
-                simKernel.getPCB(pcbCounter).setRAMAddressEnd(simRAM.getOccupiedRAM() + lineCounter);
-                simKernel.getPCB(pcbCounter).setStatus(2); // Set PCB's status to "Waiting"
+                ramOffset = simRAM.getOccupiedRAM() + lineCounter;
+                currentPCB.setRAMAddressEnd(ramOffset);
+                simKernel.addToReadyQueue(currentPCB);
+                currentPCB.setStatus(PCB.WAITING_STATE); // Set PCB's status to "Waiting"
                 simDisk.removedJobFromDisk();
                 simRAM.addedJobToRam();
-                simRAM.setOccupiedRAM(simRAM.getOccupiedRAM() + lineCounter + 1);
+                simRAM.setOccupiedRAM(ramOffset + 1);
             }
             releaseLock();
         }
