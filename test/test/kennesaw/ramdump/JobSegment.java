@@ -76,22 +76,6 @@ public class JobSegment {
         }
     }
 
-    public long getOutput(int address, boolean isInitialData) {
-        if (isInitialData) {
-            return initialOutputBuffer[address];
-        } else {
-            return finalOutputBuffer[address];
-        }
-    }
-
-    public long getTemp(int address, boolean isInitialData) {
-        if (isInitialData) {
-            return initialTempBuffer[address];
-        } else {
-            return finalTempBuffer[address];
-        }
-    }
-
     @Override
     public String toString() {
         String retStr = "Job Segment ("+(jobId+1)+"):\n";
