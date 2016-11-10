@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  */
 public class MainOSTest {
     @Test
-    public void osDriverTest() {
+    public void osDriverTest() throws InterruptedException {
         Analysis.initializeDataTables();
 
         JobSegementStructure jobSegementStructure = new JobSegementStructure();
@@ -25,8 +25,6 @@ public class MainOSTest {
         Ram simRAM = new Ram(1024);
         Kernel simKernel = new Kernel();
         Loader simLoader;
-        DmaChannel simDMA = new DmaChannel(simRAM);
-        CPU simCPU = new CPU(simDMA, 0);
 
         int pcbIndex = 0;
 
@@ -38,7 +36,7 @@ public class MainOSTest {
 
         // Initialize Long-term and Short-term schedulers
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRAM);
-        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, 4);
+        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, 1);
 
         for (PCB e : simKernel.pcbQueue)
             System.out.print(e.getJobID() + ": (RAM: " + e.getRAMAddressBegin() + "), ");
@@ -47,8 +45,7 @@ public class MainOSTest {
         int pcbIndexOffset = 0;
 
         while (simDisk.getJobsOnDisk() > 0) {
-
-            for (int i = 0; i < 1024; i++) simRAM.writeRam(i, 0L);
+            System.out.println("JOBS ON DISk: "+simDisk.getJobsOnDisk());
             simLTS.runLTS(simKernel);
             int numOfPcbs = simRAM.getJobsOnRam();
 
@@ -60,13 +57,16 @@ public class MainOSTest {
                     long correctValue = correctData.getRawData(j, true);
                     long actualValue = simRAM.readRam(j + tempPCB.getRAMAddressBegin());
                     assertEquals("Address at " + (j + tempPCB.getRAMAddressBegin()) + " on ram is: " +
-                                    correctValue +
-                                    ", but should be: " + actualValue,
-                            actualValue, correctValue);
+                                    actualValue +
+                                    ", but should be: " + correctValue,
+                            correctValue, actualValue);
                 }
             }
 
             simSTS.runSTS();
+            for (CPU cpu : simSTS.cpuBank) {
+                while (cpu.isRunningProcess());
+            }
 
             for (int i = 0; i < numOfPcbs; i++) {
                 PCB tempPCB = simKernel.getPCB(i+pcbIndexOffset);
@@ -76,37 +76,13 @@ public class MainOSTest {
                     long correctValue = correctData.getRawData(j, false);
                     long actualValue = simRAM.readRam(j + tempPCB.getRAMAddressBegin());
                     assertEquals("Address at " + (j + tempPCB.getRAMAddressBegin()) + " on ram is: " +
-                                    correctValue +
-                                    ", but should be: " + actualValue,
-                            actualValue, correctValue);
+                                    actualValue +
+                                    ", but should be: " + correctValue,
+                            correctValue, actualValue);
                 }
             }
 
             pcbIndexOffset += numOfPcbs;
-        }
-    }
-
-    @Test
-    public void osFifoTest() throws InterruptedException {
-        Disk simDisk = new Disk(2048);
-        Ram simRAM = new Ram(1024);
-        Kernel simKernel = new Kernel();
-        Loader simLoader;
-        DmaChannel simDMA = new DmaChannel(simRAM);
-
-        try {
-            simLoader = new Loader(simDisk, simKernel);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Initialize Long-term and Short-term schedulers
-        LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRAM);
-        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, 4);
-
-        while (simDisk.getJobsOnDisk() > 0) {
-            simLTS.runLTS(simKernel);
-            simSTS.runSTS();
         }
 
         for (CPU cpu : simSTS.cpuBank) {
@@ -116,6 +92,11 @@ public class MainOSTest {
         for (CPU cpu : simSTS.cpuBank) {
             cpu.join();
         }
+    }
+
+    @Test
+    public void osFifoTest() throws InterruptedException {
+
     }
 
     @Test

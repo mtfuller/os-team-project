@@ -29,13 +29,13 @@ public class DmaChannel {
         cache[addr] = instr;
     }
     
-    public long readRAM(int addr) {
+    public synchronized long readRAM(int addr) {
         addr = effectiveAddr(addr);
         long val = memory.readRam(addr);
         return val;
     }
     
-    public void writeRAM(int addr, long val) {
+    public synchronized void writeRAM(int addr, long val) {
         addr = effectiveAddr(addr);
         memory.writeRam(addr, val);
     }

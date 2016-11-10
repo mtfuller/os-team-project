@@ -118,12 +118,13 @@ public class CPU extends Thread{
         Analysis.recordIO(jobId, ioInstructs);
     }
     
-    private void exportOutput() {
-//        int addr = currentPCB.getRAMAddressBegin();
-//        int size = currentPCB.getJobSize();
-//        for (int i = 0; i < size; i++) {
-//            dmaChannel.writeRAM(i+addr, dmaChannel.readCache(i));
-//        }
+    private synchronized void exportOutput() {
+        System.out.println("DEBUG | CPU | Exporting output for Job #"+currentPCB.getJobID());
+        int addr = currentPCB.getRAMAddressBegin();
+        int size = currentPCB.getJobSize();
+        for (int i = 0; i < size; i++) {
+            dmaChannel.writeRAM((i+addr)*4, dmaChannel.readCache(i*4));
+        }
     }
     
     private synchronized long fetch(int addr) {
