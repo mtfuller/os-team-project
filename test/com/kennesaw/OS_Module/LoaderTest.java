@@ -1,5 +1,6 @@
 package com.kennesaw.OS_Module;
 
+import com.kennesaw.Analyzer.Analysis;
 import memory.Disk;
 import memory.Ram;
 import org.junit.Test;
@@ -13,6 +14,8 @@ import static org.junit.Assert.*;
 public class LoaderTest {
     @Test
     public void mainLoaderTest() {
+        Analysis.initializeDataTables();
+
         Disk disk = new Disk(2048);
         Kernel kernel = new Kernel();
 
