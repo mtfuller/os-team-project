@@ -36,17 +36,21 @@ public class MainOSTest {
 
         // Initialize Long-term and Short-term schedulers
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRAM);
-        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, 1);
+        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, 4);
 
         int pcbIndexOffset = 0;
+        int[] pcbOrder = new int[JobSegementStructure.NUMBER_OF_JOBS];
+        for (int i = 0; i < JobSegementStructure.NUMBER_OF_JOBS; i++) {
+            pcbOrder[i] = simKernel.getPCB(i).getJobID() - 1;
+        }
 
         while (simDisk.getJobsOnDisk() > 0) {
             simLTS.runLTS(simKernel);
             int numOfPcbs = simRAM.getJobsOnRam();
 
             for (int i = 0; i < numOfPcbs; i++) {
-                PCB tempPCB = simKernel.getPCB(i+pcbIndexOffset);
-                JobSegment correctData = jobSegementStructure.jobSegments[i+pcbIndexOffset];
+                PCB tempPCB = simKernel.getPCB(pcbOrder[i]+pcbIndexOffset);
+                JobSegment correctData = jobSegementStructure.jobSegments[pcbOrder[i]+pcbIndexOffset];
 
                 for (int j = 0; j < tempPCB.getJobSize(); j++) {
                     long correctValue = correctData.getRawData(j, true);
@@ -64,8 +68,8 @@ public class MainOSTest {
             }
 
             for (int i = 0; i < numOfPcbs; i++) {
-                PCB tempPCB = simKernel.getPCB(i+pcbIndexOffset);
-                JobSegment correctData = jobSegementStructure.jobSegments[i+pcbIndexOffset];
+                PCB tempPCB = simKernel.getPCB(pcbOrder[i]+pcbIndexOffset);
+                JobSegment correctData = jobSegementStructure.jobSegments[pcbOrder[i]+pcbIndexOffset];
 
                 for (int j = 0; j < tempPCB.getJobSize(); j++) {
                     long correctValue = correctData.getRawData(j, false);
@@ -112,11 +116,16 @@ public class MainOSTest {
 
         // Initialize Long-term and Short-term schedulers
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRAM);
-        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, 1);
+        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, 4);
 
         int pcbIndexOffset = 0;
 
         simKernel.sortPriority();
+
+        int[] pcbOrder = new int[JobSegementStructure.NUMBER_OF_JOBS];
+        for (int i = 0; i < JobSegementStructure.NUMBER_OF_JOBS; i++) {
+            pcbOrder[i] = simKernel.getPCB(i).getJobID() - 1;
+        }
 
         while (simDisk.getJobsOnDisk() > 0) {
             simLTS.runLTS(simKernel);
@@ -124,7 +133,7 @@ public class MainOSTest {
 
             for (int i = 0; i < numOfPcbs; i++) {
                 PCB tempPCB = simKernel.getPCB(i+pcbIndexOffset);
-                JobSegment correctData = jobSegementStructure.jobSegments[i+pcbIndexOffset];
+                JobSegment correctData = jobSegementStructure.jobSegments[pcbOrder[i+pcbIndexOffset]];
 
                 for (int j = 0; j < tempPCB.getJobSize(); j++) {
                     long correctValue = correctData.getRawData(j, true);
@@ -143,7 +152,7 @@ public class MainOSTest {
 
             for (int i = 0; i < numOfPcbs; i++) {
                 PCB tempPCB = simKernel.getPCB(i+pcbIndexOffset);
-                JobSegment correctData = jobSegementStructure.jobSegments[i+pcbIndexOffset];
+                JobSegment correctData = jobSegementStructure.jobSegments[pcbOrder[i+pcbIndexOffset]];
 
                 for (int j = 0; j < tempPCB.getJobSize(); j++) {
                     long correctValue = correctData.getRawData(j, false);
@@ -190,11 +199,16 @@ public class MainOSTest {
 
         // Initialize Long-term and Short-term schedulers
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRAM);
-        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, 1);
+        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, 4);
 
         int pcbIndexOffset = 0;
 
         simKernel.sortSJF();
+
+        int[] pcbOrder = new int[JobSegementStructure.NUMBER_OF_JOBS];
+        for (int i = 0; i < JobSegementStructure.NUMBER_OF_JOBS; i++) {
+            pcbOrder[i] = simKernel.getPCB(i).getJobID() - 1;
+        }
 
         while (simDisk.getJobsOnDisk() > 0) {
             simLTS.runLTS(simKernel);
@@ -202,7 +216,7 @@ public class MainOSTest {
 
             for (int i = 0; i < numOfPcbs; i++) {
                 PCB tempPCB = simKernel.getPCB(i+pcbIndexOffset);
-                JobSegment correctData = jobSegementStructure.jobSegments[i+pcbIndexOffset];
+                JobSegment correctData = jobSegementStructure.jobSegments[pcbOrder[i+pcbIndexOffset]];
 
                 for (int j = 0; j < tempPCB.getJobSize(); j++) {
                     long correctValue = correctData.getRawData(j, true);
@@ -221,7 +235,7 @@ public class MainOSTest {
 
             for (int i = 0; i < numOfPcbs; i++) {
                 PCB tempPCB = simKernel.getPCB(i+pcbIndexOffset);
-                JobSegment correctData = jobSegementStructure.jobSegments[i+pcbIndexOffset];
+                JobSegment correctData = jobSegementStructure.jobSegments[pcbOrder[i+pcbIndexOffset]];
 
                 for (int j = 0; j < tempPCB.getJobSize(); j++) {
                     long correctValue = correctData.getRawData(j, false);
