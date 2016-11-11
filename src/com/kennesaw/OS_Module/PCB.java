@@ -4,12 +4,17 @@ package com.kennesaw.OS_Module;
  * Created by Margaret on 9/3/2016.
  */
 
-import com.kennesaw.cpumodule.CpuState;
-
 import java.util.Arrays;
 
+import com.kennesaw.cpumodule.CpuState;
+
 public class PCB {
-    
+    public static final int NEW_STATE = 0;
+    public static final int READY_STATE = 1;
+    public static final int WAITING_STATE = 2;
+    public static final int RUNNING_STATE = 3;
+    public static final int ENDED_STATE = 4;
+
     private int jobID;  // Job ID
     private int priority; // Job's priority number, from data file
     private int jobSize;  // Number of line instructions

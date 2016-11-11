@@ -4,15 +4,14 @@ package com.kennesaw.OS_Module;
  * Created by Margaret on 9/20/2016.
  */
 
+import java.util.ArrayList;
+
 import com.kennesaw.Analyzer.Analysis;
 import com.kennesaw.cpumodule.CPU;
 import com.kennesaw.cpumodule.DmaChannel;
 import memory.Ram;
 
-import java.util.ArrayList;
-
 public class ShortTermScheduler {
-    
     Ram simRAM;
     Kernel simKernel;
     ArrayList<CPU> cpuBank = new ArrayList<>();
@@ -33,51 +32,40 @@ public class ShortTermScheduler {
     
     public int findCPU() {
         boolean openCpuFound = false;
+
+        // Spin until a free CPU is found in the CPU Bank
         while (!openCpuFound) {
             openCpuFound = (!cpuBank.get(cpuIndexPtr).isRunningProcess());
             if (openCpuFound) {
                 break;
             } else {
-                ++cpuIndexPtr;
-                cpuIndexPtr = cpuIndexPtr % cpuBank.size();
+                cpuIndexPtr = (++cpuIndexPtr) % cpuBank.size();
             }
         }
         return cpuIndexPtr;
     }
     
     public void runSTS() {
-        int cpuIndex = 0;
-        while(simRAM.isLocked());
-        simRAM.lock();
-        int size = simRAM.getJobsOnRam();
-        simRAM.unlock();
-        for (int i = 0; i < simRAM.getJobsOnRam(); i++) {
+        int cpuIndex;
+
+        // Continue to spin as long as the Kernel has ready jobs
+        while (simKernel.hasReadyJobs()) {
+            PCB nextJob = simKernel.getJobFromReadyQueue();
             cpuIndex = findCPU();
             while (cpuBank.get(cpuIndex).isRunningProcess());
-            if (simKernel.getPCB(i).getStatus() == "Waiting") {
-                Analysis.recordWaitTime(simKernel.getPCB(i).getJobID()-1);
-                cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i));
-                Analysis.recordCompleteTime(simKernel.getPCB(i).getJobID()-1);
-                simKernel.getPCB(i).setStatus(4);
-            } else {
-                if (simKernel.getPCB(i).getStatus() != "Ended") {
-                    while(simRAM.isLocked());
-                    simRAM.lock();
-                    Analysis.recordWaitTime(simKernel.getPCB(i + simRAM.getJobsOnRam()).getJobID()-1);
-                    cpuBank.get(cpuIndex).runPCB(simKernel.getPCB(i + simRAM.getJobsOnRam()));
-                    Analysis.recordCompleteTime(simKernel.getPCB(i + simRAM.getJobsOnRam()).getJobID()-1);
-                    simRAM.unlock();
-                    simKernel.getPCB(i).setStatus(4);
-                }
+            if (nextJob.getStatus() == "Waiting") {
+                Analysis.recordWaitTime(nextJob.getJobID()-1);
+                cpuBank.get(cpuIndex).runPCB(nextJob);
+                simKernel.removeFromReadyQueue(nextJob);
             }
         }
-        while(simRAM.isLocked());
-        simRAM.lock();
+
+        // Resets the number of jobs in RAM
         simRAM.resetJobCount();
-        simRAM.unlock();
+
+        // Spin until all cpus have finished processing
         for (CPU cpu : cpuBank) {
             while (cpu.isRunningProcess());
         }
     }
-    
 }
