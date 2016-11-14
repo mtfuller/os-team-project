@@ -38,4 +38,10 @@ public class Cache {
     public boolean isPageModified(LogicalAddress logAddr) {
         return dirtyBitMap[logAddr.getPageNumber()];
     }
+
+    public int getCacheSize() {
+        int count = 0;
+        for (int i = 0; i < CACHE_SIZE; i++) if (validBitMap[i]) count++;
+        return count;
+    }
 }

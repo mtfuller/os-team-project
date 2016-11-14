@@ -4,27 +4,38 @@ package com.kennesaw.cpumodule;
  * Created by Thomas on 11/13/2016.
  */
 public class LogicalAddress {
-    private byte pageNumber;
-    private byte pageOffset;
+    public static final int PAGE_SIZE = 4;
+    private int pageNumber;
+    private int pageOffset;
 
-    public LogicalAddress(byte pn, byte po) {
+    public LogicalAddress() {
+        pageNumber = 0;
+        pageOffset = 0;
+    }
+
+    public LogicalAddress(int pn, int po) {
         pageNumber = pn;
         pageOffset = po;
     }
 
-    public byte getPageNumber() {
+    public void convertFromRawAddress(int addr) {
+        setPageNumber(addr / PAGE_SIZE);
+        setPageOffset(addr % PAGE_SIZE);
+    }
+
+    public int getPageNumber() {
         return pageNumber;
     }
 
-    public void setPageNumber(byte pageNumber) {
+    public void setPageNumber(int pageNumber) {
         this.pageNumber = pageNumber;
     }
 
-    public byte getPageOffset() {
+    public int getPageOffset() {
         return pageOffset;
     }
 
-    public void setPageOffset(byte pageOffset) {
+    public void setPageOffset(int pageOffset) {
         this.pageOffset = pageOffset;
     }
 }
