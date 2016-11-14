@@ -2,6 +2,7 @@ package com.kennesaw.cpumodule;
 
 import com.kennesaw.Analyzer.Analysis;
 import com.kennesaw.OS_Module.PCB;
+import memory.Page;
 
 public class CPU extends Thread{
     private CpuState cpuState;
@@ -13,11 +14,13 @@ public class CPU extends Thread{
     private boolean isSpinning;
     private boolean isRunning;
     private boolean debugMode;
+    private Cache cache;
     
     public CPU(DmaChannel dma, int id) {
         cpuId = id;
         cpuState = new CpuState();
         dmaChannel = dma;
+        cache = new Cache();
         cacheOnly = false;
         isRunningProcess = false;
         isRunning = true;
