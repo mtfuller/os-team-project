@@ -3,29 +3,33 @@ package com.kennesaw.cpumodule;
 import com.kennesaw.Analyzer.Analysis;
 import com.kennesaw.OS_Module.PCB;
 import memory.Page;
+import sun.rmi.runtime.Log;
 
 public class CPU extends Thread{
-    private CpuState cpuState;
-    private DmaChannel dmaChannel;
-    private PCB currentPCB;
     private int cpuId;
-    private boolean cacheOnly;
+    private CpuState cpuState;
+    private Cache cache;
+    private MMU mmu;
+    private LogicalAddress logicalAddress;
+    private PCB currentPCB;
+
     private volatile boolean isRunningProcess;
     private boolean isSpinning;
     private boolean isRunning;
-    private boolean debugMode;
-    private Cache cache;
+
+    private final boolean CACHE_ONLY = false;
+    private final boolean DEBUG_MODE = true;
+
     
-    public CPU(DmaChannel dma, int id) {
+    public CPU(int id, MMU mem) {
         cpuId = id;
         cpuState = new CpuState();
-        dmaChannel = dma;
         cache = new Cache();
-        cacheOnly = false;
+        mmu = mem;
+        logicalAddress = new LogicalAddress();
         isRunningProcess = false;
         isRunning = true;
         isSpinning = false;
-        debugMode = true;
     }
     
     @Override
@@ -33,9 +37,9 @@ public class CPU extends Thread{
         while(isRunning) {
             if (isRunningProcess) {
                 logMessage("Running Job #"+currentPCB.getJobID());
-                if (!cacheOnly) initializeCPU();
+                if (!CACHE_ONLY) initializeCPU();
                 runProcess();
-                if (!cacheOnly) exportOutput();
+                if (!CACHE_ONLY) exportOutput();
                 logMessage("Exported output");
                 isRunningProcess = false;
                 logMessage("Set isRunningProcess to false");
@@ -67,10 +71,10 @@ public class CPU extends Thread{
         }
         int addr = currentPCB.getRAMAddressBegin();
         int size = currentPCB.getJobSize();
-        for (int i = 0; i < size; i++) {
-            dmaChannel.writeCache(i*4, dmaChannel.readRAM((addr+i)*4));
-        }
-        double used = (double) size / DmaChannel.CACHE_SIZE;
+//        for (int i = 0; i < size; i++) {
+//            dmaChannel.writeCache(i*4, dmaChannel.readRAM((addr+i)*4));
+//        }
+        double used = (double) size / cache.getCacheSize();
         Analysis.recordCPU((currentPCB.getJobID()-1), cpuId, used);
     }
     
@@ -127,13 +131,12 @@ public class CPU extends Thread{
         logMessage("Exporting output for Job #"+currentPCB.getJobID());
         int addr = currentPCB.getRAMAddressBegin();
         int size = currentPCB.getJobSize();
-        for (int i = 0; i < size; i++) {
-            dmaChannel.writeRAM((i+addr)*4, dmaChannel.readCache(i*4));
-        }
+        mmu.writeCacheToRAM(cache);
     }
     
     private synchronized long fetch(int addr) {
-        return dmaChannel.readCache(addr*4);
+        logicalAddress.convertFromRawAddress(addr);
+        return mmu.readCache(logicalAddress, cache);
     }
     
     private void decode(long instructionBin) {
@@ -181,10 +184,13 @@ public class CPU extends Thread{
         int acc;
         switch (opcode) {
             case 0x02:
-                dmaChannel.writeCache(((int) cpuState.getReg(dr)), cpuState.getReg(br));
+                logicalAddress.convertFromRawAddress((int) cpuState.getReg(br));
+                mmu.writeCache(logicalAddress, cpuState.getReg(br), cache);
                 break;
             case 0x03:
-                cpuState.setReg(dr, dmaChannel.readCache((int) cpuState.getReg(br)));
+                logicalAddress.convertFromRawAddress((int) cpuState.getReg(br));
+                long data = mmu.readCache(logicalAddress, cache);
+                cpuState.setReg(dr, data);
                 break;
             case 0x0B:
                 cpuState.setReg(dr, addr);
@@ -241,12 +247,14 @@ public class CPU extends Thread{
         //int baseAddr = cpuState.getBase_addr() * 4;
         switch (opcode) {
             case 0x00:
-                if (addr == 0) cpuState.setReg(r1, dmaChannel.readCache((int) cpuState.getReg(r2)));
-                else cpuState.setReg(r1, dmaChannel.readCache(addr));
+                if (addr == 0) logicalAddress.convertFromRawAddress((int) cpuState.getReg(r2));
+                else logicalAddress.convertFromRawAddress(addr);
+                cpuState.setReg(r1, mmu.readCache(logicalAddress,cache));
                 break;
             case 0x01:
-                if (r1 == r2) dmaChannel.writeCache(addr, cpuState.getReg(r1));
-                else dmaChannel.writeCache((int) cpuState.getReg(r2), cpuState.getReg(r1));
+                if (r1 == r2) logicalAddress.convertFromRawAddress(addr);
+                else logicalAddress.convertFromRawAddress((int) cpuState.getReg(r2));
+                mmu.writeCache(logicalAddress, cpuState.getReg(r1), cache);
                 break;
         }
     }
@@ -259,6 +267,6 @@ public class CPU extends Thread{
     }
 
     private void logMessage(String message) {
-        if (debugMode) System.out.println("DEBUG | CPU "+cpuId+" | "+message);
+        if (DEBUG_MODE) System.out.println("DEBUG | CPU "+cpuId+" | "+message);
     }
 }
