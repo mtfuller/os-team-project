@@ -1,6 +1,7 @@
 package com.kennesaw.cpumodule;
 
 import com.kennesaw.OS_Module.Kernel;
+import com.kennesaw.OS_Module.PCB;
 import memory.Ram;
 
 public class DmaChannel extends Thread{
@@ -14,7 +15,27 @@ public class DmaChannel extends Thread{
 
     @Override
     public void run() {
-        System.out.println("RUN DMA CHANNEL!!!");
+        // Check for any PCB in I/O request queue
+        /*
+        while (true) {
+            // Get PCB
+            PCB ioPCB = kernel.getPCB(0);
+
+            // Determine the Cache-Frame that needs to be brought in
+            LogicalAddress logicalAddress = new LogicalAddress();
+            CpuState tempState = ioPCB.getState();
+            logicalAddress.convertFromRawAddress(tempState.getPc());
+            int logicalPage = logicalAddress.getPageNumber();
+
+            // Look throught the PCB's page table to find out where the Page is in RAM
+
+            // Get the page and load it into the PCB's cache.
+
+            // Set both the Cache's validBitTable and dirtyBitTable to false for this Page
+
+            // Restart the instruction by modifying the CpuState's PC
+
+        }*/
     }
 
     //    private int effectiveAddr(int addr) {

@@ -244,7 +244,6 @@ public class CPU extends Thread{
     }
     
     private synchronized void executeIO(byte opcode, byte r1, byte r2, int addr) {
-        //int baseAddr = cpuState.getBase_addr() * 4;
         switch (opcode) {
             case 0x00:
                 if (addr == 0) logicalAddress.convertFromRawAddress((int) cpuState.getReg(r2));

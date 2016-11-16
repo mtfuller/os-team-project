@@ -20,15 +20,14 @@ public class MMU {
         boolean isInterrupt = false;
         if (!cache.isPageValid(logicalAddress)) {
             // IF PAGE IS NOT IN CACHE
-
-            // I/O Request
-                // ADD PROCESS TO KERNEL'S I/O QUEUE
-
             if (false) {
                 // IF PAGE IS NOT IN MEMORY
 
                 // PAGE FAULT
-                    // ADD PROCESS TO KERNEL'S PAGE FAULT QUEUE
+                // ADD PROCESS TO KERNEL'S PAGE FAULT QUEUE
+            } else {
+                // I/O Request
+                // ADD PROCESS TO KERNEL'S I/O QUEUE
             }
         }
         return isInterrupt;
