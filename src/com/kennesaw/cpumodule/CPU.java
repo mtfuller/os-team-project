@@ -131,7 +131,7 @@ public class CPU extends Thread{
         logMessage("Exporting output for Job #"+currentPCB.getJobID());
         int addr = currentPCB.getRAMAddressBegin();
         int size = currentPCB.getJobSize();
-        mmu.writeCacheToRAM(cache);
+        mmu.writeCacheToRAM(currentPCB);
     }
     
     private synchronized long fetch(int addr) {
