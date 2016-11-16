@@ -11,15 +11,27 @@ public class Cache {
     private Page cache[];
     private boolean validBitMap[];
     private boolean dirtyBitMap[];
+    private int numberOfValidPages;
 
     public Cache() {
         cache = new Page[CACHE_SIZE];
+        numberOfValidPages = 0;
         validBitMap = new boolean[CACHE_SIZE];
         dirtyBitMap = new boolean[CACHE_SIZE];
         for (int i = 0; i < CACHE_SIZE; i++) {
             validBitMap[i] = false;
             dirtyBitMap[i] = false;
         }
+    }
+
+    public void setValidPage(int pageNumber, boolean isValidPage) {
+        if (isValidPage && !validBitMap[pageNumber]) numberOfValidPages++;
+        else if(!isValidPage && validBitMap[pageNumber]) numberOfValidPages--;
+        validBitMap[pageNumber] = isValidPage;
+    }
+
+    public void setDirtyPage(int pageNumber, boolean isDirtyPage) {
+        dirtyBitMap[pageNumber] = isDirtyPage;
     }
 
     public long readCache(LogicalAddress logAddr) {
@@ -29,6 +41,7 @@ public class Cache {
 
     public void writeCache(LogicalAddress logAddr, long data) {
         // WRITE CACHE LOGIC
+        setDirtyPage(logAddr.getPageNumber(), true);
     }
 
     public boolean isPageValid(LogicalAddress logAddr) {
@@ -40,8 +53,6 @@ public class Cache {
     }
 
     public int getCacheSize() {
-        int count = 0;
-        for (int i = 0; i < CACHE_SIZE; i++) if (validBitMap[i]) count++;
-        return count;
+        return numberOfValidPages;
     }
 }
