@@ -29,7 +29,7 @@ public class DmaChannel extends Thread{
 
             // Look throught the PCB's page table to find out where the Page is in RAM
 
-            // Get the page and load it into the PCB's cache.
+            // Get the page from RAM and load it into the PCB's cache.
 
             // Set both the Cache's validBitTable and dirtyBitTable to false for this Page
 

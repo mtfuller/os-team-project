@@ -42,9 +42,10 @@ public class MMU {
 
     public void writeCache(LogicalAddress logicalAddress, long data, Cache cache) {
         // WRITE LOGIC
+        cache.writeCache(logicalAddress, data);
     }
 
-    public void writeCacheToRAM(Cache cache) {
-
+    public void writeCacheToRAM(PCB pcb) {
+        // Go through each MODIFIED/DIRTY page of PCB's cache and load it into the corresponding FRAME NUMBER
     }
 }
