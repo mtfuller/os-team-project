@@ -33,19 +33,19 @@ public class MMU {
         return isInterrupt;
     }
 
-    public long readCache(LogicalAddress logicalAddress, Cache cache) {
+    public synchronized long readCache(LogicalAddress logicalAddress, Cache cache) {
         if (!cache.isPageValid(logicalAddress)) {
             // IF PAGE IS NOT IN CACHE
         }
         return cache.readCache(logicalAddress);
     }
 
-    public void writeCache(LogicalAddress logicalAddress, long data, Cache cache) {
+    public synchronized void writeCache(LogicalAddress logicalAddress, long data, Cache cache) {
         // WRITE LOGIC
         cache.writeCache(logicalAddress, data);
     }
 
-    public void writeCacheToRAM(PCB pcb) {
+    public synchronized void writeCacheToRAM(PCB pcb) {
         // Go through each MODIFIED/DIRTY page of PCB's cache and load it into the corresponding FRAME NUMBER
     }
 }
