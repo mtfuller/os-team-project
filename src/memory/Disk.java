@@ -1,26 +1,26 @@
 package memory;
 
-import java.util.Arrays;
 
 import com.kennesaw.OS_Module.PCB;
 
 public class Disk {
 
-    long[] newDisk;
+    Page[] newDisk;
     int occupiedSpace;
     int jobsOnDisk;
 
     public Disk(int diskLength) {
-        newDisk = new long[diskLength];
+        newDisk = new Page[diskLength];
         occupiedSpace = 0;
     }
 
-    public void writeDisk(int address, long value) {
-        newDisk[address] = value;
+    public void writeDisk(int address, Page page) {
+
+        newDisk[address] = page;
     }
 
-    public long readDisk(int address) {
-        return newDisk[address];
+    public long readDisk(int address, int addressPage) {
+        return newDisk[address].readPage(addressPage);
     }
 
     public int getJobSize(PCB pcb) {
@@ -38,14 +38,16 @@ public class Disk {
     public void removedJobFromDisk() {
         jobsOnDisk--;
     }
-    
+
     public String toString() {
         String toReturn = "";
-        
+
         for (int i = 0; i < newDisk.length; i++) {
-            toReturn += ("Line # " + (i + 1) + " - " + readDisk(i) + "\n");
+            toReturn += ("Line # " + (i + 1) + " - " + readDisk(i,i) + "\n");
         }
         return toReturn;
     }
-    
+
+
+
 }
