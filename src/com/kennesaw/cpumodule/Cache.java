@@ -35,11 +35,12 @@ public class Cache {
     }
 
     public long readCache(LogicalAddress logAddr) {
-        return cache[logAddr.getPageNumber()].readPage(logAddr.getPageOffset());
+        // READ CACHE LOGIC
+        return 0;
     }
 
     public void writeCache(LogicalAddress logAddr, long data) {
-        cache[logAddr.getPageNumber()].writeToPage(logAddr.getPageOffset(), data);
+        // WRITE CACHE LOGIC
         setDirtyPage(logAddr.getPageNumber(), true);
     }
 
