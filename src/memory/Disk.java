@@ -6,21 +6,36 @@ import com.kennesaw.OS_Module.PCB;
 public class Disk {
 
     Page[] newDisk;
-    int occupiedSpace;
     int jobsOnDisk;
+    int nextFreePage;
 
     public Disk(int diskLength) {
         newDisk = new Page[diskLength];
-        occupiedSpace = 0;
+        nextFreePage = 0;
     }
 
-    public void writeDisk(int address, Page page) {
-
-        newDisk[address] = page;
+//    public void writeDisk(int address, Page page) {
+//        newDisk[address] = page;
+//        occupiedPages++;
+//    }
+    
+    public void writeDisk(int pageNum, int index, long instr) {
+        newDisk[pageNum].writeToPage(index, instr);
+        if (newDisk[pageNum].isPageFull()) {
+            incNextFreePage();
+        }
     }
 
-    public long readDisk(int address, int addressPage) {
-        return newDisk[address].readPage(addressPage);
+    public Page readDisk(int address) {
+        return newDisk[address];
+    }
+    
+    public int getNextFreePage() {
+        return nextFreePage;
+    }
+    
+    public void incNextFreePage() {
+        nextFreePage++;
     }
 
     public int getJobSize(PCB pcb) {
@@ -43,7 +58,7 @@ public class Disk {
         String toReturn = "";
 
         for (int i = 0; i < newDisk.length; i++) {
-            toReturn += ("Line # " + (i + 1) + " - " + readDisk(i,i) + "\n");
+            toReturn += ("Line # " + (i + 1) + " - " + readDisk(i) + "\n");
         }
         return toReturn;
     }

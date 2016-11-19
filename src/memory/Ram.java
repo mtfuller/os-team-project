@@ -1,7 +1,5 @@
 package memory;
 
-
-
 import java.util.Arrays;
 
 public class Ram {
@@ -33,7 +31,6 @@ public class Ram {
     }
 
     public void writeRam(int address, Page page) {
-
         newRAM[address] = page;
     }
 

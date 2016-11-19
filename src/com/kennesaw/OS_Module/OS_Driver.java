@@ -12,8 +12,8 @@ import com.kennesaw.cpumodule.CPU;
 
 public class OS_Driver {
     
-    Disk simDisk = new Disk(2048);
-    Ram simRAM = new Ram(1024);
+    Disk simDisk = new Disk(512);
+    Ram simRAM = new Ram(256);
     Kernel simKernel = new Kernel();
     Loader simLoader;
     
@@ -86,11 +86,9 @@ public class OS_Driver {
         ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, (int)(Math.pow(2, cpus)));
         
         // While there are jobs on the Disk, schedule those jobs and send them to the CPU
-        while (simDisk.getJobsOnDisk() > 0) {
-            simLTS.runLTS(simKernel);
-            simSTS.runSTS();
-        }
-
+       simLTS.runLTS(simKernel);
+       simSTS.runSTS();
+       
         // Waits for all CPUs to finish executing
         for (CPU cpu : simSTS.cpuBank) {
             cpu.endCPU();
