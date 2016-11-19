@@ -4,6 +4,7 @@ import com.kennesaw.OS_Module.Kernel;
 import com.kennesaw.OS_Module.PCB;
 import memory.Ram;
 
+<<<<<<< HEAD
 public class DmaChannel extends Thread{
     private Ram memory;
     private Kernel kernel;
@@ -39,6 +40,20 @@ public class DmaChannel extends Thread{
     }
 
     //    private int effectiveAddr(int addr) {
+=======
+public class DmaChannel {
+//    public static final int CACHE_SIZE = 72;
+//    private Ram memory;
+//    private long cache[];
+//
+//    public DmaChannel(Ram mem) {
+//        memory = mem;
+//        cache = new long[CACHE_SIZE];
+//        for (int i = 0; i < CACHE_SIZE; i++) cache[i] = 0L;
+//    }
+//
+//    private int effectiveAddr(int addr) {
+>>>>>>> origin/Phase_II_Changes
 //        return addr / 4;
 //    }
 //

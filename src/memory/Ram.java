@@ -1,7 +1,5 @@
 package memory;
 
-
-
 import java.util.Arrays;
 
 public class Ram {
@@ -15,6 +13,9 @@ public class Ram {
     public Ram(int ramSpace) {
         RAMlength = ramSpace;
         newRAM = new Page[256];
+        for (int i = 0; i < ramSpace; i++) {
+            newRAM[i] = new Page();
+        }
         occupiedRAM = 0;
         jobsOnRam = 0;
         mutexLock = false;
@@ -33,7 +34,6 @@ public class Ram {
     }
 
     public void writeRam(int address, Page page) {
-
         newRAM[address] = page;
     }
 
@@ -65,12 +65,16 @@ public class Ram {
     public void addedJobToRam() {
         jobsOnRam++;
     }
-
+    
     public String toString() {
         String toReturn = "";
-
-        for (int i = 0; i < RAMlength; i++) {
-            toReturn += ("Line # " + (i + 1) + " - " + readRam(i, i) + "\n");
+        
+        for (int i = 0; i < newRAM.length; i++) {
+            toReturn += ("Page # " + (i + 1) + "-\n");
+            for (int j = 0; j < 4; j++) {
+                toReturn += (readRam(i, j) + "\n");
+            }
+            toReturn += ("\n");
         }
         return toReturn;
     }
