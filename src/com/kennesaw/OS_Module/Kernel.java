@@ -12,10 +12,12 @@ import java.util.LinkedList;
 public class Kernel {
 
     LinkedList<PCB> readyQueue;
+    LinkedList<PCB> ioQueue;
     ArrayList<PCB> pcbQueue;
     
     public Kernel() {
         pcbQueue = new ArrayList<>();
+        ioQueue = new LinkedList<>();
         readyQueue = new LinkedList<>();
     }
     
