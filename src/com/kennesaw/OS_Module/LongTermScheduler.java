@@ -33,6 +33,12 @@ public class LongTermScheduler {
                 ramPageCounter++;
             }
             simKernel.getPCB(i).setStatus(1);
+            for (int k = 0; k < simKernel.getPCB(i).getJobSize(); k++) {
+                System.out.println("Job Number " +
+                        simKernel.getPCB(i).getJobID() + ": " + "Page in Ram: " +
+                        simKernel.getPCB(i).getPageTable().getPage(k) +
+                        " - Valid/Invalid: " + simKernel.getPCB(i).getPageTable().getValid(k));
+            }
         }
 
 //            aquireLock();

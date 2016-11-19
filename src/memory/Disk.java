@@ -11,6 +11,9 @@ public class Disk {
 
     public Disk(int diskLength) {
         newDisk = new Page[diskLength];
+        for (int i = 0; i < diskLength; i++) {
+            newDisk[i] = new Page();
+        }
         nextFreePage = 0;
     }
 
@@ -58,11 +61,12 @@ public class Disk {
         String toReturn = "";
 
         for (int i = 0; i < newDisk.length; i++) {
-            toReturn += ("Line # " + (i + 1) + " - " + readDisk(i) + "\n");
+            toReturn += ("Page # " + (i + 1) + "-\n");
+            for (int j = 0; j < 4; j++) {
+                toReturn += (readDisk(i).readPage(j) + "\n");
+            }
+            toReturn += ("\n");
         }
         return toReturn;
     }
-
-
-
 }

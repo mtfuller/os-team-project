@@ -9,33 +9,36 @@ import java.util.ArrayList;
  */
 public class PageTable {
     
-    ArrayList<Integer> pageSpan;
-    ArrayList<Boolean> valid;
+    int[] pageSpan;
+    boolean[] valid;
+    int counter;
     
-    public PageTable(){
-        pageSpan = new ArrayList<>();
-        valid = new ArrayList<>();
+    public PageTable(int arraySize){
+        pageSpan = new int[arraySize];
+        valid = new boolean[arraySize];
+        counter = 0;
     }
     
     public void writePageTable(int pageNumber) {
-        pageSpan.add(pageNumber);
-        valid.add(true);
+        pageSpan[counter] = pageNumber;
+        valid[counter] = true;
+        counter++;
     }
     
-    public ArrayList readPageTable(PCB pcb) {
+    public int[] readPageTable(PCB pcb) {
         return pageSpan;
     }
     
-    public int getPage(int index) {
-        return pageSpan.get(index);
+    public int getPage(int pageNum) {
+        return pageSpan[pageNum];
     }
     
-    public Boolean getValid(int index) {
-        return valid.get(index);
+    public boolean getValid(int index) {
+        return valid[index];
     }
     
     public void flipValid(int index) {
-        valid.set(index, !valid.get(index));
+        valid[index] = !valid[index];
     }
     
 }

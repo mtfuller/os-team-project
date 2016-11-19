@@ -43,10 +43,10 @@ public class Loader {
                 // Remove whitespace to extract the job info.
                 String[] lineSplitter = line.split("\\s+");
                 newJob = true;
-                new_PCB.setDiskAddressBegin(simDisk.getNextFreePage());
                 
                 // Create a new PCB object & add to PCB queue
                 new_PCB = new PCB(Integer.parseInt(lineSplitter[2], 16), Integer.parseInt(lineSplitter[3], 16), Integer.parseInt(lineSplitter[4], 16));
+                new_PCB.setDiskAddressBegin(simDisk.getNextFreePage());
                 Analysis.recordNumOFJobs(new_PCB.getJobID()-1);
                 Analysis.recordCreateTime(new_PCB.getJobID()-1);
                 simKernel.addPCB(currentPCB, new_PCB);
@@ -79,13 +79,13 @@ public class Loader {
             } else {
                 // Write the line to Disk as a Page at a specific index.
                 long toHex = Long.parseLong(line.substring(2), 16);
-                
                 // If we're writing a new job's instructions, reset looper and turn off newJob flag
                 if (newJob) {
                     newJob = false;
                     looper = 0;
                 }
                 // Write to Disk, incrementing the pointer to the next free page after 4 lines are written
+//                System.out.println(simDisk.getNextFreePage() + "  " + looper + "  " + (looper%4) + "  " + newJob);
                 simDisk.writeDisk(simDisk.getNextFreePage(), (looper%4), toHex);
                 looper++;
             }

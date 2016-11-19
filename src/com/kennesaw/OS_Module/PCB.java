@@ -40,6 +40,7 @@ public class PCB {
         priority = prior;
         diskAddressBegin = 0;
         status = currentState[0];
+        pageTable = new PageTable(jobSize);
         state = new CpuState();
         inputBuffer = new ArrayList<>();
         outputBuffer = new ArrayList<>();
@@ -98,14 +99,14 @@ public class PCB {
         this.diskAddressEnd = diskAddressEnd;
     }
     
-    public int getBaseAddress() {
-        return state.getBase_addr();
-    }
-    
-    
-    public void setBaseAddress(int addr) {
-        state.setBase_addr(addr);
-    }
+//    public int getBaseAddress() {
+//        return state.getBase_addr();
+//    }
+//
+//
+//    public void setBaseAddress(int addr) {
+//        state.setBase_addr(addr);
+//    }
     
     public int getRAMAddressBegin() {
         return RAMAddressBegin;
