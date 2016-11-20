@@ -33,12 +33,19 @@ public class Ram {
         mutexLock = false;
     }
 
-    public void writeRam(int address, Page page) {
+    public void writeRam(int address, int pageOffset, long data) {
+        newRAM[address].writeToPage(pageOffset, data);
+    }
+
+    public void writePageToRam(int address, Page page) {
         newRAM[address] = page;
     }
 
-    public long readRam(int index, int addressPage) {
+    public Page readPageFromRam(int index) {
+        return newRAM[index];
+    }
 
+    public long readRam(int index, int addressPage) {
         return newRAM[index].readPage(addressPage);
     }
 

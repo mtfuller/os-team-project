@@ -24,7 +24,7 @@ public class CPU extends Thread{
     public CPU(int id, MMU mem) {
         cpuId = id;
         cpuState = new CpuState();
-        cache = new Cache();
+        cache = null;
         mmu = mem;
         logicalAddress = new LogicalAddress();
         isRunningProcess = false;
@@ -59,6 +59,7 @@ public class CPU extends Thread{
         logMessage("Setting pcb to PCB #"+pcb.getJobID());
         while (isSpinning);
         currentPCB = pcb;
+        cache = pcb.getState().getCache();
         isRunningProcess = true;
     }
     
@@ -136,6 +137,7 @@ public class CPU extends Thread{
     
     private synchronized long fetch(int addr) {
         logicalAddress.convertFromRawAddress(addr);
+        if (mmu.checkForInterrupt(logicalAddress, cache, currentPCB)) isSpinning = false;
         return mmu.readCache(logicalAddress, cache);
     }
     

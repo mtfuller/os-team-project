@@ -16,12 +16,14 @@ public class CpuState {
     private int base_Addr;
     private Instruction instruction;
     private long reg[];
+    private Cache cache;
 
     public CpuState() {
         pc = 0;
         instruction = new Instruction();
         reg = new long[NUM_OF_REGISTERS];
         for (int i = 0; i < NUM_OF_REGISTERS; i++) reg[i] = 0;
+        cache = new Cache();
     }
 
     public int getPc() {
@@ -34,6 +36,10 @@ public class CpuState {
 
     public void incrementPc() {
         this.pc++;
+    }
+
+    public void decrementPc() {
+        this.pc--;
     }
 
     public Instruction getInstruction() {
@@ -50,6 +56,10 @@ public class CpuState {
 
     public void setReg(byte i, long val) {
         this.reg[i] = val;
+    }
+
+    public Cache getCache() {
+        return cache;
     }
 
     @Override

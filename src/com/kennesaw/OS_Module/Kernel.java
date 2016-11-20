@@ -57,6 +57,23 @@ public class Kernel {
         if (!readyQueue.contains(pcb)) readyQueue.addLast(pcb);
     }
 
+    public void addRequestIO(PCB pcb) {
+        if (!ioQueue.contains(pcb)) ioQueue.addLast(pcb);
+    }
+
+    public PCB getNextIORequest() {
+        if (ioQueue.isEmpty()) return null;
+        return ioQueue.peek();
+    }
+
+    public void removeIORequest(PCB pcb) {
+        ioQueue.remove(pcb);
+    }
+
+    public boolean ioQueueIsEmpty() {
+        return ioQueue.isEmpty();
+    }
+
     public PCB getJobFromReadyQueue() {
         return readyQueue.getFirst();
     }
