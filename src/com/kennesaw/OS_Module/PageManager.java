@@ -9,23 +9,23 @@ import memory.Ram;
 public class PageManager {
     
     int freeFramePool;
-    boolean isPageAvailable;
+    boolean pageAvailable;
     
     public PageManager(Ram ram) {
         freeFramePool = ram.getFreePages();
-        isPageAvailable = true;
+        pageAvailable = true;
     }
     
     public Page getFreePage() {
         freeFramePool--;
         if (freeFramePool == 0) {
-            isPageAvailable = false;
+            pageAvailable = false;
         }
         return new Page();
     }
     
-    public boolean getIsPageAvailable(){
-        return isPageAvailable;
+    public boolean isPageAvailable(){
+        return pageAvailable;
     }
     
 }

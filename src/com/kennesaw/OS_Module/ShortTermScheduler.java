@@ -49,16 +49,16 @@ public class ShortTermScheduler {
         int cpuIndex;
 
         // Continue to spin as long as the Kernel has ready jobs
-        while (simKernel.hasReadyJobs()) {
-            PCB nextJob = simKernel.getJobFromReadyQueue();
-            cpuIndex = findCPU();
-            while (cpuBank.get(cpuIndex).isRunningProcess());
-            if (nextJob.getStatus() == "Waiting") {
-                Analysis.recordWaitTime(nextJob.getJobID()-1);
-                cpuBank.get(cpuIndex).runPCB(nextJob);
-                simKernel.removeFromReadyQueue(nextJob);
-            }
-        }
+//        while (simKernel.hasReadyJobs()) {
+//            PCB nextJob = simKernel.getJobFromReadyQueue();
+//            cpuIndex = findCPU();
+//            while (cpuBank.get(cpuIndex).isRunningProcess());
+//            if (nextJob.getStatus() == "Waiting") {
+//                Analysis.recordWaitTime(nextJob.getJobID()-1);
+//                cpuBank.get(cpuIndex).runPCB(nextJob);
+//                simKernel.removeFromReadyQueue(nextJob);
+//            }
+//        }
 
         // Resets the number of jobs in RAM
         simRAM.resetJobCount();

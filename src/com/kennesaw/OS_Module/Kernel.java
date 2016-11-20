@@ -55,6 +55,7 @@ public class Kernel {
     
     public void addToPageFaultQueue(PCB pcb) {
         if (!pageFaultQueue.contains(pcb)) pageFaultQueue.addLast(pcb);
+        pcb.setStatus(2);
     }
     
     public PCB getJobFromPageFaultQueue() {
@@ -63,10 +64,12 @@ public class Kernel {
     
     public void removeFromPageFaultQueue(PCB pcb) {
         if (pageFaultQueue.contains(pcb)) pageFaultQueue.remove(pcb);
+        pcb.setStatus(1);
     }
     
     public void addToioQueueQueue(PCB pcb) {
         if (!ioQueue.contains(pcb)) ioQueue.addLast(pcb);
+        pcb.setStatus(2);
     }
     
     public PCB getJobFromioQueueQueue() {
@@ -75,6 +78,7 @@ public class Kernel {
     
     public void removeFromioQueueQueue(PCB pcb) {
         if (ioQueue.contains(pcb)) ioQueue.remove(pcb);
+        pcb.setStatus(1);
     }
     
     public boolean hasPageFaultJobs() {
