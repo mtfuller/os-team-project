@@ -8,5 +8,6 @@ Classes that are complete:
 - LongTermScheduler() writes each PCB's first four frames of instructions to RAM and then goes to sleep
 
 Currently working on:
-- ShortTermScheduler() - pageFaultQueue and ioQueue have been created
+- Kernel() - pageFaultQueue and ioQueue have been created
+- ShortTermScheduler() - hand off appropriate job to CPUs
 - PageManager() has freeFramePool which will track which pages in RAM are available for writing
