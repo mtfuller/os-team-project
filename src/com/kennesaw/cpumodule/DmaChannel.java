@@ -21,9 +21,9 @@ public class DmaChannel extends Thread{
     public void run() {
         while (isSystemRunning) {
             // Check for any PCB in I/O request queue
-            if (!kernel.ioQueueIsEmpty()) {
+            if (kernel.hasIOJobs()) {
                 // Get PCB
-                PCB ioPCB = kernel.getNextIORequest();
+                PCB ioPCB = kernel.getJobFromioQueueQueue();
 
                 // Determine the Cache-Frame that needs to be brought in
                 LogicalAddress logicalAddress = new LogicalAddress();
@@ -50,7 +50,7 @@ public class DmaChannel extends Thread{
                 // Restart the instruction by modifying the CpuState's PC, set PCB to ready, and remove io request
                 ioPCB.getState().decrementPc();
                 ioPCB.setStatus(PCB.READY_STATE);
-                kernel.removeIORequest(ioPCB);
+                kernel.removeFromioQueueQueue(ioPCB);
             }
         }
     }

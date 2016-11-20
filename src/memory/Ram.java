@@ -3,32 +3,32 @@ package memory;
 import java.util.Arrays;
 
 public class Ram {
-
+    
     Page newRAM[];
     int RAMlength;
-    int occupiedRAM;
+    int freePages;
     int jobsOnRam;
     private boolean mutexLock;
-
+    
     public Ram(int ramSpace) {
         RAMlength = ramSpace;
-        newRAM = new Page[256];
-        for (int i = 0; i < ramSpace; i++) {
+        newRAM = new Page[RAMlength];
+        for (int i = 0; i < RAMlength; i++) {
             newRAM[i] = new Page();
         }
-        occupiedRAM = 0;
+        freePages = ramSpace;
         jobsOnRam = 0;
         mutexLock = false;
     }
-
+    
     public boolean isLocked() {
         return mutexLock;
     }
-
+    
     public void lock() {
         mutexLock = true;
     }
-
+    
     public void unlock() {
         mutexLock = false;
     }
@@ -36,39 +36,23 @@ public class Ram {
     public void writeRam(int address, int pageOffset, long data) {
         newRAM[address].writeToPage(pageOffset, data);
     }
-
-    public void writePageToRam(int address, Page page) {
-        newRAM[address] = page;
-    }
-
-    public Page readPageFromRam(int index) {
-        return newRAM[index];
-    }
-
+    
     public long readRam(int index, int addressPage) {
         return newRAM[index].readPage(addressPage);
     }
-
-    public void setOccupiedRAM(int lastElement) {
-        occupiedRAM = lastElement;
+    
+    public int getFreePages() {
+        return freePages;
     }
-
-    public int getOccupiedRAM() {
-        return occupiedRAM;
-    }
-
-    public int getFreeRAMSpace() {
-        return 256 - getOccupiedRAM();
-    }
-
+    
     public int getJobsOnRam() {
         return jobsOnRam;
     }
-
+    
     public void resetJobCount() {
         jobsOnRam = 0;
     }
-
+    
     public void addedJobToRam() {
         jobsOnRam++;
     }
@@ -85,7 +69,6 @@ public class Ram {
         }
         return toReturn;
     }
-
-
+    
+    
 }
-

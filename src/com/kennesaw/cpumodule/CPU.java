@@ -12,19 +12,19 @@ public class CPU extends Thread{
     private MMU mmu;
     private LogicalAddress logicalAddress;
     private PCB currentPCB;
-
+    
     private volatile boolean isRunningProcess;
     private boolean isSpinning;
     private boolean isRunning;
-
+    
     private final boolean CACHE_ONLY = false;
     private final boolean DEBUG_MODE = true;
-
+    
     
     public CPU(int id, MMU mem) {
         cpuId = id;
         cpuState = new CpuState();
-        cache = null;
+        cache = new Cache();
         mmu = mem;
         logicalAddress = new LogicalAddress();
         isRunningProcess = false;
@@ -59,7 +59,6 @@ public class CPU extends Thread{
         logMessage("Setting pcb to PCB #"+pcb.getJobID());
         while (isSpinning);
         currentPCB = pcb;
-        cache = pcb.getState().getCache();
         isRunningProcess = true;
     }
     
@@ -84,7 +83,7 @@ public class CPU extends Thread{
         isSpinning = true;
         int ioInstructs = 0;
         int jobId = currentPCB.getJobID() - 1;
-
+        
         // Main Loop
         while(isSpinning) {
             // Get instruction from memory
@@ -137,7 +136,6 @@ public class CPU extends Thread{
     
     private synchronized long fetch(int addr) {
         logicalAddress.convertFromRawAddress(addr);
-        if (mmu.checkForInterrupt(logicalAddress, cache, currentPCB)) isSpinning = false;
         return mmu.readCache(logicalAddress, cache);
     }
     
@@ -266,7 +264,7 @@ public class CPU extends Thread{
                 "\n\n" +
                 cpuState.toString();
     }
-
+    
     private void logMessage(String message) {
         if (DEBUG_MODE) System.out.println("DEBUG | CPU "+cpuId+" | "+message);
     }

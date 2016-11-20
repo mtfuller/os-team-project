@@ -32,7 +32,7 @@ public class MMU {
                 // I/O Request
 
                 // ADD PROCESS TO KERNEL'S I/O QUEUE
-                kernel.addRequestIO(pcb);
+                kernel.addToioQueueQueue(pcb);
             }
             pcb.setStatus(PCB.WAITING_STATE);
             isInterrupt = true;

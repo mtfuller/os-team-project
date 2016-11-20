@@ -12,14 +12,14 @@ import com.kennesaw.cpumodule.DmaChannel;
 import memory.Ram;
 
 public class ShortTermScheduler {
-//    Ram simRAM;
-//    Kernel simKernel;
-//    ArrayList<CPU> cpuBank = new ArrayList<>();
-//    private int cpuIndexPtr = 0;
-//
-//    public ShortTermScheduler(Ram ram, Kernel kernel, int numCPUs) {
-//        simRAM = ram;
-//        simKernel = kernel;
+    Ram simRAM;
+    Kernel simKernel;
+    ArrayList<CPU> cpuBank = new ArrayList<>();
+    private int cpuIndexPtr = 0;
+
+    public ShortTermScheduler(Ram ram, Kernel kernel, int numCPUs) {
+        simRAM = ram;
+        simKernel = kernel;
 //        for (int i = 0; i < numCPUs; i++) {
 //            cpuBank.add(new CPU(new DmaChannel(simRAM), i));
 //            cpuBank.get(i).start();
@@ -28,27 +28,27 @@ public class ShortTermScheduler {
 //            double used = (double)simKernel.getPCB(i).getJobSize() / 1024.00;
 //            Analysis.recordRamSpace(i, used);
 //        }
-//    }
-//
-//    public int findCPU() {
-//        boolean openCpuFound = false;
-//
-//        // Spin until a free CPU is found in the CPU Bank
-//        while (!openCpuFound) {
-//            openCpuFound = (!cpuBank.get(cpuIndexPtr).isRunningProcess());
-//            if (openCpuFound) {
-//                break;
-//            } else {
-//                cpuIndexPtr = (++cpuIndexPtr) % cpuBank.size();
-//            }
-//        }
-//        return cpuIndexPtr;
-//    }
-//
-//    public void runSTS() {
-//        int cpuIndex;
-//
-//        // Continue to spin as long as the Kernel has ready jobs
+    }
+
+    public int findCPU() {
+        boolean openCpuFound = false;
+
+        // Spin until a free CPU is found in the CPU Bank
+        while (!openCpuFound) {
+            openCpuFound = (!cpuBank.get(cpuIndexPtr).isRunningProcess());
+            if (openCpuFound) {
+                break;
+            } else {
+                cpuIndexPtr = (++cpuIndexPtr) % cpuBank.size();
+            }
+        }
+        return cpuIndexPtr;
+    }
+
+    public void runSTS() {
+        int cpuIndex;
+
+        // Continue to spin as long as the Kernel has ready jobs
 //        while (simKernel.hasReadyJobs()) {
 //            PCB nextJob = simKernel.getJobFromReadyQueue();
 //            cpuIndex = findCPU();
@@ -59,13 +59,13 @@ public class ShortTermScheduler {
 //                simKernel.removeFromReadyQueue(nextJob);
 //            }
 //        }
-//
-//        // Resets the number of jobs in RAM
-//        simRAM.resetJobCount();
-//
-//        // Spin until all cpus have finished processing
-//        for (CPU cpu : cpuBank) {
-//            while (cpu.isRunningProcess());
-//        }
-//    }
+
+        // Resets the number of jobs in RAM
+        simRAM.resetJobCount();
+
+        // Spin until all cpus have finished processing
+        for (CPU cpu : cpuBank) {
+            while (cpu.isRunningProcess());
+        }
+    }
 }
