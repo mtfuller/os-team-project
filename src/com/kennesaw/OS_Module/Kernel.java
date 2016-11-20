@@ -8,15 +8,17 @@ import java.util.LinkedList;
  */
 
 // This class holds all PCBs and sorts when necessary
-    
-public class Kernel {
 
-    LinkedList<PCB> readyQueue;
+public class Kernel {
+    
     ArrayList<PCB> pcbQueue;
+    LinkedList<PCB> pageFaultQueue;
+    LinkedList<PCB> ioQueue;
     
     public Kernel() {
         pcbQueue = new ArrayList<>();
-        readyQueue = new LinkedList<>();
+        pageFaultQueue = new LinkedList<>();
+        ioQueue = new LinkedList<>();
     }
     
     public void sortPriority() {
@@ -50,24 +52,49 @@ public class Kernel {
     public void addPCB(int index, PCB newPCB) {
         pcbQueue.add(index, newPCB);
     }
-
-    public void addToReadyQueue(PCB pcb) {
-        if (!readyQueue.contains(pcb)) readyQueue.addLast(pcb);
+    
+    public void addToPageFaultQueue(PCB pcb) {
+        if (!pageFaultQueue.contains(pcb)) pageFaultQueue.addLast(pcb);
     }
-
-    public PCB getJobFromReadyQueue() {
-        return readyQueue.getFirst();
+    
+    public PCB getJobFromPageFaultQueue() {
+        return pageFaultQueue.getFirst();
     }
-
-    public void removeFromReadyQueue(PCB pcb) {
-        if (readyQueue.contains(pcb)) readyQueue.remove(pcb);
+    
+    public void removeFromPageFaultQueue(PCB pcb) {
+        if (pageFaultQueue.contains(pcb)) pageFaultQueue.remove(pcb);
     }
-
-    public boolean hasReadyJobs() {
-        return !readyQueue.isEmpty();
+    
+    public void addToioQueueQueue(PCB pcb) {
+        if (!ioQueue.contains(pcb)) ioQueue.addLast(pcb);
     }
-
+    
+    public PCB getJobFromioQueueQueue() {
+        return ioQueue.getFirst();
+    }
+    
+    public void removeFromioQueueQueue(PCB pcb) {
+        if (ioQueue.contains(pcb)) ioQueue.remove(pcb);
+    }
+    
+    public boolean hasPageFaultJobs() {
+        return !pageFaultQueue.isEmpty();
+    }
+    
+    public boolean hasIOJobs() {
+        return !ioQueue.isEmpty();
+    }
+    
     public int getQueueSize() {
         return pcbQueue.size();
     }
+    
+    public int getPageFaultSize() {
+        return pageFaultQueue.size();
+    }
+    
+    public int getIOSize() {
+        return ioQueue.size();
+    }
+    
 }

@@ -60,5 +60,4 @@ public class CpuState {
         for (byte i = 0; i < NUM_OF_REGISTERS; i++) retStr = retStr.concat("\n\tR" + i + ": \t" + getReg(i));
         return retStr;
     }
-    
 }

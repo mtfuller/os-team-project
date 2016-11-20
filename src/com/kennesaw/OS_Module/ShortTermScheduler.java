@@ -16,20 +16,20 @@ public class ShortTermScheduler {
     Kernel simKernel;
     ArrayList<CPU> cpuBank = new ArrayList<>();
     private int cpuIndexPtr = 0;
-    
+
     public ShortTermScheduler(Ram ram, Kernel kernel, int numCPUs) {
         simRAM = ram;
         simKernel = kernel;
-        for (int i = 0; i < numCPUs; i++) {
-            cpuBank.add(new CPU(new DmaChannel(simRAM), i));
-            cpuBank.get(i).start();
-        }
-        for(int i = 0; i < 30; i++) {
-            double used = (double)simKernel.getPCB(i).getJobSize() / 1024.00;
-            Analysis.recordRamSpace(i, used);
-        }
+//        for (int i = 0; i < numCPUs; i++) {
+//            cpuBank.add(new CPU(new DmaChannel(simRAM), i));
+//            cpuBank.get(i).start();
+//        }
+//        for(int i = 0; i < 30; i++) {
+//            double used = (double)simKernel.getPCB(i).getJobSize() / 1024.00;
+//            Analysis.recordRamSpace(i, used);
+//        }
     }
-    
+
     public int findCPU() {
         boolean openCpuFound = false;
 
@@ -44,7 +44,7 @@ public class ShortTermScheduler {
         }
         return cpuIndexPtr;
     }
-    
+
     public void runSTS() {
         int cpuIndex;
 
