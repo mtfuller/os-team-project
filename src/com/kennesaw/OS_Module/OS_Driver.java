@@ -13,9 +13,9 @@ import com.kennesaw.cpumodule.CPU;
 public class OS_Driver {
     
     Disk simDisk = new Disk(512);
-    PageManager pagemgr = new PageManager();
-    Ram simRAM = new Ram(256, pagemgr);
     Kernel simKernel = new Kernel();
+    Ram simRAM = new Ram(256);
+    PageManager pgMgr = new PageManager(simKernel, simRAM);
     Loader simLoader;
     
     // Ask user how many CPUs should be created
@@ -82,14 +82,12 @@ public class OS_Driver {
             System.out.println();
         }
         
+        simRAM.assignPageMgr(pgMgr);
         // Initialize Long-term and Short-term schedulers
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRAM);
         ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, (int)(Math.pow(2, cpus)));
         // While there are jobs on the Disk, schedule those jobs and send them to the CPU
-//        System.out.println(pagemgr.toString());
         simLTS.runLTS(simKernel);
-//        System.out.println(simRAM.toString());
-//        System.out.println(pagemgr.toString());
         simSTS.runSTS();
         // Waits for all CPUs to finish executing
         for (CPU cpu : simSTS.cpuBank) {

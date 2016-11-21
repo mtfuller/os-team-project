@@ -11,18 +11,18 @@ public class PageTable {
     
     int[] pageSpan;
     boolean[] valid;
-    int counter;
+    int pointer;
     
     public PageTable(int arraySize){
         pageSpan = new int[arraySize];
         valid = new boolean[arraySize];
-        counter = 0;
+        pointer = 0;
     }
     
     public void writePageTable(int pageNumber) {
-        pageSpan[counter] = pageNumber;
-        valid[counter] = true;
-        counter++;
+        pageSpan[pointer] = pageNumber;
+        valid[pointer] = true;
+        pointer++;
     }
     
     public int[] readPageTable(PCB pcb) {
@@ -39,6 +39,10 @@ public class PageTable {
     
     public void flipValid(int index) {
         valid[index] = !valid[index];
+    }
+    
+    public int getPointer() {
+        return pointer;
     }
     
 }

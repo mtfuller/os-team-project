@@ -24,10 +24,10 @@ public class ShortTermScheduler {
 //            cpuBank.add(new CPU(new DmaChannel(simRAM), i));
 //            cpuBank.get(i).start();
 //        }
-//        for(int i = 0; i < 30; i++) {
-//            double used = (double)simKernel.getPCB(i).getJobSize() / 1024.00;
-//            Analysis.recordRamSpace(i, used);
-//        }
+        for(int i = 0; i < 30; i++) {
+            double used = (double)simKernel.getPCB(i).getJobSize() / 1024.00;
+            Analysis.recordRamSpace(i, used);
+        }
     }
     
     public int findCPU() {
@@ -49,16 +49,16 @@ public class ShortTermScheduler {
         int cpuIndex;
         
         // Continue to spin as long as the Kernel has ready jobs
-//        while (simKernel.hasReadyJobs()) {
-//            PCB nextJob = simKernel.getJobFromReadyQueue();
-//            cpuIndex = findCPU();
-//            while (cpuBank.get(cpuIndex).isRunningProcess());
-//            if (nextJob.getStatus() == "Waiting") {
-//                Analysis.recordWaitTime(nextJob.getJobID()-1);
-//                cpuBank.get(cpuIndex).runPCB(nextJob);
-//                simKernel.removeFromReadyQueue(nextJob);
-//            }
-//        }
+        while (simKernel.getPCB(simKernel.pcbQueue.size()-1).getStatus() != "Ended") {
+            PCB nextJob = simKernel.getNextPCB();
+            cpuIndex = findCPU();
+            while (cpuBank.get(cpuIndex).isRunningProcess());
+            if (nextJob.getStatus() == "Waiting") {
+                Analysis.recordWaitTime(nextJob.getJobID()-1);
+                cpuBank.get(cpuIndex).runPCB(nextJob);
+                simKernel.getPCB(simKernel.pcbQueuePointer).setStatus(4);
+            }
+        }
         
         // Resets the number of jobs in RAM
         simRAM.resetJobCount();

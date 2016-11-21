@@ -12,16 +12,21 @@ public class Ram {
     int jobsOnRam;
     private boolean mutexLock;
     
-    public Ram(int ramSpace, PageManager pagemgr) {
+    public Ram(int ramSpace) {
         RAMlength = ramSpace;
         newRAM = new Page[RAMlength];
-        pageManager = pagemgr;
         for (int i = 0; i < RAMlength; i++) {
             newRAM[i] = new Page();
-            pageManager.addPageToPool(i);
         }
         jobsOnRam = 0;
         mutexLock = false;
+    }
+    
+    public void assignPageMgr(PageManager pgmgr) {
+        pageManager = pgmgr;
+        for (int i = 0; i < RAMlength; i++) {
+            pageManager.addPageToPool(i);
+        }
     }
     
     public boolean isLocked() {

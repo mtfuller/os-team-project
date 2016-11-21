@@ -54,7 +54,7 @@ public class DmaChannel extends Thread{
             }
         }
     }
-    
+
 //        private int effectiveAddr(int addr) {
 //        return addr / 4;
 //    }

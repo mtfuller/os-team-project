@@ -11,9 +11,15 @@ import java.util.ArrayList;
 public class PageManager extends Thread {
     
     ArrayList<Integer> freeFramePool;
+    Kernel simKernel;
+    Ram simRam;
+    private boolean isSystemRunning;
     
-    public PageManager() {
+    public PageManager(Kernel kern, Ram mem) {
+        simKernel = kern;
+        simRam = mem;
         freeFramePool = new ArrayList<>();
+        isSystemRunning = true;
     }
     
     public void addPageToPool(int pageNum) {
@@ -39,12 +45,24 @@ public class PageManager extends Thread {
         return (freeFramePool.size() != 0);
     }
     
+    public void run() {
+        while (isSystemRunning) {
+            if (simKernel.hasPageFaultJobs() && isPageAvailable()) {
+                for (int i = 0; i < 4; i++) {
+                    simRam.writeRam(freeFramePool.get(0), i, (simKernel.getJobFromPageFaultQueue().getDiskAddressBegin() + i));
+                }
+                simKernel.removeFromPageFaultQueue(simKernel.getJobFromPageFaultQueue());
+                removePageFromPool(freeFramePool.get(0));
+            }
+        }
+    }
+    
     public String toString() {
         String toReturn = "Pages Available for Writing:\n";
         for (int i = 0; i < freeFramePool.size(); i++) {
             toReturn += freeFramePool.get(i);
             toReturn += "   ";
-            if ((i+1) % 10 == 0) {
+            if ((i+1) % 16 == 0) {
                 toReturn += "\n";
             }
         }

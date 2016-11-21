@@ -14,11 +14,13 @@ public class Kernel {
     ArrayList<PCB> pcbQueue;
     LinkedList<PCB> pageFaultQueue;
     LinkedList<PCB> ioQueue;
+    int pcbQueuePointer;
     
     public Kernel() {
         pcbQueue = new ArrayList<>();
         pageFaultQueue = new LinkedList<>();
         ioQueue = new LinkedList<>();
+        pcbQueuePointer = 0;
     }
     
     public void sortPriority() {
@@ -47,6 +49,10 @@ public class Kernel {
     
     public PCB getPCB(int index) {
         return pcbQueue.get(index);
+    }
+    
+    public PCB getNextPCB() {
+        return pcbQueue.get(pcbQueuePointer);
     }
     
     public void addPCB(int index, PCB newPCB) {
