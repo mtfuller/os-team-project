@@ -6,7 +6,7 @@ import memory.Ram;
 /**
  * Created by Margaret on 11/16/2016.
  */
-public class PageManager {
+public class PageManager extends Thread {
     
     int freeFramePool;
     boolean pageAvailable;

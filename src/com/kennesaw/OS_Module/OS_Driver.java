@@ -86,12 +86,12 @@ public class OS_Driver {
         ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, (int)(Math.pow(2, cpus)));
         // While there are jobs on the Disk, schedule those jobs and send them to the CPU
         simLTS.runLTS(simKernel);
+        System.out.println(simRAM.toString());
         simSTS.runSTS();
-        
         // Waits for all CPUs to finish executing
-        for (CPU cpu : simSTS.cpuBank) {
-            cpu.endCPU();
-            cpu.join();
-        }
+//        for (CPU cpu : simSTS.cpuBank) {
+//            cpu.endCPU();
+//            cpu.join();
+//        }
     }
 }

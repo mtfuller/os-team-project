@@ -16,7 +16,7 @@ public class ShortTermScheduler {
     Kernel simKernel;
     ArrayList<CPU> cpuBank = new ArrayList<>();
     private int cpuIndexPtr = 0;
-
+    
     public ShortTermScheduler(Ram ram, Kernel kernel, int numCPUs) {
         simRAM = ram;
         simKernel = kernel;
@@ -29,10 +29,10 @@ public class ShortTermScheduler {
 //            Analysis.recordRamSpace(i, used);
 //        }
     }
-
+    
     public int findCPU() {
         boolean openCpuFound = false;
-
+        
         // Spin until a free CPU is found in the CPU Bank
         while (!openCpuFound) {
             openCpuFound = (!cpuBank.get(cpuIndexPtr).isRunningProcess());
@@ -44,10 +44,10 @@ public class ShortTermScheduler {
         }
         return cpuIndexPtr;
     }
-
+    
     public void runSTS() {
         int cpuIndex;
-
+        
         // Continue to spin as long as the Kernel has ready jobs
 //        while (simKernel.hasReadyJobs()) {
 //            PCB nextJob = simKernel.getJobFromReadyQueue();
@@ -59,10 +59,10 @@ public class ShortTermScheduler {
 //                simKernel.removeFromReadyQueue(nextJob);
 //            }
 //        }
-
+        
         // Resets the number of jobs in RAM
         simRAM.resetJobCount();
-
+        
         // Spin until all cpus have finished processing
         for (CPU cpu : cpuBank) {
             while (cpu.isRunningProcess());
