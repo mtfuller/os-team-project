@@ -47,8 +47,16 @@ public class Cache {
         return validBitMap[logAddr.getPageNumber()];
     }
     
+    public boolean isPageValid(int logAddr) {
+        return validBitMap[logAddr];
+    }
+    
     public boolean isPageModified(LogicalAddress logAddr) {
         return dirtyBitMap[logAddr.getPageNumber()];
+    }
+    
+    public boolean isPageModified(int logAddr) {
+        return dirtyBitMap[logAddr];
     }
     
     public int getCacheSize() {
