@@ -10,9 +10,8 @@
 
 <b>Currently working on:</b>
 <br>
-Kernel():
+<br>Kernel():
 - pageFaultQueue and ioQueue have been created
-
 ShortTermScheduler():
 - hand off appropriate job to CPUs
 
@@ -20,6 +19,6 @@ PageManager():
 - has freeFramePool which will track which pages in RAM are available for writing
 - has toString() method which lists pages in RAM that are available
 - has cleanPageTable() method which dumps a PCB's written pages back into the freeFramePool when the job's been run to completion
-    
+
 <br><b>Things to note:</b>
 - the RAM() object now takes a PageManager() as a parameter. All of the files in this branch have been updated to reflect that.
