@@ -24,10 +24,10 @@ public class LongTermScheduler {
         // Walk through each PCB in the Kernel
         for (int i = 0; i < simKernel.getQueueSize(); i++) {
             for (int j = 0; j < 4; j++) {
-                
-                //Write the first 4 pages of each PCB from Disk to Ram
-                simRAM.writeRam(ramPageCounter, simDisk.readDisk(simKernel.getPCB(i).getDiskAddressBegin() + j));
-                
+                for (int k = 0; k < 4; k++) {
+                    //Write the first 4 pages of each PCB from Disk to Ram
+                    simRAM.writeRam(ramPageCounter, k, simDisk.readDisk(simKernel.getPCB(i).getDiskAddressBegin() + j).readPage(k));
+                }
                 // Update the PCB's PageTable with the corresponding RAM page numbers
                 // Each entry's valid/invalid bit is automatically set to "true" when written
                 simKernel.getPCB(i).getPageTable().writePageTable(ramPageCounter);
@@ -35,15 +35,15 @@ public class LongTermScheduler {
             }
             simKernel.getPCB(i).setStatus(1);
         }
-
-            aquireLock();
-            releaseLock();
+        
+        aquireLock();
+        releaseLock();
     }
     private void aquireLock() {
         while(simRAM.isLocked());
         simRAM.lock();
     }
-
+    
     private void releaseLock() {
         simRAM.unlock();
     }
