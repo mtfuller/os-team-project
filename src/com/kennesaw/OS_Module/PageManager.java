@@ -1,5 +1,6 @@
 package com.kennesaw.OS_Module;
 
+import memory.Disk;
 import memory.Page;
 import memory.Ram;
 
@@ -13,11 +14,13 @@ public class PageManager extends Thread {
     ArrayList<Integer> freeFramePool;
     Kernel simKernel;
     Ram simRam;
+    Disk simDisk;
     private boolean isSystemRunning;
     
-    public PageManager(Kernel kern, Ram mem) {
+    public PageManager(Kernel kern, Ram mem, Disk disk) {
         simKernel = kern;
         simRam = mem;
+        simDisk = disk;
         freeFramePool = new ArrayList<>();
         isSystemRunning = true;
     }
@@ -49,7 +52,7 @@ public class PageManager extends Thread {
         while (isSystemRunning) {
             if (simKernel.hasPageFaultJobs() && isPageAvailable()) {
                 for (int i = 0; i < 4; i++) {
-                    simRam.writeRam(freeFramePool.get(0), i, (simKernel.getJobFromPageFaultQueue().getDiskAddressBegin() + i));
+                    simRam.writeRam(freeFramePool.get(0), i, simDisk.readDisk(simKernel.getJobFromPageFaultQueue().getDiskAddressBegin()).readPage(i));
                 }
                 simKernel.removeFromPageFaultQueue(simKernel.getJobFromPageFaultQueue());
                 removePageFromPool(freeFramePool.get(0));

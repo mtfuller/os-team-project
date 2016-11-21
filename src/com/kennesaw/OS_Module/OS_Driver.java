@@ -15,7 +15,7 @@ public class OS_Driver {
     Disk simDisk = new Disk(512);
     Kernel simKernel = new Kernel();
     Ram simRAM = new Ram(256);
-    PageManager pgMgr = new PageManager(simKernel, simRAM);
+    PageManager pgMgr = new PageManager(simKernel, simRAM, simDisk);
     Loader simLoader;
     
     // Ask user how many CPUs should be created
