@@ -33,9 +33,8 @@ public class Ram {
         mutexLock = false;
     }
     
-    public void writeRam(int address, Page page) {
-        newRAM[address] = page;
-        freePages--;
+    public void writeRam(int address, int pageOffset, long data) {
+        newRAM[address].writeToPage(pageOffset, data);
     }
     
     public long readRam(int index, int addressPage) {
@@ -62,7 +61,7 @@ public class Ram {
         String toReturn = "";
         
         for (int i = 0; i < newRAM.length; i++) {
-            toReturn += ("Page # " + (i + 1) + "-\n");
+            toReturn += ("Page # " + i + "-\n");
             for (int j = 0; j < 4; j++) {
                 toReturn += (readRam(i, j) + "\n");
             }

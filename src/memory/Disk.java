@@ -61,7 +61,7 @@ public class Disk {
         String toReturn = "";
         
         for (int i = 0; i < newDisk.length; i++) {
-            toReturn += ("Page # " + (i + 1) + "-\n");
+            toReturn += ("Page # " + i + "-\n");
             for (int j = 0; j < 4; j++) {
                 toReturn += (readDisk(i).readPage(j) + "\n");
             }
