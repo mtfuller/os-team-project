@@ -16,6 +16,7 @@ ShortTermScheduler():
 - hand off appropriate job to CPUs
 
 PageManager():
+- Initialized in OS_Driver and assigned to simRAM
 - has freeFramePool which will track which pages in RAM are available for writing
 - has toString() method which lists pages in RAM that are available
 - has cleanPageTable() method which dumps a PCB's written pages back into the freeFramePool when the job's been run to completion
