@@ -18,6 +18,6 @@
     <li> has cleanPageTable() method which dumps a PCB's written pages back into the freeFramePool when the job's been run to completion</li>
     <li> </li>
     <li> </li>
-    <li> </li>
+    <li> </li></ul>
 <b>Things to note:</b>
 - the RAM() object now takes a PageManager() as a parameter. All of the files in this branch have been updated to reflect that.
