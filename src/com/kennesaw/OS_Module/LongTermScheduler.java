@@ -20,7 +20,6 @@ public class LongTermScheduler {
     }
     
     public void runLTS(Kernel simKernel) {
-        
         // Walk through each PCB in the Kernel
         for (int i = 0; i < simKernel.getQueueSize(); i++) {
             for (int j = 0; j < 4; j++) {
@@ -35,9 +34,8 @@ public class LongTermScheduler {
             }
             simKernel.getPCB(i).setStatus(1);
         }
-
-            aquireLock();
-            releaseLock();
+        aquireLock();
+        releaseLock();
     }
     private void aquireLock() {
         while(simRAM.isLocked());

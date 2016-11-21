@@ -15,6 +15,37 @@ import static org.junit.Assert.*;
  * Created by Thomas on 10/9/2016.
  */
 public class MainOSTest {
+    @Test
+    public void osTest1() throws Exception {
+        System.out.println("Beginning OS Test...");
+
+        // Create Disk
+        Disk simDisk = new Disk(2048);
+
+        // Create Ram
+        Ram simRam = new Ram(1024);
+
+        // Create Kernel
+        Kernel simKernel = new Kernel();
+
+        // Create DMA Channel
+        DmaChannel dmaChannel = new DmaChannel(simRam, simKernel);
+
+        // Create Page Manager
+
+        // Create Loader
+        Loader simLoader = new Loader(simDisk, simKernel);
+
+        // Create Schedulers
+        LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRam);
+        ShortTermScheduler simSTS = new ShortTermScheduler(simRam, simKernel, 1);
+
+        simLTS.runLTS(simKernel);
+        simSTS.runSTS();
+
+        System.out.println("OS Test was successful!!!");
+    }
+
 //    @Test
 //    public void osFifoTest() throws InterruptedException {
 //        System.out.println("BEGINNING FIFO TEST WITH 4 CPUs...");
