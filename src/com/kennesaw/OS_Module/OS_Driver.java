@@ -13,7 +13,8 @@ import com.kennesaw.cpumodule.CPU;
 public class OS_Driver {
     
     Disk simDisk = new Disk(512);
-    Ram simRAM = new Ram(256);
+    PageManager pagemgr = new PageManager();
+    Ram simRAM = new Ram(256, pagemgr);
     Kernel simKernel = new Kernel();
     Loader simLoader;
     
@@ -85,13 +86,15 @@ public class OS_Driver {
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRAM);
         ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, (int)(Math.pow(2, cpus)));
         // While there are jobs on the Disk, schedule those jobs and send them to the CPU
+//        System.out.println(pagemgr.toString());
         simLTS.runLTS(simKernel);
-        System.out.println(simRAM.toString());
+//        System.out.println(simRAM.toString());
+//        System.out.println(pagemgr.toString());
         simSTS.runSTS();
         // Waits for all CPUs to finish executing
-//        for (CPU cpu : simSTS.cpuBank) {
-//            cpu.endCPU();
-//            cpu.join();
-//        }
+        for (CPU cpu : simSTS.cpuBank) {
+            cpu.endCPU();
+            cpu.join();
+        }
     }
 }

@@ -3,29 +3,51 @@ package com.kennesaw.OS_Module;
 import memory.Page;
 import memory.Ram;
 
+import java.util.ArrayList;
+
 /**
  * Created by Margaret on 11/16/2016.
  */
 public class PageManager extends Thread {
     
-    int freeFramePool;
-    boolean pageAvailable;
+    ArrayList<Integer> freeFramePool;
     
-    public PageManager(Ram ram) {
-        freeFramePool = ram.getFreePages();
-        pageAvailable = true;
+    public PageManager() {
+        freeFramePool = new ArrayList<>();
     }
     
-    public Page getFreePage() {
-        freeFramePool--;
-        if (freeFramePool == 0) {
-            pageAvailable = false;
+    public void addPageToPool(int pageNum) {
+        freeFramePool.add(pageNum);
+    }
+    
+    public void removePageFromPool(int pageNum) {
+        freeFramePool.remove(Integer.valueOf(pageNum));
+    }
+    
+    public void cleanPageTable(PCB pcb) {
+        for (int i = 0; i < pcb.getPageTable().pageSpan.length; i++) {
+            addPageToPool(pcb.getPageTable().pageSpan[i]);
+            pcb.getPageTable().flipValid(i);
         }
-        return new Page();
+    }
+    
+    public int numOfFreePages() {
+        return freeFramePool.size();
     }
     
     public boolean isPageAvailable(){
-        return pageAvailable;
+        return (freeFramePool.size() != 0);
     }
     
+    public String toString() {
+        String toReturn = "Pages Available for Writing:\n";
+        for (int i = 0; i < freeFramePool.size(); i++) {
+            toReturn += freeFramePool.get(i);
+            toReturn += "   ";
+            if ((i+1) % 10 == 0) {
+                toReturn += "\n";
+            }
+        }
+        return toReturn;
+    }
 }

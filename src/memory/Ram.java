@@ -1,22 +1,25 @@
 package memory;
 
+import com.kennesaw.OS_Module.PageManager;
+
 import java.util.Arrays;
 
 public class Ram {
     
     Page newRAM[];
     int RAMlength;
-    int freePages;
+    PageManager pageManager;
     int jobsOnRam;
     private boolean mutexLock;
     
-    public Ram(int ramSpace) {
+    public Ram(int ramSpace, PageManager pagemgr) {
         RAMlength = ramSpace;
         newRAM = new Page[RAMlength];
+        pageManager = pagemgr;
         for (int i = 0; i < RAMlength; i++) {
             newRAM[i] = new Page();
+            pageManager.addPageToPool(i);
         }
-        freePages = ramSpace;
         jobsOnRam = 0;
         mutexLock = false;
     }
@@ -35,14 +38,11 @@ public class Ram {
     
     public void writeRam(int address, int pageOffset, long data) {
         newRAM[address].writeToPage(pageOffset, data);
+        pageManager.removePageFromPool(address);
     }
     
     public long readRam(int index, int addressPage) {
         return newRAM[index].readPage(addressPage);
-    }
-    
-    public int getFreePages() {
-        return freePages;
     }
     
     public int getJobsOnRam() {
