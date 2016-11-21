@@ -20,5 +20,18 @@
 - hand off appropriate job to CPUs
 
 <br><b>Things to note:</b>
-- the findCPU() method in the STS isn't working, and I'm not sure what the problem is. I think the Dma requires an MMU as a parameter, but I'm not sure where to declare that?
+- <strike>the findCPU() method in the STS isn't working, and I'm not sure what the problem is. I think the Dma requires an MMU as a parameter, but I'm not sure where to declare that?</strike> Working now  &#10004;
 - Who should call the cleanPageTable() method when a job's complete? Would the CPU be able to do that, or should I call it from one of my classes?
+- I'm getting an error when I run the STS on 1 CPU, FIFO:
+
+Exception in thread "Thread-3" java.lang.NullPointerException
+  <br>  at com.kennesaw.cpumodule.Cache.readCache(Cache.java:38)
+	<br>  at com.kennesaw.cpumodule.MMU.readCache(MMU.java:43)
+	<br>  at com.kennesaw.cpumodule.CPU.fetch(CPU.java:139)
+	<br>  at com.kennesaw.cpumodule.CPU.runProcess(CPU.java:90)
+	<br>  at com.kennesaw.cpumodule.CPU.run(CPU.java:41)
+
+DEBUG | CPU 0 | Setting pcb to PCB #1
+<br>DEBUG | CPU 0 | Running Job #1
+
+Process finished with exit code 1
