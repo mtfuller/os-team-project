@@ -4,6 +4,7 @@ package memory;
  * Created by willw on 11/12/2016.
  */
 public class Page {
+    public static final int PAGE_SIZE = 4;
     
     long[] page;
     int wordsAvailable;
