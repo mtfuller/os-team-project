@@ -20,10 +20,10 @@ public class MainOSTest {
         System.out.println("Beginning OS Test...");
 
         // Create Disk
-        Disk simDisk = new Disk(2048);
+        Disk simDisk = new Disk(512);
 
         // Create Ram
-        Ram simRam = new Ram(1024);
+        Ram simRam = new Ram(256);
 
         // Create Kernel
         Kernel simKernel = new Kernel();
@@ -42,6 +42,9 @@ public class MainOSTest {
 
         simLTS.runLTS(simKernel);
         simSTS.runSTS();
+
+        JobSegementStructure jobSegementStructure = new JobSegementStructure();
+        System.out.println(jobSegementStructure.toString());
 
         System.out.println("OS Test was successful!!!");
     }

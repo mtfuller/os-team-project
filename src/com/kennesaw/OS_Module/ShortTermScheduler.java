@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import com.kennesaw.Analyzer.Analysis;
 import com.kennesaw.cpumodule.CPU;
 import com.kennesaw.cpumodule.DmaChannel;
+import com.kennesaw.cpumodule.MMU;
 import memory.Ram;
 
 public class ShortTermScheduler {
+    MMU simMMU;
     Ram simRAM;
     Kernel simKernel;
     ArrayList<CPU> cpuBank = new ArrayList<>();
@@ -20,6 +22,7 @@ public class ShortTermScheduler {
     public ShortTermScheduler(Ram ram, Kernel kernel, int numCPUs) {
         simRAM = ram;
         simKernel = kernel;
+        simMMU = new MMU(simKernel,simRAM);
 //        for (int i = 0; i < numCPUs; i++) {
 //            cpuBank.add(new CPU(new DmaChannel(simRAM), i));
 //            cpuBank.get(i).start();
