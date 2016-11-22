@@ -4,11 +4,11 @@ package memory;
 import com.kennesaw.OS_Module.PCB;
 
 public class Disk {
-
+    
     Page[] newDisk;
     int jobsOnDisk;
     int nextFreePage;
-
+    
     public Disk(int diskLength) {
         newDisk = new Page[diskLength];
         for (int i = 0; i < diskLength; i++) {
@@ -28,7 +28,7 @@ public class Disk {
             incNextFreePage();
         }
     }
-
+    
     public Page readDisk(int address) {
         return newDisk[address];
     }
@@ -40,28 +40,28 @@ public class Disk {
     public void incNextFreePage() {
         nextFreePage++;
     }
-
+    
     public int getJobSize(PCB pcb) {
         return pcb.getDiskAddressEnd() - pcb.getDiskAddressBegin();
     }
-
+    
     public int getJobsOnDisk() {
         return jobsOnDisk;
     }
-
+    
     public void addedJobToDisk() {
         jobsOnDisk++;
     }
-
+    
     public void removedJobFromDisk() {
         jobsOnDisk--;
     }
-
+    
     public String toString() {
         String toReturn = "";
-
+        
         for (int i = 0; i < newDisk.length; i++) {
-            toReturn += ("Page # " + (i + 1) + "-\n");
+            toReturn += ("Page # " + i + "-\n");
             for (int j = 0; j < 4; j++) {
                 toReturn += (readDisk(i).readPage(j) + "\n");
             }

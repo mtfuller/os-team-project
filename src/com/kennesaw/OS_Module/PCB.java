@@ -22,6 +22,7 @@ public class PCB {
     private int jobSize;  // Number of line instructions
     private String status;
     private PageTable pageTable;
+    private int pageTablePointer;
     private int diskAddressBegin; // Beginning address where job is located on Disk
     private int diskAddressEnd; // Beginning address where job is located on Disk
     private int RAMAddressBegin; // Long scheduler will write this to the PCBs
@@ -41,6 +42,7 @@ public class PCB {
         diskAddressBegin = 0;
         status = currentState[0];
         pageTable = new PageTable(jobSize);
+        pageTablePointer = 0;
         state = new CpuState();
         inputBuffer = new ArrayList<>();
         outputBuffer = new ArrayList<>();

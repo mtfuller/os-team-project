@@ -1,12 +1,14 @@
 package memory;
 
+import com.kennesaw.OS_Module.PageManager;
+
 import java.util.Arrays;
 
 public class Ram {
     
     Page newRAM[];
     int RAMlength;
-    int freePages;
+    PageManager pageManager;
     int jobsOnRam;
     private boolean mutexLock;
     
@@ -16,9 +18,15 @@ public class Ram {
         for (int i = 0; i < RAMlength; i++) {
             newRAM[i] = new Page();
         }
-        freePages = ramSpace;
         jobsOnRam = 0;
         mutexLock = false;
+    }
+    
+    public void assignPageMgr(PageManager pgmgr) {
+        pageManager = pgmgr;
+        for (int i = 0; i < RAMlength; i++) {
+            pageManager.addPageToPool(i);
+        }
     }
     
     public boolean isLocked() {
@@ -32,23 +40,20 @@ public class Ram {
     public void unlock() {
         mutexLock = false;
     }
+    
+    public void writeRam(int address, int pageOffset, long data) {
+        newRAM[address].writeToPage(pageOffset, data);
+        pageManager.removePageFromPool(address);
+    }
+    
+    public long readRam(int index, int addressPage) {
+        return newRAM[index].readPage(addressPage);
+    }
 
     public void writeRam(int address, Page page) {
         newRAM[address] = page;
     }
 
-    public void writeRam(int address, int pageOffset, long data) {
-        newRAM[address].writeToPage(pageOffset, data);
-    }
-
-    public long readRam(int index, int addressPage) {
-        return newRAM[index].readPage(addressPage);
-    }
-    
-    public int getFreePages() {
-        return freePages;
-    }
-    
     public int getJobsOnRam() {
         return jobsOnRam;
     }
@@ -65,7 +70,7 @@ public class Ram {
         String toReturn = "";
         
         for (int i = 0; i < newRAM.length; i++) {
-            toReturn += ("Page # " + (i + 1) + "-\n");
+            toReturn += ("Page # " + i + "-\n");
             for (int j = 0; j < 4; j++) {
                 toReturn += (readRam(i, j) + "\n");
             }
@@ -73,6 +78,4 @@ public class Ram {
         }
         return toReturn;
     }
-    
-    
 }
