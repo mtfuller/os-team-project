@@ -19,6 +19,10 @@ public class DmaChannel extends Thread{
         this.setName("DMA");
     }
 
+    public void endDMA() {
+        isSystemRunning = false;
+    }
+
     @Override
     public void run() {
         while (isSystemRunning) {

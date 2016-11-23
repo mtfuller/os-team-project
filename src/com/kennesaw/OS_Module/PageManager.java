@@ -80,4 +80,8 @@ public class PageManager extends Thread {
         }
         return toReturn;
     }
+
+    public void endPageManager() {
+        isSystemRunning = false;
+    }
 }
