@@ -144,9 +144,6 @@ public class CPU extends Thread{
     
     private synchronized long fetch(int addr) {
         logicalAddress.convertFromRawAddress(addr);
-        logMessage("Raw Address:"+addr);
-        logMessage("PAGE NUMBER: "+logicalAddress.getPageNumber());
-        logMessage("PAGE OFFSET: "+logicalAddress.getPageOffset());
         handleInterupt(logicalAddress);
         return mmu.readCache(logicalAddress, cache);
     }
@@ -264,8 +261,6 @@ public class CPU extends Thread{
         int wordAddr;
         switch (opcode) {
             case 0x00:
-                logMessage("ADDR: "+addr);
-
                 if (addr == 0) wordAddr = (int) cpuState.getReg(r2) / 4;
                 else wordAddr = addr / 4;
                 logicalAddress.convertFromRawAddress(wordAddr);

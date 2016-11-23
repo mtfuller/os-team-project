@@ -57,7 +57,7 @@ public class ShortTermScheduler {
         // Continue to spin as long as the Kernel has ready jobs
         while (simKernel.getQueueSize() > 0) {
             PCB nextJob = simKernel.getNextPCB();
-            System.out.println(nextJob.getStatus());
+            logMessage("Current JOB is: "+nextJob.getStatus());
             cpuIndex = findCPU();
             while (cpuBank.get(cpuIndex).isRunningProcess());
             if (nextJob.getStatus() == "Ready") {
@@ -80,5 +80,9 @@ public class ShortTermScheduler {
         for (CPU cpu : cpuBank) {
             while (cpu.isRunningProcess());
         }
+    }
+
+    private void logMessage(String message) {
+        System.out.println("DEBUG | STS | "+message);
     }
 }
