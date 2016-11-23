@@ -46,13 +46,15 @@ public class MainOSTest {
         simRam.assignPageMgr(pageManager);
         // Create Schedulers
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRam);
-        ShortTermScheduler simSTS = new ShortTermScheduler(simRam, simKernel, 1);
+        ShortTermScheduler simSTS = new ShortTermScheduler(simRam, simKernel, pageManager, 1);
 
         simLTS.runLTS(simKernel);
         simSTS.runSTS();
 
-        JobSegementStructure jobSegementStructure = new JobSegementStructure();
-        System.out.println(jobSegementStructure.toString());
+        for (CPU cpu : simSTS.cpuBank) {
+            cpu.endCPU();
+            cpu.join();
+        }
 
         System.out.println("OS Test was successful!!!");
     }

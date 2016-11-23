@@ -16,12 +16,18 @@ public class ShortTermScheduler {
     MMU simMMU;
     Ram simRAM;
     Kernel simKernel;
+    PageManager pageManager;
+    DmaChannel dmaChannel;
     ArrayList<CPU> cpuBank = new ArrayList<>();
     private int cpuIndexPtr = 0;
     
-    public ShortTermScheduler(Ram ram, Kernel kernel, int numCPUs) {
+    public ShortTermScheduler(Ram ram, Kernel kernel, PageManager pageMan, int numCPUs) {
         simRAM = ram;
         simKernel = kernel;
+        dmaChannel = new DmaChannel(simRAM, simKernel);
+        dmaChannel.start();
+        pageManager = pageMan;
+        pageManager.start();
         simMMU = new MMU(simKernel,simRAM);
         for (int i = 0; i < numCPUs; i++) {
             cpuBank.add(new CPU(i, simMMU));
@@ -49,19 +55,20 @@ public class ShortTermScheduler {
         int cpuIndex;
         
         // Continue to spin as long as the Kernel has ready jobs
-        while (simKernel.getPCB(simKernel.pcbQueue.size()-1).getStatus() != "Ended") {
+        while (simKernel.getQueueSize() > 0) {
             PCB nextJob = simKernel.getNextPCB();
             System.out.println(nextJob.getStatus());
             cpuIndex = findCPU();
             while (cpuBank.get(cpuIndex).isRunningProcess());
             if (nextJob.getStatus() == "Ready") {
-//                Analysis.recordWaitTime(nextJob.getJobID()-1);
+                // Analysis.recordWaitTime(nextJob.getJobID()-1);
                 cpuBank.get(cpuIndex).runPCB(nextJob);
-                simKernel.getPCB(simKernel.pcbQueuePointer).setStatus(PCB.WAITING_STATE);
+                simKernel.getPCB(simKernel.pcbQueuePointer).setStatus(PCB.RUNNING_STATE);
             } else if (nextJob.getStatus() == "Waiting") {
                 if (!simKernel.ioQueue.contains(nextJob) && !simKernel.pageFaultQueue.contains(nextJob))
                     nextJob.setStatus(PCB.READY_STATE);
             } else if (nextJob.getStatus() == "Ended") {
+                pageManager.cleanPageTable(nextJob);
                 simKernel.pcbQueue.remove(nextJob);
             }
         }

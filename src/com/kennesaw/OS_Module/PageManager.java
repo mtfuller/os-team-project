@@ -34,7 +34,7 @@ public class PageManager extends Thread {
         freeFramePool.remove(Integer.valueOf(pageNum));
     }
     
-    public void cleanPageTable(PCB pcb) {
+    public synchronized void cleanPageTable(PCB pcb) {
         for (int i = 0; i < pcb.getPageTable().pageSpan.length; i++) {
             addPageToPool(pcb.getPageTable().pageSpan[i]);
             pcb.getPageTable().flipValid(i);
@@ -56,10 +56,11 @@ public class PageManager extends Thread {
                     MemoryMapping memoryMapping = simKernel.getJobFromPageFaultQueue();
                     PCB currentPCB = memoryMapping.getPcbReference();
                     synchronized (currentPCB) {
-                        int diskIndex = currentPCB.getDiskAddressBegin() + memoryMapping.getDestIndex();
+                        int logicalIndex = memoryMapping.getDestIndex();
+                        int diskIndex = currentPCB.getDiskAddressBegin() + logicalIndex;
                         Integer pageIndex = freeFramePool.get(0);
                         simRam.writeRam(pageIndex, simDisk.readDisk(diskIndex));
-                        currentPCB.getPageTable().writePageTable(diskIndex, pageIndex);
+                        currentPCB.getPageTable().writePageTable(logicalIndex, pageIndex);
                         simKernel.removeFromPageFaultQueue(memoryMapping);
                         removePageFromPool(pageIndex);
                     }

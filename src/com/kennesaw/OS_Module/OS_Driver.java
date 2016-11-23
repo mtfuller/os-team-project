@@ -85,7 +85,7 @@ public class OS_Driver {
         simRAM.assignPageMgr(pgMgr);
         // Initialize Long-term and Short-term schedulers
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRAM);
-        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, (int)(Math.pow(2, cpus)));
+        ShortTermScheduler simSTS = new ShortTermScheduler(simRAM, simKernel, pgMgr, (int)(Math.pow(2, cpus)));
         // While there are jobs on the Disk, schedule those jobs and send them to the CPU
         simLTS.runLTS(simKernel);
         simSTS.runSTS();
