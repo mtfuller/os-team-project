@@ -6,39 +6,37 @@ package test.kennesaw.ramdump;
 public class JobSegementStructure {
     public static final byte NUMBER_OF_JOBS = 30;
 
-    public JobSegment[] jobSegments;
+    public JobPageSegment[] jobPageSegments;
 
     public JobSegementStructure() {
-        jobSegments = new JobSegment[NUMBER_OF_JOBS];
+        jobPageSegments = new JobPageSegment[NUMBER_OF_JOBS];
         build();
     }
 
     private void build() {
-        // Intialize settings
+        final int DATA_SIZE = 0x14 + 0xC + 0xC;
         int dataOffset = 0;
-        long[] initDump = ProgramFileData.initialRamDump;
-        long[] finalDump = ProgramFileData.finalRamDump;
 
-        // Iteratorate through each job from Program-File.txt
-        for (int jobId = 0; jobId < ProgramFileData.NUMBER_OF_JOBS; jobId++) {
-            //Get segment size of job (i.e. sum of instruction, input buffer, temp buffer, and output buffer sizes)
-            int segmentSize = ProgramFileData.jobSizes[jobId] + JobSegment.INPUT_SIZE + JobSegment.OUTPUT_SIZE +
-                    JobSegment.TEMP_SIZE;
-            jobSegments[jobId] = new JobSegment(jobId, ProgramFileData.jobSizes[jobId]);
+        for (int i = 0; i < ProgramFileData.NUMBER_OF_JOBS; i++) {
+            int instrSize = ProgramFileData.jobSizes[i];
+            int jobSize = instrSize + DATA_SIZE;
+            JobPageSegment newPage = new JobPageSegment(i, instrSize);
 
-            // Add Job Data
-            for (int index = 0; index < segmentSize; index++) {
-                jobSegments[jobId].setRawData(index, initDump[index + dataOffset], true);
-                jobSegments[jobId].setRawData(index, finalDump[index + dataOffset], false);
+            long[] jobArr = new long[jobSize];
+            for (int j = 0; j < jobArr.length; j++) {
+                jobArr[j] = ProgramFileData.initialRamDump[j + dataOffset];
             }
-            dataOffset += segmentSize;
+            newPage.addPagesFromRawInstructions(jobArr);
+            dataOffset += jobArr.length;
+
+            jobPageSegments[i] = newPage;
         }
     }
 
     @Override
     public String toString() {
         String retStr = "JOB SEGMENTS:\n\n";
-        for (JobSegment e : jobSegments) retStr += e.toString();
+        for (JobPageSegment e : jobPageSegments) retStr += e.toString();
         return retStr;
     }
 }

@@ -8,15 +8,19 @@ import java.util.LinkedList;
  */
 
 // This class holds all PCBs and sorts when necessary
-    
-public class Kernel {
 
-    LinkedList<PCB> readyQueue;
+public class Kernel {
+    
     ArrayList<PCB> pcbQueue;
+    LinkedList<MemoryMapping> pageFaultQueue;
+    LinkedList<MemoryMapping> ioQueue;
+    int pcbQueuePointer;
     
     public Kernel() {
         pcbQueue = new ArrayList<>();
-        readyQueue = new LinkedList<>();
+        pageFaultQueue = new LinkedList<>();
+        ioQueue = new LinkedList<>();
+        pcbQueuePointer = 0;
     }
     
     public void sortPriority() {
@@ -47,27 +51,60 @@ public class Kernel {
         return pcbQueue.get(index);
     }
     
+    public PCB getNextPCB() {
+        return pcbQueue.get(pcbQueuePointer);
+    }
+    
     public void addPCB(int index, PCB newPCB) {
         pcbQueue.add(index, newPCB);
     }
-
-    public void addToReadyQueue(PCB pcb) {
-        if (!readyQueue.contains(pcb)) readyQueue.addLast(pcb);
+    
+    public synchronized void addToPageFaultQueue(MemoryMapping memMap) {
+        if (!pageFaultQueue.contains(memMap)) pageFaultQueue.addLast(memMap);
+        //memMap.getPcbReference().setStatus(2);
     }
-
-    public PCB getJobFromReadyQueue() {
-        return readyQueue.getFirst();
+    
+    public synchronized MemoryMapping getJobFromPageFaultQueue() {
+        return pageFaultQueue.getFirst();
     }
-
-    public void removeFromReadyQueue(PCB pcb) {
-        if (readyQueue.contains(pcb)) readyQueue.remove(pcb);
+    
+    public synchronized void removeFromPageFaultQueue(MemoryMapping memoryMapping) {
+        if (pageFaultQueue.contains(memoryMapping)) pageFaultQueue.remove(memoryMapping);
+        //memoryMapping.getPcbReference().setStatus(1);
     }
-
-    public boolean hasReadyJobs() {
-        return !readyQueue.isEmpty();
+    
+    public synchronized void addToioQueueQueue(MemoryMapping memMap) {
+        if (!ioQueue.contains(memMap)) ioQueue.addLast(memMap);
+        //memMap.getPcbReference().setStatus(2);
     }
-
+    
+    public synchronized MemoryMapping getJobFromioQueueQueue() {
+        return ioQueue.getFirst();
+    }
+    
+    public synchronized void removeFromioQueueQueue(MemoryMapping memoryMapping) {
+        if (ioQueue.contains(memoryMapping)) ioQueue.remove(memoryMapping);
+        //memoryMapping.getPcbReference().setStatus(1);
+    }
+    
+    public synchronized boolean hasPageFaultJobs() {
+        return !pageFaultQueue.isEmpty();
+    }
+    
+    public synchronized boolean hasIOJobs() {
+        return !ioQueue.isEmpty();
+    }
+    
     public int getQueueSize() {
         return pcbQueue.size();
     }
+    
+    public int getPageFaultSize() {
+        return pageFaultQueue.size();
+    }
+    
+    public int getIOSize() {
+        return ioQueue.size();
+    }
+    
 }
