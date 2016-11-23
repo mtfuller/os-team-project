@@ -1,14 +1,4 @@
 <<<<<<< HEAD
-#Phase II Progress
-
-These are the classes that I believe are complete:
- - Loader() writes the ProgramFile to Disk()
- - Each PCB() now has pages to represent its 3 buffers
- - Each PCB() has a PageTable(), which is a collection of two arrays
- - LongTerm Scheduler() moves each PCB's 1st four Disk pages to RAM and then goes to sleep
-
-At this point, the program stops after the LTS goes to sleep. When the program is run, <br>a copy of the Disk() and RAM() are printed, as is each PCB's PageTable().
-=======
 # Phase II Progress
 
 Currently working on:
@@ -29,24 +19,9 @@ Currently working on:
 - has toString() method which lists pages in RAM that are available
 - has cleanPageTable() method which dumps a PCB's written pages back into the freeFramePool when the job's been run to completion
 
-<b>Currently working on:</b>
-<br>
-<br>ShortTermScheduler():
-- hand off appropriate job to CPUs
-
 <br><b>Things to note:</b>
 - <strike>the findCPU() method in the STS isn't working, and I'm not sure what the problem is. I think the Dma requires an MMU as a parameter, but I'm not sure where to declare that?</strike> Working now  &#10004;
 - Who should call the cleanPageTable() method when a job's complete? Would the CPU be able to do that, or should I call it from one of my classes?
-- I'm getting an error when I run the STS on 1 CPU, FIFO:
 
-Exception in thread "Thread-3" java.lang.NullPointerException
-  <br>  at com.kennesaw.cpumodule.Cache.readCache(Cache.java:38)
-	<br>  at com.kennesaw.cpumodule.MMU.readCache(MMU.java:43)
-	<br>  at com.kennesaw.cpumodule.CPU.fetch(CPU.java:139)
-	<br>  at com.kennesaw.cpumodule.CPU.runProcess(CPU.java:90)
-	<br>  at com.kennesaw.cpumodule.CPU.run(CPU.java:41)
 
-DEBUG | CPU 0 | Setting pcb to PCB #1
-<br>DEBUG | CPU 0 | Running Job #1
-
-Process finished with exit code 1
+- One Cpu, FIFO and SJF seem to work the best at this point.
