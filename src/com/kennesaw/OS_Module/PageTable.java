@@ -19,10 +19,9 @@ public class PageTable {
         pointer = 0;
     }
     
-    public void writePageTable(int pageNumber) {
-        pageSpan[pointer] = pageNumber;
-        valid[pointer] = true;
-        pointer++;
+    public void writePageTable(int logicalPageNumber, int pageNumber) {
+        pageSpan[logicalPageNumber] = pageNumber;
+        valid[logicalPageNumber] = true;
     }
     
     public int[] readPageTable(PCB pcb) {

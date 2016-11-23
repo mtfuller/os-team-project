@@ -53,10 +53,7 @@ public class MMU {
             if (cache.isPageModified(i) && cache.isPageValid(i)) {
                 int ramAddr = pageTable.getPage(i);
                 logicalAddress.setPageNumber(i);
-                for (byte b = 0; b < Page.PAGE_SIZE; b++) {
-                    logicalAddress.setPageOffset(b);
-                    ram.writeRam(ramAddr, b, readCache(logicalAddress, cache));
-                }
+                ram.writeRam(ramAddr, cache.readPage(i));
             }
         }
     }

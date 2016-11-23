@@ -23,36 +23,39 @@ public class DmaChannel extends Thread{
     public void run() {
         while (isSystemRunning) {
             // Check for any PCB in I/O request queue
-            if (kernel.hasIOJobs()) {
-                // Get PCB
-                MemoryMapping memoryMapping = kernel.getJobFromioQueueQueue();
-                PCB ioPCB = memoryMapping.getPcbReference();
+            synchronized (kernel) {
+                if (kernel.hasIOJobs()) {
+                    // Get PCB
+                    MemoryMapping memoryMapping = kernel.getJobFromioQueueQueue();
+                    PCB ioPCB = memoryMapping.getPcbReference();
+                    synchronized (ioPCB) {
+                        // Determine the Cache-Frame that needs to be brought in
+                        LogicalAddress logicalAddress = new LogicalAddress();
+                        int logicalPage = memoryMapping.getDestIndex();
+                        logicalAddress.setPageNumber(logicalPage);
 
-                // Determine the Cache-Frame that needs to be brought in
-                LogicalAddress logicalAddress = new LogicalAddress();
-                int logicalPage = memoryMapping.getDestIndex();
-                logicalAddress.setPageNumber(logicalPage);
+                        // Look through the PCB's page table to find out where the Page is in RAM
+                        PageTable pageTable = ioPCB.getPageTable();
+                        int ramAddr = pageTable.getPage(logicalPage);
 
-                // Look through the PCB's page table to find out where the Page is in RAM
-                PageTable pageTable = ioPCB.getPageTable();
-                int ramAddr = pageTable.getPage(logicalPage);
+                        // Get the page from RAM and load it into the PCB's cache.
+                        Cache pcbCache = ioPCB.getState().getCache();
+                        for (byte b = 0; b < Page.PAGE_SIZE; b++) {
+                            long data = memory.readRam(ramAddr, b);
+                            logicalAddress.setPageOffset(b);
+                            pcbCache.writeCache(logicalAddress, data);
+                        }
 
-                // Get the page from RAM and load it into the PCB's cache.
-                Cache pcbCache = ioPCB.getState().getCache();
-                for (byte b = 0; b < Page.PAGE_SIZE; b++) {
-                    long data = memory.readRam(ramAddr, b);
-                    logicalAddress.setPageOffset(b);
-                    pcbCache.writeCache(logicalAddress, data);
+                        // Set both the Cache's validBitTable to true and dirtyBitTable to false for this Page
+                        pcbCache.setValidPage(logicalPage, true);
+                        pcbCache.setDirtyPage(logicalPage, false);
+                    }
+
+                    // Restart the instruction by modifying the CpuState's PC, set PCB to ready, and remove io request
+                    //ioPCB.getState().decrementPc();
+                    memoryMapping.getPcbReference().setStatus(PCB.READY_STATE);
+                    kernel.removeFromioQueueQueue(memoryMapping);
                 }
-
-                // Set both the Cache's validBitTable to true and dirtyBitTable to false for this Page
-                pcbCache.setValidPage(logicalPage, true);
-                pcbCache.setDirtyPage(logicalPage, false);
-
-                // Restart the instruction by modifying the CpuState's PC, set PCB to ready, and remove io request
-                //ioPCB.getState().decrementPc();
-                memoryMapping.getPcbReference().setStatus(PCB.READY_STATE);
-                kernel.removeFromioQueueQueue(memoryMapping);
             }
         }
     }

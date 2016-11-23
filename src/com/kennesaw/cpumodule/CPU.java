@@ -18,6 +18,7 @@ public class CPU extends Thread{
     private boolean isRunning;
     private boolean isProcessStarted;
     private boolean isProcessComplete;
+    private boolean cpuIsInterupted;
     
     private final boolean CACHE_ONLY = false;
     private final boolean DEBUG_MODE = true;
@@ -34,6 +35,7 @@ public class CPU extends Thread{
         isSpinning = false;
         isProcessStarted = false;
         isProcessComplete = false;
+        cpuIsInterupted = false;
         this.setName("CPU "+cpuId);
     }
     
@@ -82,7 +84,7 @@ public class CPU extends Thread{
         Analysis.recordCPU((currentPCB.getJobID()-1), cpuId, used);
     }
     
-    private void runProcess() {
+    private synchronized void runProcess() {
         // Initial Settings
         isSpinning = true;
         int ioInstructs = 0;
@@ -120,17 +122,17 @@ public class CPU extends Thread{
                     ioInstructs++;
                     break;
             }
-            if (cpuState.getBase_addr() > 72) {
-                isSpinning = false;
-                break;
-            }
         }
-        // Save CPU State
+
+        if (cpuIsInterupted) {
+            currentPCB.setStatus(PCB.WAITING_STATE);
+            cpuState.decrementPc();
+            cpuIsInterupted = false;
+        }
 
         logMessage("Spun CPU with Process #"+(currentPCB.getJobID()+1));
-        Analysis.recordCompleteTime(currentPCB.getJobID()-1);
-        Analysis.recordIO(jobId, ioInstructs);
-        //currentPCB.setStatus(4);
+        //Analysis.recordCompleteTime(currentPCB.getJobID()-1);
+        //Analysis.recordIO(jobId, ioInstructs);
     }
     
     private synchronized void exportOutput() {
@@ -191,15 +193,16 @@ public class CPU extends Thread{
     }
     
     private synchronized void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
-        int acc;
+        int acc, wordAddr;
         switch (opcode) {
             case 0x02:
-                logicalAddress.convertFromRawAddress((int) cpuState.getReg(br));
+                wordAddr = (int) cpuState.getReg(br) / 4;
+                logicalAddress.convertFromRawAddress(wordAddr);
                 handleInterupt(logicalAddress);
                 mmu.writeCache(logicalAddress, cpuState.getReg(br), cache);
                 break;
             case 0x03:
-                int wordAddr = (int) cpuState.getReg(br) / 4;
+                wordAddr = (int) cpuState.getReg(br) / 4;
                 logicalAddress.convertFromRawAddress(wordAddr);
                 handleInterupt(logicalAddress);
                 long data = mmu.readCache(logicalAddress, cache);
@@ -258,21 +261,21 @@ public class CPU extends Thread{
     }
     
     private synchronized void executeIO(byte opcode, byte r1, byte r2, int addr) {
+        int wordAddr;
         switch (opcode) {
             case 0x00:
                 logMessage("ADDR: "+addr);
-                int wordAddr;
+
                 if (addr == 0) wordAddr = (int) cpuState.getReg(r2) / 4;
                 else wordAddr = addr / 4;
                 logicalAddress.convertFromRawAddress(wordAddr);
-                logMessage("LINE 266: LOGICAL ADDR PAGE#: "+logicalAddress.getPageNumber());
-                logMessage("LINE 267: LOGICAL ADDR PAGE OFFSET: "+logicalAddress.getPageOffset());
                 handleInterupt(logicalAddress);
                 cpuState.setReg(r1, mmu.readCache(logicalAddress,cache));
                 break;
             case 0x01:
-                if (r1 == r2) logicalAddress.convertFromRawAddress(addr);
-                else logicalAddress.convertFromRawAddress((int) cpuState.getReg(r2));
+                if (r1 == r2) wordAddr = addr / 4;
+                else wordAddr = (int) cpuState.getReg(r2) / 4;
+                logicalAddress.convertFromRawAddress(wordAddr);
                 handleInterupt(logicalAddress);
                 mmu.writeCache(logicalAddress, cpuState.getReg(r1), cache);
                 break;
@@ -282,7 +285,7 @@ public class CPU extends Thread{
     private void handleInterupt(LogicalAddress l) {
         if (mmu.checkForInterrupt(l, cache, currentPCB)) {
             isSpinning = false;
-            cpuState.decrementPc();
+            cpuIsInterupted = true;
         }
     }
     

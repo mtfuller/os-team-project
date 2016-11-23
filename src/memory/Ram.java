@@ -41,8 +41,11 @@ public class Ram {
         mutexLock = false;
     }
     
-    public void writeRam(int address, int pageOffset, long data) {
-        newRAM[address].writeToPage(pageOffset, data);
+    public void writeRam(int address, Page pageData)
+    {
+        for (byte b = 0; b < Page.PAGE_SIZE; b++) {
+            newRAM[address].writeToPage(b, pageData.readPage(b));
+        }
         pageManager.removePageFromPool(address);
     }
     
@@ -50,9 +53,9 @@ public class Ram {
         return newRAM[index].readPage(addressPage);
     }
 
-    public void writeRam(int address, Page page) {
+    /*public void writeRam(int address, Page page) {
         newRAM[address] = page;
-    }
+    }*/
 
     public int getJobsOnRam() {
         return jobsOnRam;

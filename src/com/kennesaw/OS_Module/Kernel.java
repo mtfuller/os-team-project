@@ -61,7 +61,7 @@ public class Kernel {
     
     public synchronized void addToPageFaultQueue(MemoryMapping memMap) {
         if (!pageFaultQueue.contains(memMap)) pageFaultQueue.addLast(memMap);
-        memMap.getPcbReference().setStatus(2);
+        //memMap.getPcbReference().setStatus(2);
     }
     
     public synchronized MemoryMapping getJobFromPageFaultQueue() {
@@ -70,12 +70,12 @@ public class Kernel {
     
     public synchronized void removeFromPageFaultQueue(MemoryMapping memoryMapping) {
         if (pageFaultQueue.contains(memoryMapping)) pageFaultQueue.remove(memoryMapping);
-        memoryMapping.getPcbReference().setStatus(1);
+        //memoryMapping.getPcbReference().setStatus(1);
     }
     
     public synchronized void addToioQueueQueue(MemoryMapping memMap) {
         if (!ioQueue.contains(memMap)) ioQueue.addLast(memMap);
-        memMap.getPcbReference().setStatus(2);
+        //memMap.getPcbReference().setStatus(2);
     }
     
     public synchronized MemoryMapping getJobFromioQueueQueue() {
@@ -84,7 +84,7 @@ public class Kernel {
     
     public synchronized void removeFromioQueueQueue(MemoryMapping memoryMapping) {
         if (ioQueue.contains(memoryMapping)) ioQueue.remove(memoryMapping);
-        memoryMapping.getPcbReference().setStatus(1);
+        //memoryMapping.getPcbReference().setStatus(1);
     }
     
     public synchronized boolean hasPageFaultJobs() {

@@ -35,6 +35,10 @@ public class Cache {
         dirtyBitMap[pageNumber] = isDirtyPage;
     }
 
+    public Page readPage(int pageNumber) {
+        return cache[pageNumber];
+    }
+
     public long readCache(LogicalAddress logAddr) {
         return cache[logAddr.getPageNumber()].readPage(logAddr.getPageOffset());
     }
