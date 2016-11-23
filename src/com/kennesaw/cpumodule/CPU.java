@@ -16,6 +16,8 @@ public class CPU extends Thread{
     private volatile boolean isRunningProcess;
     private boolean isSpinning;
     private boolean isRunning;
+    private boolean isProcessStarted;
+    private boolean isProcessComplete;
     
     private final boolean CACHE_ONLY = false;
     private final boolean DEBUG_MODE = true;
@@ -30,6 +32,9 @@ public class CPU extends Thread{
         isRunningProcess = false;
         isRunning = true;
         isSpinning = false;
+        isProcessStarted = false;
+        isProcessComplete = false;
+        this.setName("CPU "+cpuId);
     }
     
     @Override
@@ -39,8 +44,8 @@ public class CPU extends Thread{
                 logMessage("Running Job #"+currentPCB.getJobID());
                 if (!CACHE_ONLY) initializeCPU();
                 runProcess();
-                if (!CACHE_ONLY) exportOutput();
-                logMessage("Exported output");
+                //if (!CACHE_ONLY) exportOutput();
+                //logMessage("Exported output");
                 isRunningProcess = false;
                 logMessage("Set isRunningProcess to false");
             }
@@ -59,6 +64,8 @@ public class CPU extends Thread{
         logMessage("Setting pcb to PCB #"+pcb.getJobID());
         while (isSpinning);
         currentPCB = pcb;
+        cpuState = currentPCB.getState();
+        cache = cpuState.getCache();
         isRunningProcess = true;
     }
     
@@ -71,9 +78,6 @@ public class CPU extends Thread{
         }
         int addr = currentPCB.getRAMAddressBegin();
         int size = currentPCB.getJobSize();
-//        for (int i = 0; i < size; i++) {
-//            dmaChannel.writeCache(i*4, dmaChannel.readRAM((addr+i)*4));
-//        }
         double used = (double) size / cache.getCacheSize();
         Analysis.recordCPU((currentPCB.getJobID()-1), cpuId, used);
     }
@@ -121,10 +125,12 @@ public class CPU extends Thread{
                 break;
             }
         }
+        // Save CPU State
+
         logMessage("Spun CPU with Process #"+(currentPCB.getJobID()+1));
         Analysis.recordCompleteTime(currentPCB.getJobID()-1);
         Analysis.recordIO(jobId, ioInstructs);
-        currentPCB.setStatus(4);
+        //currentPCB.setStatus(4);
     }
     
     private synchronized void exportOutput() {
@@ -136,6 +142,10 @@ public class CPU extends Thread{
     
     private synchronized long fetch(int addr) {
         logicalAddress.convertFromRawAddress(addr);
+        logMessage("Raw Address:"+addr);
+        logMessage("PAGE NUMBER: "+logicalAddress.getPageNumber());
+        logMessage("PAGE OFFSET: "+logicalAddress.getPageOffset());
+        handleInterupt(logicalAddress);
         return mmu.readCache(logicalAddress, cache);
     }
     
@@ -185,10 +195,13 @@ public class CPU extends Thread{
         switch (opcode) {
             case 0x02:
                 logicalAddress.convertFromRawAddress((int) cpuState.getReg(br));
+                handleInterupt(logicalAddress);
                 mmu.writeCache(logicalAddress, cpuState.getReg(br), cache);
                 break;
             case 0x03:
-                logicalAddress.convertFromRawAddress((int) cpuState.getReg(br));
+                int wordAddr = (int) cpuState.getReg(br) / 4;
+                logicalAddress.convertFromRawAddress(wordAddr);
+                handleInterupt(logicalAddress);
                 long data = mmu.readCache(logicalAddress, cache);
                 cpuState.setReg(dr, data);
                 break;
@@ -236,6 +249,7 @@ public class CPU extends Thread{
         switch (opcode) {
             case 0x12:
                 isSpinning = false;
+                currentPCB.setStatus(PCB.ENDED_STATE);
                 break;
             case 0x14:
                 cpuState.setPc(addr);
@@ -246,15 +260,29 @@ public class CPU extends Thread{
     private synchronized void executeIO(byte opcode, byte r1, byte r2, int addr) {
         switch (opcode) {
             case 0x00:
-                if (addr == 0) logicalAddress.convertFromRawAddress((int) cpuState.getReg(r2));
-                else logicalAddress.convertFromRawAddress(addr);
+                logMessage("ADDR: "+addr);
+                int wordAddr;
+                if (addr == 0) wordAddr = (int) cpuState.getReg(r2) / 4;
+                else wordAddr = addr / 4;
+                logicalAddress.convertFromRawAddress(wordAddr);
+                logMessage("LINE 266: LOGICAL ADDR PAGE#: "+logicalAddress.getPageNumber());
+                logMessage("LINE 267: LOGICAL ADDR PAGE OFFSET: "+logicalAddress.getPageOffset());
+                handleInterupt(logicalAddress);
                 cpuState.setReg(r1, mmu.readCache(logicalAddress,cache));
                 break;
             case 0x01:
                 if (r1 == r2) logicalAddress.convertFromRawAddress(addr);
                 else logicalAddress.convertFromRawAddress((int) cpuState.getReg(r2));
+                handleInterupt(logicalAddress);
                 mmu.writeCache(logicalAddress, cpuState.getReg(r1), cache);
                 break;
+        }
+    }
+
+    private void handleInterupt(LogicalAddress l) {
+        if (mmu.checkForInterrupt(l, cache, currentPCB)) {
+            isSpinning = false;
+            cpuState.decrementPc();
         }
     }
     

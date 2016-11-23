@@ -3,7 +3,9 @@ package com.kennesaw.OS_Module;
 import com.kennesaw.Analyzer.Analysis;
 import com.kennesaw.cpumodule.CPU;
 import com.kennesaw.cpumodule.DmaChannel;
+import com.kennesaw.cpumodule.MMU;
 import memory.Disk;
+import memory.Page;
 import memory.Ram;
 import org.junit.Test;
 import test.kennesaw.ramdump.JobSegementStructure;
@@ -19,6 +21,8 @@ public class MainOSTest {
     public void osTest1() throws Exception {
         System.out.println("Beginning OS Test...");
 
+        Analysis.initializeDataTables();
+
         // Create Disk
         Disk simDisk = new Disk(512);
 
@@ -30,12 +34,16 @@ public class MainOSTest {
 
         // Create DMA Channel
         DmaChannel dmaChannel = new DmaChannel(simRam, simKernel);
+        dmaChannel.start();
 
         // Create Page Manager
+        PageManager pageManager = new PageManager(simKernel, simRam, simDisk);
+        pageManager.start();
 
         // Create Loader
         Loader simLoader = new Loader(simDisk, simKernel);
 
+        simRam.assignPageMgr(pageManager);
         // Create Schedulers
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRam);
         ShortTermScheduler simSTS = new ShortTermScheduler(simRam, simKernel, 1);

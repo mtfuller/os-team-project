@@ -13,6 +13,7 @@ public class Page {
     public Page(){
         page = new long[4];
         wordsAvailable = 4;
+        for (byte b = 0; b < PAGE_SIZE; b++) page[b] = 0L;
         isFull = false;
     }
     

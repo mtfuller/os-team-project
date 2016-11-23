@@ -11,6 +11,7 @@ import com.kennesaw.cpumodule.CpuState;
 import memory.Page;
 
 public class PCB {
+
     public static final int NEW_STATE = 0;
     public static final int READY_STATE = 1;
     public static final int WAITING_STATE = 2;

@@ -23,21 +23,10 @@ public class ShortTermScheduler {
         simRAM = ram;
         simKernel = kernel;
         simMMU = new MMU(simKernel,simRAM);
-<<<<<<< HEAD
-//        for (int i = 0; i < numCPUs; i++) {
-//            cpuBank.add(new CPU(new DmaChannel(simRAM), i));
-//            cpuBank.get(i).start();
-//        }
-=======
         for (int i = 0; i < numCPUs; i++) {
             cpuBank.add(new CPU(i, simMMU));
             cpuBank.get(i).start();
         }
->>>>>>> origin/Phase_2
-//        for(int i = 0; i < 30; i++) {
-//            double used = (double)simKernel.getPCB(i).getJobSize() / 1024.00;
-//            Analysis.recordRamSpace(i, used);
-//        }
     }
     
     
@@ -68,7 +57,12 @@ public class ShortTermScheduler {
             if (nextJob.getStatus() == "Ready") {
 //                Analysis.recordWaitTime(nextJob.getJobID()-1);
                 cpuBank.get(cpuIndex).runPCB(nextJob);
-                simKernel.getPCB(simKernel.pcbQueuePointer).setStatus(4);
+                simKernel.getPCB(simKernel.pcbQueuePointer).setStatus(PCB.WAITING_STATE);
+            } else if (nextJob.getStatus() == "Waiting") {
+                if (!simKernel.ioQueue.contains(nextJob) && !simKernel.pageFaultQueue.contains(nextJob))
+                    nextJob.setStatus(PCB.READY_STATE);
+            } else if (nextJob.getStatus() == "Ended") {
+                simKernel.pcbQueue.remove(nextJob);
             }
         }
     

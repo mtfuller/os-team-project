@@ -1,6 +1,7 @@
 package com.kennesaw.cpumodule;
 
 import com.kennesaw.OS_Module.Kernel;
+import com.kennesaw.OS_Module.MemoryMapping;
 import com.kennesaw.OS_Module.PCB;
 import com.kennesaw.OS_Module.PageTable;
 import memory.Page;
@@ -18,35 +19,32 @@ public class MMU {
         ram = mem;
     }
 
-    public boolean checkForInterrupt(LogicalAddress logicalAddress, Cache cache, PCB pcb) {
+    public synchronized boolean checkForInterrupt(LogicalAddress logicalAddress, Cache cache, PCB pcb) {
         boolean isInterrupt = false;
         int pageNumber = logicalAddress.getPageNumber();
         if (!cache.isPageValid(logicalAddress)) {
-            // IF PAGE IS NOT IN CACHE
-            if (pcb.getPageTable().getValid(pageNumber)) {
-                // IF PAGE IS NOT IN MEMORY
-
+            if (!pcb.getPageTable().getValid(pageNumber)) {
                 // PAGE FAULT
-                // ADD PROCESS TO KERNEL'S PAGE FAULT QUEUE
+                kernel.addToPageFaultQueue(new MemoryMapping(pcb, logicalAddress.getPageNumber()));
             } else {
                 // I/O Request
-
-                // ADD PROCESS TO KERNEL'S I/O QUEUE
-                kernel.addToioQueueQueue(pcb);
+                kernel.addToioQueueQueue(new MemoryMapping(pcb, logicalAddress.getPageNumber()));
             }
             pcb.setStatus(PCB.WAITING_STATE);
             isInterrupt = true;
         }
         return isInterrupt;
     }
-    public long readCache(LogicalAddress logicalAddress, Cache cache) {
+
+    public synchronized long readCache(LogicalAddress logicalAddress, Cache cache) {
         return cache.readCache(logicalAddress);
     }
 
-    public void writeCache(LogicalAddress logicalAddress, long data, Cache cache) {
+    public synchronized void writeCache(LogicalAddress logicalAddress, long data, Cache cache) {
         cache.writeCache(logicalAddress, data);
     }
-    public void writeCacheToRAM(PCB pcb) {
+
+    public synchronized void writeCacheToRAM(PCB pcb) {
         LogicalAddress logicalAddress = new LogicalAddress();
         Cache cache = pcb.getState().getCache();
         PageTable pageTable = pcb.getPageTable();

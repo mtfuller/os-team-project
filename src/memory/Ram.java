@@ -25,7 +25,7 @@ public class Ram {
     public void assignPageMgr(PageManager pgmgr) {
         pageManager = pgmgr;
         for (int i = 0; i < RAMlength; i++) {
-            pageManager.addPageToPool(i);
+            pageManager.addPageToPool(new Integer(i));
         }
     }
     

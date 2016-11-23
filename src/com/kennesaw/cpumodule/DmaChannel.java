@@ -1,6 +1,7 @@
 package com.kennesaw.cpumodule;
 
 import com.kennesaw.OS_Module.Kernel;
+import com.kennesaw.OS_Module.MemoryMapping;
 import com.kennesaw.OS_Module.PCB;
 import com.kennesaw.OS_Module.PageTable;
 import memory.Page;
@@ -15,6 +16,7 @@ public class DmaChannel extends Thread{
         memory = mem;
         kernel = kern;
         isSystemRunning = true;
+        this.setName("DMA");
     }
 
     @Override
@@ -23,13 +25,13 @@ public class DmaChannel extends Thread{
             // Check for any PCB in I/O request queue
             if (kernel.hasIOJobs()) {
                 // Get PCB
-                PCB ioPCB = kernel.getJobFromioQueueQueue();
+                MemoryMapping memoryMapping = kernel.getJobFromioQueueQueue();
+                PCB ioPCB = memoryMapping.getPcbReference();
 
                 // Determine the Cache-Frame that needs to be brought in
                 LogicalAddress logicalAddress = new LogicalAddress();
-                CpuState tempState = ioPCB.getState();
-                logicalAddress.convertFromRawAddress(tempState.getPc());
-                int logicalPage = logicalAddress.getPageNumber();
+                int logicalPage = memoryMapping.getDestIndex();
+                logicalAddress.setPageNumber(logicalPage);
 
                 // Look through the PCB's page table to find out where the Page is in RAM
                 PageTable pageTable = ioPCB.getPageTable();
@@ -48,9 +50,9 @@ public class DmaChannel extends Thread{
                 pcbCache.setDirtyPage(logicalPage, false);
 
                 // Restart the instruction by modifying the CpuState's PC, set PCB to ready, and remove io request
-                ioPCB.getState().decrementPc();
-                ioPCB.setStatus(PCB.READY_STATE);
-                kernel.removeFromioQueueQueue(ioPCB);
+                //ioPCB.getState().decrementPc();
+                memoryMapping.getPcbReference().setStatus(PCB.READY_STATE);
+                kernel.removeFromioQueueQueue(memoryMapping);
             }
         }
     }

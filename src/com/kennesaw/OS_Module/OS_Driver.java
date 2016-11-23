@@ -89,10 +89,10 @@ public class OS_Driver {
         // While there are jobs on the Disk, schedule those jobs and send them to the CPU
         simLTS.runLTS(simKernel);
         simSTS.runSTS();
-        // Waits for all CPUs to finish executing
-//        for (CPU cpu : simSTS.cpuBank) {
-//            cpu.endCPU();
-//            cpu.join();
-//        }
+        //Waits for all CPUs to finish executing
+        for (CPU cpu : simSTS.cpuBank) {
+            cpu.endCPU();
+            cpu.join();
+        }
     }
 }

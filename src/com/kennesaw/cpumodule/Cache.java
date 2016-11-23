@@ -19,6 +19,7 @@ public class Cache {
         validBitMap = new boolean[CACHE_SIZE];
         dirtyBitMap = new boolean[CACHE_SIZE];
         for (int i = 0; i < CACHE_SIZE; i++) {
+            cache[i] = new Page();
             validBitMap[i] = false;
             dirtyBitMap[i] = false;
         }
