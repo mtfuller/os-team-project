@@ -80,6 +80,16 @@ public class ShortTermScheduler {
         for (CPU cpu : cpuBank) {
             while (cpu.isRunningProcess());
         }
+
+        // Ending PageManager and DMA Channel
+        pageManager.endPageManager();
+        dmaChannel.endDMA();
+        try {
+            pageManager.join();
+            dmaChannel.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void logMessage(String message) {
