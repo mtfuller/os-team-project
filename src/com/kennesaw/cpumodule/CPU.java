@@ -196,7 +196,7 @@ public class CPU extends Thread{
         int acc, wordAddr;
         switch (opcode) {
             case 0x02:
-                wordAddr = (int) cpuState.getReg(br) / 4;
+                wordAddr = (int) cpuState.getReg(dr) / 4;
                 logicalAddress.convertFromRawAddress(wordAddr);
                 handleInterupt(logicalAddress);
                 mmu.writeCache(logicalAddress, cpuState.getReg(br), cache);
