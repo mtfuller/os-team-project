@@ -19,7 +19,7 @@ public class PageTable {
         pointer = 0;
     }
     
-    public void writePageTable(int logicalPageNumber, int pageNumber) {
+    public synchronized void writePageTable(int logicalPageNumber, int pageNumber) {
         pageSpan[logicalPageNumber] = pageNumber;
         valid[logicalPageNumber] = true;
     }
@@ -28,15 +28,15 @@ public class PageTable {
         return pageSpan;
     }
     
-    public int getPage(int pageNum) {
+    public synchronized int getPage(int pageNum) {
         return pageSpan[pageNum];
     }
     
-    public boolean getValid(int index) {
+    public synchronized boolean getValid(int index) {
         return valid[index];
     }
     
-    public void flipValid(int index) {
+    public synchronized void flipValid(int index) {
         valid[index] = !valid[index];
     }
     

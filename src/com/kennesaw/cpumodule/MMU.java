@@ -22,16 +22,21 @@ public class MMU {
     public synchronized boolean checkForInterrupt(LogicalAddress logicalAddress, Cache cache, PCB pcb) {
         boolean isInterrupt = false;
         int pageNumber = logicalAddress.getPageNumber();
-        if (!cache.isPageValid(logicalAddress)) {
-            if (!pcb.getPageTable().getValid(pageNumber)) {
-                // PAGE FAULT
-                kernel.addToPageFaultQueue(new MemoryMapping(pcb, logicalAddress.getPageNumber()));
-            } else {
-                // I/O Request
-                kernel.addToioQueueQueue(new MemoryMapping(pcb, logicalAddress.getPageNumber()));
+        try {
+            if (!cache.isPageValid(logicalAddress)) {
+                if (!pcb.getPageTable().getValid(pageNumber)) {
+                    // PAGE FAULT
+                    kernel.addToPageFaultQueue(pcb, logicalAddress.getPageNumber());
+                } else {
+                    // I/O Request
+                    kernel.addToioQueueQueue(pcb, logicalAddress.getPageNumber());
+                }
+                pcb.setStatus(PCB.WAITING_STATE);
+                isInterrupt = true;
             }
-            pcb.setStatus(PCB.WAITING_STATE);
-            isInterrupt = true;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println(cache.toString());
+            e.printStackTrace();
         }
         return isInterrupt;
     }

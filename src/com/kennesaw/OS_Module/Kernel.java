@@ -12,18 +12,18 @@ import java.util.LinkedList;
 public class Kernel {
     
     ArrayList<PCB> pcbQueue;
-    LinkedList<MemoryMapping> pageFaultQueue;
-    LinkedList<MemoryMapping> ioQueue;
+    MemoryMapping pageFaultQueue;
+    MemoryMapping ioQueue;
     int pcbQueuePointer;
     
     public Kernel() {
         pcbQueue = new ArrayList<>();
-        pageFaultQueue = new LinkedList<>();
-        ioQueue = new LinkedList<>();
+        pageFaultQueue = new MemoryMapping();
+        ioQueue = new MemoryMapping();
         pcbQueuePointer = 0;
     }
     
-    public void sortPriority() {
+    public synchronized void sortPriority() {
         for (int j = 1; j < pcbQueue.size(); j++) {
             PCB key = pcbQueue.get(j);
             int i = j - 1;
@@ -35,7 +35,7 @@ public class Kernel {
         }
     }
     
-    public void sortSJF() {
+    public synchronized void sortSJF() {
         for (int j = 1; j < pcbQueue.size(); j++) {
             PCB key = pcbQueue.get(j);
             int i = j - 1;
@@ -47,44 +47,48 @@ public class Kernel {
         }
     }
     
-    public PCB getPCB(int index) {
+    public synchronized PCB getPCB(int index) {
         return pcbQueue.get(index);
     }
     
-    public PCB getNextPCB() {
+    public synchronized PCB getNextPCB() {
         return pcbQueue.get(pcbQueuePointer);
     }
     
-    public void addPCB(int index, PCB newPCB) {
+    public synchronized void addPCB(int index, PCB newPCB) {
         pcbQueue.add(index, newPCB);
     }
     
-    public synchronized void addToPageFaultQueue(MemoryMapping memMap) {
-        if (!pageFaultQueue.contains(memMap)) pageFaultQueue.addLast(memMap);
-        //memMap.getPcbReference().setStatus(2);
+    public synchronized void addToPageFaultQueue(PCB pcb, Integer integer) {
+        pageFaultQueue.addPageToPCB(pcb, integer);
     }
     
-    public synchronized MemoryMapping getJobFromPageFaultQueue() {
-        return pageFaultQueue.getFirst();
+    public synchronized PCB getJobFromPageFaultQueue() {
+        return pageFaultQueue.getNextPCB();
+    }
+
+    public synchronized ArrayList<Integer> getPagesFromPageFaultQueue(PCB pcb) {
+        return pageFaultQueue.getPagesForPCB(pcb);
     }
     
-    public synchronized void removeFromPageFaultQueue(MemoryMapping memoryMapping) {
-        if (pageFaultQueue.contains(memoryMapping)) pageFaultQueue.remove(memoryMapping);
-        //memoryMapping.getPcbReference().setStatus(1);
+    public synchronized void removeFromPageFaultQueue(PCB pcb) {
+        pageFaultQueue.removeFromQueue(pcb);
     }
     
-    public synchronized void addToioQueueQueue(MemoryMapping memMap) {
-        if (!ioQueue.contains(memMap)) ioQueue.addLast(memMap);
-        //memMap.getPcbReference().setStatus(2);
+    public synchronized void addToioQueueQueue(PCB pcb, Integer integer) {
+        ioQueue.addPageToPCB(pcb, integer);
     }
     
-    public synchronized MemoryMapping getJobFromioQueueQueue() {
-        return ioQueue.getFirst();
+    public synchronized PCB getJobFromioQueueQueue() {
+        return ioQueue.getNextPCB();
+    }
+
+    public synchronized ArrayList<Integer> getPagesFromIoQueue(PCB pcb) {
+        return ioQueue.getPagesForPCB(pcb);
     }
     
-    public synchronized void removeFromioQueueQueue(MemoryMapping memoryMapping) {
-        if (ioQueue.contains(memoryMapping)) ioQueue.remove(memoryMapping);
-        //memoryMapping.getPcbReference().setStatus(1);
+    public synchronized void removeFromioQueueQueue(PCB pcb) {
+        ioQueue.removeFromQueue(pcb);
     }
     
     public synchronized boolean hasPageFaultJobs() {
@@ -95,7 +99,7 @@ public class Kernel {
         return !ioQueue.isEmpty();
     }
     
-    public int getQueueSize() {
+    public synchronized int getQueueSize() {
         return pcbQueue.size();
     }
     

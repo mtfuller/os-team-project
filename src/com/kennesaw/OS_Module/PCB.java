@@ -50,7 +50,7 @@ public class PCB {
         tempBuffer = new ArrayList<>();
     }
     
-    public int getJobID() {
+    public synchronized int getJobID() {
         return jobID;
     }
     
@@ -58,7 +58,7 @@ public class PCB {
         this.jobID = jobID;
     }
     
-    public int getPriority() {
+    public synchronized int getPriority() {
         return priority;
     }
     
@@ -66,7 +66,7 @@ public class PCB {
         this.priority = priority;
     }
     
-    public int getJobSize() {
+    public synchronized int getJobSize() {
         return (getDiskAddressEnd()-getDiskAddressBegin());
     }
     
@@ -74,31 +74,31 @@ public class PCB {
         this.jobSize = jobSize;
     }
     
-    public String getStatus() {
+    public synchronized String getStatus() {
         return status;
     }
     
-    public void setStatus(int status) {
+    public synchronized void setStatus(int status) {
         this.status = currentState[status];
     }
     
-    public PageTable getPageTable() {
+    public synchronized PageTable getPageTable() {
         return pageTable;
     }
     
-    public int getDiskAddressBegin() {
+    public synchronized int getDiskAddressBegin() {
         return diskAddressBegin;
     }
     
-    public void setDiskAddressBegin(int diskAddressBegin) {
+    public synchronized void setDiskAddressBegin(int diskAddressBegin) {
         this.diskAddressBegin = diskAddressBegin;
     }
     
-    public int getDiskAddressEnd() {
+    public synchronized int getDiskAddressEnd() {
         return diskAddressEnd;
     }
     
-    public void setDiskAddressEnd(int diskAddressEnd) {
+    public synchronized void setDiskAddressEnd(int diskAddressEnd) {
         this.diskAddressEnd = diskAddressEnd;
     }
 
@@ -111,7 +111,7 @@ public class PCB {
 //        state.setBase_addr(addr);
 //    }
     
-    public int getRAMAddressBegin() {
+    public synchronized int getRAMAddressBegin() {
         return RAMAddressBegin;
     }
     
@@ -132,13 +132,13 @@ public class PCB {
         return inputBuffer;
     }
     
-    public void setInputBuffer(int input) {
+    public synchronized void setInputBuffer(int input) {
         for (int i = 0; i < (input/4); i++) {
             inputBuffer.add(new Page());
         }
     }
     
-    public ArrayList getOutputBuffer() {
+    public synchronized ArrayList getOutputBuffer() {
         return outputBuffer;
     }
     
@@ -152,13 +152,13 @@ public class PCB {
         return tempBuffer;
     }
     
-    public void setTempBuffer(int temp) {
+    public synchronized void setTempBuffer(int temp) {
         for (int i = 0; i < (temp/4); i++) {
             inputBuffer.add(new Page());
         }
     }
     
-    public CpuState getState() {
+    public synchronized CpuState getState() {
         return state;
     }
     

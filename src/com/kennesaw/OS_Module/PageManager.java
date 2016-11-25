@@ -51,19 +51,15 @@ public class PageManager extends Thread {
     
     public void run() {
         while (isSystemRunning) {
-            synchronized (simKernel) {
-                if (simKernel.hasPageFaultJobs() && isPageAvailable()) {
-                    MemoryMapping memoryMapping = simKernel.getJobFromPageFaultQueue();
-                    PCB currentPCB = memoryMapping.getPcbReference();
-                    synchronized (currentPCB) {
-                        int logicalIndex = memoryMapping.getDestIndex();
-                        int diskIndex = currentPCB.getDiskAddressBegin() + logicalIndex;
-                        Integer pageIndex = freeFramePool.get(0);
-                        simRam.writeRam(pageIndex, simDisk.readDisk(diskIndex));
-                        currentPCB.getPageTable().writePageTable(logicalIndex, pageIndex);
-                        simKernel.removeFromPageFaultQueue(memoryMapping);
-                        removePageFromPool(pageIndex);
-                    }
+            if (simKernel.hasPageFaultJobs() && isPageAvailable()) {
+                PCB currentPCB = simKernel.getJobFromPageFaultQueue();
+                ArrayList<Integer> pageFaults = simKernel.getPagesFromPageFaultQueue(currentPCB);
+                for (Integer logicalIndex : pageFaults) {
+                    int diskIndex = currentPCB.getDiskAddressBegin() + logicalIndex;
+                    Integer pageIndex = freeFramePool.get(0);
+                    simRam.writeRam(pageIndex, simDisk.readDisk(diskIndex));
+                    currentPCB.getPageTable().writePageTable(logicalIndex, pageIndex);
+                    removePageFromPool(pageIndex);
                 }
             }
         }
@@ -81,7 +77,7 @@ public class PageManager extends Thread {
         return toReturn;
     }
 
-    public void endPageManager() {
+    public synchronized void endPageManager() {
         isSystemRunning = false;
     }
 }
