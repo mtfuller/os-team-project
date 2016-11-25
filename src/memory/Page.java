@@ -1,5 +1,7 @@
 package memory;
 
+import java.util.Arrays;
+
 /**
  * Created by willw on 11/12/2016.
  */
@@ -17,7 +19,7 @@ public class Page {
         isFull = false;
     }
     
-    public void writeToPage(int index, long instr){
+    public synchronized void writeToPage(int index, long instr){
         page[index]= instr;
         wordsAvailable--;
         if (wordsAvailable == 0) {
@@ -25,16 +27,24 @@ public class Page {
         }
     }
     
-    public long readPage(int index){
+    public synchronized long readPage(int index){
         return page[index];
     }
     
-    public boolean isPageFull(){
+    public synchronized boolean isPageFull(){
         return isFull;
     }
     
-    public int getWordsAvailable(){
+    public synchronized int getWordsAvailable(){
         return wordsAvailable;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Page{" +
+                "page=" + Arrays.toString(page) +
+                ", wordsAvailable=" + wordsAvailable +
+                ", isFull=" + isFull +
+                '}';
+    }
 }

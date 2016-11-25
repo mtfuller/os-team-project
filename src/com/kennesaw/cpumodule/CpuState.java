@@ -9,7 +9,7 @@ public class CpuState {
         return base_Addr;
     }
 
-    public void setBase_addr(int base_Addr) {
+    public synchronized void setBase_addr(int base_Addr) {
         this.base_Addr = base_Addr;
     }
 
@@ -26,39 +26,39 @@ public class CpuState {
         cache = new Cache();
     }
 
-    public int getPc() {
+    public synchronized int getPc() {
         return pc;
     }
 
-    public void setPc(int pc) {
+    public synchronized void setPc(int pc) {
         this.pc = pc;
     }
 
-    public void incrementPc() {
+    public synchronized void incrementPc() {
         this.pc++;
     }
 
-    public void decrementPc() {
+    public synchronized void decrementPc() {
         this.pc--;
     }
 
-    public Instruction getInstruction() {
+    public synchronized Instruction getInstruction() {
         return instruction;
     }
 
-    public void setInstruction(long instructionBin) {
+    public synchronized void setInstruction(long instructionBin) {
         instruction.decodeInstruction(instructionBin);
     }
 
-    public long getReg(byte i) {
+    public synchronized long getReg(byte i) {
         return reg[i];
     }
 
-    public void setReg(byte i, long val) {
+    public synchronized void setReg(byte i, long val) {
         this.reg[i] = val;
     }
 
-    public Cache getCache() {
+    public synchronized Cache getCache() {
         return cache;
     }
 

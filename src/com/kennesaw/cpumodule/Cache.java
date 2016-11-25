@@ -2,6 +2,8 @@ package com.kennesaw.cpumodule;
 
 import memory.Page;
 
+import java.util.Arrays;
+
 /**
  * Created by Thomas on 11/13/2016.
  */
@@ -25,46 +27,57 @@ public class Cache {
         }
     }
 
-    public void setValidPage(int pageNumber, boolean isValidPage) {
+    public synchronized void setValidPage(int pageNumber, boolean isValidPage) {
         if (isValidPage && !validBitMap[pageNumber]) numberOfValidPages++;
         else if(!isValidPage && validBitMap[pageNumber]) numberOfValidPages--;
         validBitMap[pageNumber] = isValidPage;
     }
 
-    public void setDirtyPage(int pageNumber, boolean isDirtyPage) {
+    public synchronized void setDirtyPage(int pageNumber, boolean isDirtyPage) {
         dirtyBitMap[pageNumber] = isDirtyPage;
     }
 
-    public Page readPage(int pageNumber) {
+    public synchronized Page readPage(int pageNumber) {
         return cache[pageNumber];
     }
 
-    public long readCache(LogicalAddress logAddr) {
+    public synchronized long readCache(LogicalAddress logAddr) {
         return cache[logAddr.getPageNumber()].readPage(logAddr.getPageOffset());
     }
 
-    public void writeCache(LogicalAddress logAddr, long data) {
+    public synchronized void writeCache(LogicalAddress logAddr, long data) {
         cache[logAddr.getPageNumber()].writeToPage(logAddr.getPageOffset(), data);
         setDirtyPage(logAddr.getPageNumber(), true);
     }
 
-    public boolean isPageValid(LogicalAddress logAddr) {
+    public synchronized boolean isPageValid(LogicalAddress logAddr) {
         return validBitMap[logAddr.getPageNumber()];
     }
 
-    public boolean isPageValid(int logAddr) {
+    public synchronized boolean isPageValid(int logAddr) {
         return validBitMap[logAddr];
     }
 
-    public boolean isPageModified(LogicalAddress logAddr) {
+    public synchronized boolean isPageModified(LogicalAddress logAddr) {
         return dirtyBitMap[logAddr.getPageNumber()];
     }
 
-    public boolean isPageModified(int logAddr) {
+    public synchronized boolean isPageModified(int logAddr) {
         return dirtyBitMap[logAddr];
     }
 
-    public int getCacheSize() {
+    public synchronized int getCacheSize() {
         return numberOfValidPages;
+    }
+
+    @Override
+    public String toString() {
+        final String HEADER_FORMAT = "DEBUG | CACHE | ";
+        String retStr = HEADER_FORMAT;
+        retStr += "Cache:\n";
+        for (int i = 0; i < cache.length; i++) {
+            retStr += HEADER_FORMAT+"\t"+cache[i].toString()+"\n";
+        }
+        return retStr;
     }
 }

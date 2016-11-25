@@ -22,22 +22,22 @@ public class Disk {
 //        occupiedPages++;
 //    }
     
-    public void writeDisk(int pageNum, int index, long instr) {
+    public synchronized void writeDisk(int pageNum, int index, long instr) {
         newDisk[pageNum].writeToPage(index, instr);
         if (newDisk[pageNum].isPageFull()) {
             incNextFreePage();
         }
     }
     
-    public Page readDisk(int address) {
+    public synchronized Page readDisk(int address) {
         return newDisk[address];
     }
     
-    public int getNextFreePage() {
+    public synchronized int getNextFreePage() {
         return nextFreePage;
     }
     
-    public void incNextFreePage() {
+    public synchronized void incNextFreePage() {
         nextFreePage++;
     }
     
@@ -49,7 +49,7 @@ public class Disk {
         return jobsOnDisk;
     }
     
-    public void addedJobToDisk() {
+    public synchronized void addedJobToDisk() {
         jobsOnDisk++;
     }
     

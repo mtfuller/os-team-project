@@ -52,13 +52,14 @@ public class CPU extends Thread{
                 logMessage("Set isRunningProcess to false");
             }
         }
+        logMessage("CPU is finished!!!");
     }
     
-    public boolean isRunningProcess() {
+    public synchronized boolean isRunningProcess() {
         return isRunningProcess;
     }
     
-    public void endCPU() {
+    public synchronized void endCPU() {
         isRunning = false;
     }
     
@@ -72,19 +73,21 @@ public class CPU extends Thread{
     }
     
     private void initializeCPU() {
-        CpuState pcbState = currentPCB.getState();
-        cpuState.setPc(pcbState.getPc());
-        cpuState.setBase_addr(0);
-        for(byte i = 0; i < 15; i++) {
-            cpuState.setReg(i, pcbState.getReg(i));
+        synchronized (currentPCB) {
+            CpuState pcbState = currentPCB.getState();
+            cpuState.setPc(pcbState.getPc());
+            cpuState.setBase_addr(0);
+            for (byte i = 0; i < 15; i++) {
+                cpuState.setReg(i, pcbState.getReg(i));
+            }
+            int addr = currentPCB.getRAMAddressBegin();
+            int size = currentPCB.getJobSize();
+            double used = (double) size / cache.getCacheSize();
+            Analysis.recordCPU((currentPCB.getJobID() - 1), cpuId, used);
         }
-        int addr = currentPCB.getRAMAddressBegin();
-        int size = currentPCB.getJobSize();
-        double used = (double) size / cache.getCacheSize();
-        Analysis.recordCPU((currentPCB.getJobID()-1), cpuId, used);
     }
     
-    private synchronized void runProcess() {
+    private void runProcess() {
         // Initial Settings
         isSpinning = true;
         int ioInstructs = 0;
@@ -135,14 +138,14 @@ public class CPU extends Thread{
         //Analysis.recordIO(jobId, ioInstructs);
     }
     
-    private synchronized void exportOutput() {
+    private void exportOutput() {
         logMessage("Exporting output for Job #"+currentPCB.getJobID());
         int addr = currentPCB.getRAMAddressBegin();
         int size = currentPCB.getJobSize();
         mmu.writeCacheToRAM(currentPCB);
     }
     
-    private synchronized long fetch(int addr) {
+    private long fetch(int addr) {
         logicalAddress.convertFromRawAddress(addr);
         handleInterupt(logicalAddress);
         return mmu.readCache(logicalAddress, cache);
@@ -189,7 +192,7 @@ public class CPU extends Thread{
         }
     }
     
-    private synchronized void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
+    private void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
         int acc, wordAddr;
         switch (opcode) {
             case 0x02:
@@ -257,7 +260,7 @@ public class CPU extends Thread{
         }
     }
     
-    private synchronized void executeIO(byte opcode, byte r1, byte r2, int addr) {
+    private void executeIO(byte opcode, byte r1, byte r2, int addr) {
         int wordAddr;
         switch (opcode) {
             case 0x00:

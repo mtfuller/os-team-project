@@ -22,26 +22,14 @@ public class Ram {
         mutexLock = false;
     }
     
-    public void assignPageMgr(PageManager pgmgr) {
+    public synchronized void assignPageMgr(PageManager pgmgr) {
         pageManager = pgmgr;
         for (int i = 0; i < RAMlength; i++) {
             pageManager.addPageToPool(new Integer(i));
         }
     }
     
-    public boolean isLocked() {
-        return mutexLock;
-    }
-    
-    public void lock() {
-        mutexLock = true;
-    }
-    
-    public void unlock() {
-        mutexLock = false;
-    }
-    
-    public void writeRam(int address, Page pageData)
+    public synchronized void writeRam(int address, Page pageData)
     {
         for (byte b = 0; b < Page.PAGE_SIZE; b++) {
             newRAM[address].writeToPage(b, pageData.readPage(b));
@@ -49,7 +37,7 @@ public class Ram {
         pageManager.removePageFromPool(address);
     }
     
-    public long readRam(int index, int addressPage) {
+    public synchronized long readRam(int index, int addressPage) {
         return newRAM[index].readPage(addressPage);
     }
 
@@ -61,7 +49,7 @@ public class Ram {
         return jobsOnRam;
     }
     
-    public void resetJobCount() {
+    public synchronized void resetJobCount() {
         jobsOnRam = 0;
     }
     
