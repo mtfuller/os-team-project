@@ -56,21 +56,20 @@ public class ShortTermScheduler {
         // Continue to spin as long as the Kernel has ready jobs
         while (simKernel.getQueueSize() > 0) {
             PCB nextJob = simKernel.getNextPCB();
+
             //logMessage("Current JOB is: "+nextJob.getStatus());
             cpuIndex = findCPU();
-            while (cpuBank.get(cpuIndex).isRunningProcess());
-            synchronized (simKernel) {
-                if (nextJob.getStatus() == "Ready") {
-                    // Analysis.recordWaitTime(nextJob.getJobID()-1);
-                    cpuBank.get(cpuIndex).runPCB(nextJob);
-                    nextJob.setStatus(PCB.RUNNING_STATE);
-                } else if (nextJob.getStatus() == "Waiting") {
-                    if (!simKernel.ioQueue.contains(nextJob) && !simKernel.pageFaultQueue.contains(nextJob))
-                        nextJob.setStatus(PCB.READY_STATE);
-                } else if (nextJob.getStatus() == "Ended") {
-                    pageManager.cleanPageTable(nextJob);
-                    simKernel.pcbQueue.remove(nextJob);
-                }
+            while (cpuBank.get(cpuIndex).isRunningProcess()) ;
+            if (nextJob.getStatus() == "Ready") {
+                // Analysis.recordWaitTime(nextJob.getJobID()-1);
+                cpuBank.get(cpuIndex).runPCB(nextJob);
+                nextJob.setStatus(PCB.RUNNING_STATE);
+            } else if (nextJob.getStatus() == "Waiting") {
+                if (!simKernel.ioQueue.contains(nextJob) && !simKernel.pageFaultQueue.contains(nextJob))
+                    nextJob.setStatus(PCB.READY_STATE);
+            } else if (nextJob.getStatus() == "Ended") {
+                pageManager.cleanPageTable(nextJob);
+                simKernel.pcbQueue.remove(nextJob);
             }
         }
     

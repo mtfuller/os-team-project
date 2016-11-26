@@ -57,7 +57,6 @@ public class DmaChannel extends Thread{
                     // Restart the instruction by modifying the CpuState's PC, set PCB to ready, and remove io request
                     //ioPCB.getState().decrementPc();
                 }
-                ioPCB.setStatus(PCB.READY_STATE);
             }
         }
     }
