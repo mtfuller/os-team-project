@@ -1,4 +1,4 @@
-package com.kennesaw.OS_Module;
+package com.kennesaw.osmodule;
 
 import java.util.ArrayList;
 import java.util.HashMap;

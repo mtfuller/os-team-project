@@ -1,5 +1,5 @@
-import com.kennesaw.Analyzer.Analysis;
-import com.kennesaw.OS_Module.OS_Driver;
+import com.kennesaw.analysis.Analysis;
+import com.kennesaw.osmodule.OS_Driver;
 
 /**
  * Created by Margaret on 9/10/2016.

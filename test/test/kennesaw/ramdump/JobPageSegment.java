@@ -1,6 +1,6 @@
 package test.kennesaw.ramdump;
 
-import memory.Page;
+import com.kennesaw.memory.Page;
 
 /**
  * Created by Thomas on 11/20/2016.

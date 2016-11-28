@@ -1,7 +1,6 @@
-package com.kennesaw.OS_Module;
+package com.kennesaw.osmodule;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  * Created by Margaret on 9/20/2016.

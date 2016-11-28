@@ -1,8 +1,4 @@
-package com.kennesaw.OS_Module;
-
-import memory.Page;
-
-import java.util.ArrayList;
+package com.kennesaw.osmodule;
 
 /**
  * Created by Margaret on 11/15/2016.

@@ -1,4 +1,4 @@
-package memory;
+package com.kennesaw.memory;
 
 import java.util.Arrays;
 

@@ -1,7 +1,7 @@
-package memory;
+package com.kennesaw.memory;
 
 
-import com.kennesaw.OS_Module.PCB;
+import com.kennesaw.osmodule.PCB;
 
 public class Disk {
     
@@ -16,11 +16,6 @@ public class Disk {
         }
         nextFreePage = 0;
     }
-
-//    public void writeDisk(int address, Page page) {
-//        newDisk[address] = page;
-//        occupiedPages++;
-//    }
     
     public synchronized void writeDisk(int pageNum, int index, long instr) {
         newDisk[pageNum].writeToPage(index, instr);

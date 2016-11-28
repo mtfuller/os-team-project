@@ -1,14 +1,10 @@
 package com.kennesaw.cpumodule;
 
-import com.kennesaw.Analyzer.Analysis;
-import com.kennesaw.OS_Module.PCB;
-import memory.Page;
-import sun.rmi.runtime.Log;
+import com.kennesaw.analysis.Analysis;
+import com.kennesaw.osmodule.PCB;
+import com.kennesaw.util.DebuggableThread;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-public class CPU extends Thread{
+public class CPU extends DebuggableThread{
     private int cpuId;
     private CpuState cpuState;
     private Cache cache;
@@ -24,10 +20,9 @@ public class CPU extends Thread{
     private boolean cpuIsInterupted;
     
     private final boolean CACHE_ONLY = false;
-    private final boolean DEBUG_MODE = true;
     
     
-    public CPU(int id, MMU mem) {
+    public CPU(int id, MMU mem, boolean isDebug) {
         cpuId = id;
         cpuState = new CpuState();
         cache = new Cache();
@@ -40,6 +35,8 @@ public class CPU extends Thread{
         isProcessComplete = false;
         cpuIsInterupted = false;
         this.setName("CPU "+cpuId);
+        this.setModuleName(this.getName());
+        this.setDebugMode(isDebug);
     }
     
     @Override
@@ -99,7 +96,7 @@ public class CPU extends Thread{
         
         // Main Loop
         while(isSpinning) {
-            // Get instruction from memory
+            // Get instruction from com.kennesaw.memory
             long instr = fetch(cpuState.getPc());
 
             // Increment the PC
@@ -310,9 +307,5 @@ public class CPU extends Thread{
         return "\nCPU:" +
                 "\n\n" +
                 cpuState.toString();
-    }
-    
-    private void logMessage(String message) {
-        if (DEBUG_MODE) System.out.println("DEBUG | CPU "+cpuId+" | "+message);
     }
 }

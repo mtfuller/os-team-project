@@ -1,6 +1,6 @@
-package com.kennesaw.OS_Module;
+package com.kennesaw.osmodule;
 
-import memory.*;
+import com.kennesaw.memory.*;
 
 /**
  * Created by Margaret on 9/20/2016.
@@ -26,6 +26,7 @@ public class LongTermScheduler {
             for (int j = 0; j < 4; j++) {
                 //Write the first 4 pages of each PCB from Disk to Ram
                 simRAM.writeRam(ramPageCounter, simDisk.readDisk(simKernel.getPCB(i).getDiskAddressBegin() + j));
+
                 // Update the PCB's PageTable with the corresponding RAM page numbers
                 // Each entry's valid/invalid bit is automatically set to "true" when written
                 simKernel.getPCB(i).getPageTable().writePageTable(j, ramPageCounter);

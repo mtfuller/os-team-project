@@ -1,20 +1,21 @@
 package com.kennesaw.cpumodule;
 
-import com.kennesaw.OS_Module.Kernel;
-import com.kennesaw.OS_Module.MemoryMapping;
-import com.kennesaw.OS_Module.PCB;
-import com.kennesaw.OS_Module.PageTable;
-import memory.Page;
-import memory.Ram;
+import com.kennesaw.osmodule.Kernel;
+import com.kennesaw.osmodule.PCB;
+import com.kennesaw.osmodule.PageTable;
+import com.kennesaw.memory.Ram;
+import com.kennesaw.util.DebuggableModule;
 
 /**
  * Created by Thomas on 11/13/2016.
  */
-public class MMU {
+public class MMU extends DebuggableModule {
     private Kernel kernel;
     private Ram ram;
 
-    public MMU(Kernel kern, Ram mem) {
+    public MMU(Kernel kern, Ram mem, boolean isDebug) {
+        setDebugMode(isDebug);
+        setModuleName("MMU");
         kernel = kern;
         ram = mem;
     }
@@ -54,18 +55,12 @@ public class MMU {
         Cache cache = pcb.getState().getCache();
         PageTable pageTable = pcb.getPageTable();
         // Go through each MODIFIED/DIRTY page of PCB's cache and load it into the corresponding FRAME NUMBER
-        logMessage("OUTPUT FROM PROCESS #"+pcb.getJobID()+":");
         for (int i = 0; i < Cache.CACHE_SIZE; i++) {
             if (cache.isPageModified(i) && cache.isPageValid(i)) {
                 int ramAddr = pageTable.getPage(i);
                 logicalAddress.setPageNumber(i);
                 ram.writeRam(ramAddr, cache.readPage(i));
-                for (byte b = 0; b < 4; b++) logMessage("\t"+ramAddr+"@"+b+": "+ram.readRam(ramAddr, b));
             }
         }
-    }
-
-    private void logMessage(String message) {
-        System.out.println("DEBUG | MMU | "+message);
     }
 }
