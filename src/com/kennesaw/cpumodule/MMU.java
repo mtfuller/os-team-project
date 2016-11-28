@@ -54,12 +54,18 @@ public class MMU {
         Cache cache = pcb.getState().getCache();
         PageTable pageTable = pcb.getPageTable();
         // Go through each MODIFIED/DIRTY page of PCB's cache and load it into the corresponding FRAME NUMBER
+        logMessage("OUTPUT FROM PROCESS #"+pcb.getJobID()+":");
         for (int i = 0; i < Cache.CACHE_SIZE; i++) {
             if (cache.isPageModified(i) && cache.isPageValid(i)) {
                 int ramAddr = pageTable.getPage(i);
                 logicalAddress.setPageNumber(i);
                 ram.writeRam(ramAddr, cache.readPage(i));
+                for (byte b = 0; b < 4; b++) logMessage("\t"+ramAddr+"@"+b+": "+ram.readRam(ramAddr, b));
             }
         }
+    }
+
+    private void logMessage(String message) {
+        System.out.println("DEBUG | MMU | "+message);
     }
 }

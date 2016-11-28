@@ -27,17 +27,21 @@ public class PageManager extends Thread {
     }
     
     public synchronized void addPageToPool(int pageNum) {
+        if (!freeFramePool.contains(pageNum))
         freeFramePool.add(pageNum);
     }
     
     public synchronized void removePageFromPool(int pageNum) {
+        if (freeFramePool.contains(pageNum))
         freeFramePool.remove(Integer.valueOf(pageNum));
     }
     
     public synchronized void cleanPageTable(PCB pcb) {
-        for (int i = 0; i < pcb.getPageTable().pageSpan.length; i++) {
-            addPageToPool(pcb.getPageTable().pageSpan[i]);
-            pcb.getPageTable().flipValid(i);
+        synchronized (pcb) {
+            for (int i = 0; i < pcb.getPageTable().pageSpan.length; i++) {
+                addPageToPool(pcb.getPageTable().pageSpan[i]);
+                pcb.getPageTable().flipValid(i);
+            }
         }
     }
     

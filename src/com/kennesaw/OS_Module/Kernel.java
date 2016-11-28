@@ -48,15 +48,25 @@ public class Kernel {
     }
     
     public synchronized PCB getPCB(int index) {
-        return pcbQueue.get(index);
+        synchronized (pcbQueue) {
+            return pcbQueue.get(index);
+        }
     }
     
     public synchronized PCB getNextPCB() {
-        return pcbQueue.get(pcbQueuePointer);
+        synchronized (pcbQueue) {
+            for (int i = 0; i < pcbQueue.size(); i++) {
+                PCB currentPCB = pcbQueue.get(i);
+                if (currentPCB.getStatus() != "Running") return currentPCB;
+            }
+        }
+        return null;
     }
     
     public synchronized void addPCB(int index, PCB newPCB) {
-        pcbQueue.add(index, newPCB);
+        synchronized (pcbQueue) {
+            pcbQueue.add(index, newPCB);
+        }
     }
     
     public synchronized void addToPageFaultQueue(PCB pcb, Integer integer) {
@@ -100,7 +110,9 @@ public class Kernel {
     }
     
     public synchronized int getQueueSize() {
-        return pcbQueue.size();
+        synchronized (pcbQueue) {
+            return pcbQueue.size();
+        }
     }
     
     public int getPageFaultSize() {

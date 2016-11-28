@@ -50,8 +50,6 @@ public class CPU extends Thread{
                     logMessage("Running Job #" + currentPCB.getJobID());
                     if (!CACHE_ONLY) initializeCPU();
                     runProcess();
-                    //if (!CACHE_ONLY) exportOutput();
-                    //logMessage("Exported output");
                     isRunningProcess = false;
                 }
             }
@@ -152,8 +150,6 @@ public class CPU extends Thread{
     
     private void exportOutput() {
         logMessage("Exporting output for Job #"+currentPCB.getJobID());
-        int addr = currentPCB.getRAMAddressBegin();
-        int size = currentPCB.getJobSize();
         mmu.writeCacheToRAM(currentPCB);
     }
     
@@ -270,6 +266,7 @@ public class CPU extends Thread{
         switch (opcode) {
             case 0x12:
                 isSpinning = false;
+                exportOutput();
                 currentPCB.setStatus(PCB.ENDED_STATE);
                 break;
             case 0x14:
