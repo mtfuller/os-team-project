@@ -21,7 +21,7 @@ public class Analysis {
     private static ArrayList<Long> pageFaultComplete = new ArrayList<>();
     private static ArrayList<Long> pageFaultRunningTotals = new ArrayList<>();
 
-    public static void initializeDataTables() {
+    public synchronized static void initializeDataTables() {
         for (int i = 0; i < 30; i++) {
 //            jobID1.add(0);
             createTimes.add(0L);
@@ -39,59 +39,59 @@ public class Analysis {
         }
     }
 
-    public static void recordNumOFJobs(int jobID){
+    public synchronized static void recordNumOFJobs(int jobID){
         jobID1.add(jobID+1);
     }
 
-    public static void recordCreateTime(int jobID){
+    public synchronized static void recordCreateTime(int jobID){
         createTimes.set(jobID, System.nanoTime());
     }
 
-    public static void recordWaitTime(int jobID){
+    public synchronized static void recordWaitTime(int jobID){
         waitTimes.set(jobID - 1, System.nanoTime());
     }
 
-    public static void recordCompleteTime(int jobID){
+    public synchronized static void recordCompleteTime(int jobID){
         completeTimes.set(jobID - 1, System.nanoTime());
     }
 
-    public static void recordIO(int jobID){
+    public synchronized static void recordIO(int jobID){
         int tempIO;
         tempIO = io.get(jobID - 1);
         io.set(jobID - 1, (tempIO + 1));
     }
 
-    public static void recordCPU(int jobID, int cpuID, double cacheUsedSize){
+    public synchronized static void recordCPU(int jobID, int cpuID, double cacheUsedSize){
         cpuSpace.set(jobID, cacheUsedSize);
         cpuID1.set(jobID, cpuID);
     }
 
-    public static void recordRamSpace(int jobID, double ramSpace){
+    public synchronized static void recordRamSpace(int jobID, double ramSpace){
         ramSpace1.set(jobID - 1, ramSpace);
     }
     
-    public static void recordMemoryUtilization(int jobID, int pageUsed){
+    public synchronized static void recordMemoryUtilization(int jobID, int pageUsed){
         memoryUtilization.set(jobID - 1, pageUsed);
     }
     
-    public static void recordNumOFPageFaults(int jobID){
+    public synchronized static void recordNumOFPageFaults(int jobID){
         int tempPF;
         tempPF = numOFPageFaults.get(jobID - 1);
         numOFPageFaults.set(jobID - 1, (tempPF + 1));
     }
     
-    public static void recordPageFaultStart(int jobID){
+    public synchronized static void recordPageFaultStart(int jobID){
         pageFaultStart.set(jobID - 1,System.nanoTime());
     }
     
-    public static void recordPageFaultComplete(int jobID){
+    public synchronized static void recordPageFaultComplete(int jobID){
         pageFaultComplete.set(jobID - 1,System.nanoTime());
         long totalTimeSoFar;
         totalTimeSoFar = (pageFaultRunningTotals.get(jobID - 1) + (pageFaultComplete.get(jobID - 1) - pageFaultStart.get(jobID - 1)));
         pageFaultRunningTotals.set(jobID - 1, totalTimeSoFar);
     }
     
-    public static void calctoString() {
+    public synchronized static void calctoString() {
         //subtracts createTime/completeTime by waitTime
         ArrayList<Long> realWait = new ArrayList<>();
         ArrayList<Long> realComplete = new ArrayList<>();
