@@ -1,10 +1,4 @@
-package com.kennesaw.OS_Module;
-
-import memory.Disk;
-import memory.Ram;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+package com.kennesaw.osmodule;
 
 /**
  * Created by Thomas on 10/20/2016.

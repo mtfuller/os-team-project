@@ -1,4 +1,4 @@
-package com.kennesaw.OS_Module;
+package com.kennesaw.osmodule;
 
 /**
  * Created by Margaret on 9/3/2016.
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.kennesaw.cpumodule.CpuState;
-import memory.Page;
+import com.kennesaw.memory.Page;
 
 public class PCB {
 
@@ -101,20 +101,10 @@ public class PCB {
     public synchronized void setDiskAddressEnd(int diskAddressEnd) {
         this.diskAddressEnd = diskAddressEnd;
     }
-
-//    public int getBaseAddress() {
-//        return state.getBase_addr();
-//    }
-//
-//
-//    public void setBaseAddress(int addr) {
-//        state.setBase_addr(addr);
-//    }
     
     public synchronized int getRAMAddressBegin() {
         return RAMAddressBegin;
     }
-    
     
     public void setRAMAddressBegin(int RAMAddressBegin) {
         this.RAMAddressBegin = RAMAddressBegin;

@@ -1,11 +1,10 @@
 package com.kennesaw.cpumodule;
 
-import com.kennesaw.OS_Module.Kernel;
-import com.kennesaw.OS_Module.MemoryMapping;
-import com.kennesaw.OS_Module.PCB;
-import com.kennesaw.OS_Module.PageTable;
-import memory.Page;
-import memory.Ram;
+import com.kennesaw.osmodule.Kernel;
+import com.kennesaw.osmodule.PCB;
+import com.kennesaw.osmodule.PageTable;
+import com.kennesaw.memory.Page;
+import com.kennesaw.memory.Ram;
 
 import java.util.ArrayList;
 
@@ -53,37 +52,8 @@ public class DmaChannel extends Thread{
                     // Set both the Cache's validBitTable to true and dirtyBitTable to false for this Page
                     pcbCache.setValidPage(logicalPage, true);
                     pcbCache.setDirtyPage(logicalPage, false);
-
-                    // Restart the instruction by modifying the CpuState's PC, set PCB to ready, and remove io request
-                    //ioPCB.getState().decrementPc();
                 }
-                ioPCB.setStatus(PCB.READY_STATE);
             }
         }
     }
-
-    //    private int effectiveAddr(int addr) {
-//        return addr / 4;
-//    }
-//
-//    public long readCache(int addr) {
-//        addr = effectiveAddr(addr);
-//        return cache[addr];
-//    }
-//
-//    public void writeCache(int addr, long instr) {
-//        addr = effectiveAddr(addr);
-//        cache[addr] = instr;
-//    }
-//
-//    public synchronized long readRAM(int addr) {
-//        addr = effectiveAddr(addr);
-//        long val = memory.readRam(addr);
-//        return val;
-//    }
-//
-//    public synchronized void writeRAM(int addr, long val) {
-//        addr = effectiveAddr(addr);
-//        memory.writeRam(addr, val);
-//    }
 }

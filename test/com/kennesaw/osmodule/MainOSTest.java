@@ -1,17 +1,11 @@
-package com.kennesaw.OS_Module;
+package com.kennesaw.osmodule;
 
-import com.kennesaw.Analyzer.Analysis;
+import com.kennesaw.analysis.Analysis;
 import com.kennesaw.cpumodule.CPU;
 import com.kennesaw.cpumodule.DmaChannel;
-import com.kennesaw.cpumodule.MMU;
-import memory.Disk;
-import memory.Page;
-import memory.Ram;
+import com.kennesaw.memory.Disk;
+import com.kennesaw.memory.Ram;
 import org.junit.Test;
-import test.kennesaw.ramdump.JobSegementStructure;
-import test.kennesaw.ramdump.JobSegment;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Thomas on 10/9/2016.
@@ -46,7 +40,7 @@ public class MainOSTest {
         simRam.assignPageMgr(pageManager);
         // Create Schedulers
         LongTermScheduler simLTS = new LongTermScheduler(simDisk, simRam);
-        ShortTermScheduler simSTS = new ShortTermScheduler(simRam, simKernel, pageManager, 1);
+        ShortTermScheduler simSTS = new ShortTermScheduler(simRam, simKernel, pageManager, 1, true);
 
         simLTS.runLTS(simKernel);
         simSTS.runSTS();

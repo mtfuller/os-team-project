@@ -1,8 +1,6 @@
 package com.kennesaw.cpumodule;
 
-import memory.Page;
-
-import java.util.Arrays;
+import com.kennesaw.memory.Page;
 
 /**
  * Created by Thomas on 11/13/2016.

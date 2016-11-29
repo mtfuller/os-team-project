@@ -1,10 +1,8 @@
-package com.kennesaw.OS_Module;
+package com.kennesaw.osmodule;
 
-import com.kennesaw.Analyzer.Analysis;
-import memory.Disk;
-import memory.Ram;
+import com.kennesaw.analysis.Analysis;
+import com.kennesaw.memory.Disk;
 import org.junit.Test;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import static org.junit.Assert.*;
 

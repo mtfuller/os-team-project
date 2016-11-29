@@ -1,20 +1,21 @@
 package com.kennesaw.cpumodule;
 
-import com.kennesaw.OS_Module.Kernel;
-import com.kennesaw.OS_Module.MemoryMapping;
-import com.kennesaw.OS_Module.PCB;
-import com.kennesaw.OS_Module.PageTable;
-import memory.Page;
-import memory.Ram;
+import com.kennesaw.osmodule.Kernel;
+import com.kennesaw.osmodule.PCB;
+import com.kennesaw.osmodule.PageTable;
+import com.kennesaw.memory.Ram;
+import com.kennesaw.util.DebuggableModule;
 
 /**
  * Created by Thomas on 11/13/2016.
  */
-public class MMU {
+public class MMU extends DebuggableModule {
     private Kernel kernel;
     private Ram ram;
 
-    public MMU(Kernel kern, Ram mem) {
+    public MMU(Kernel kern, Ram mem, boolean isDebug) {
+        setDebugMode(isDebug);
+        setModuleName("MMU");
         kernel = kern;
         ram = mem;
     }

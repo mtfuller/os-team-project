@@ -1,11 +1,10 @@
 package com.kennesaw.cpumodule;
 
-import com.kennesaw.Analyzer.Analysis;
-import com.kennesaw.OS_Module.PCB;
-import memory.Page;
-import sun.rmi.runtime.Log;
+import com.kennesaw.analysis.Analysis;
+import com.kennesaw.osmodule.PCB;
+import com.kennesaw.util.DebuggableThread;
 
-public class CPU extends Thread{
+public class CPU extends DebuggableThread{
     private int cpuId;
     private CpuState cpuState;
     private Cache cache;
@@ -21,10 +20,9 @@ public class CPU extends Thread{
     private boolean cpuIsInterupted;
     
     private final boolean CACHE_ONLY = false;
-    private final boolean DEBUG_MODE = true;
     
     
-    public CPU(int id, MMU mem) {
+    public CPU(int id, MMU mem, boolean isDebug) {
         cpuId = id;
         cpuState = new CpuState();
         cache = new Cache();
@@ -37,19 +35,20 @@ public class CPU extends Thread{
         isProcessComplete = false;
         cpuIsInterupted = false;
         this.setName("CPU "+cpuId);
+        this.setModuleName(this.getName());
+        this.setDebugMode(isDebug);
     }
     
     @Override
     public void run() {
         while(isRunning) {
             if (isRunningProcess) {
-                logMessage("Running Job #"+currentPCB.getJobID());
-                if (!CACHE_ONLY) initializeCPU();
-                runProcess();
-                //if (!CACHE_ONLY) exportOutput();
-                //logMessage("Exported output");
-                isRunningProcess = false;
-                logMessage("Set isRunningProcess to false");
+                synchronized (this) {
+                    logMessage("Running Job #" + currentPCB.getJobID());
+                    if (!CACHE_ONLY) initializeCPU();
+                    runProcess();
+                    isRunningProcess = false;
+                }
             }
         }
         logMessage("CPU is finished!!!");
@@ -67,9 +66,11 @@ public class CPU extends Thread{
         logMessage("Setting pcb to PCB #"+pcb.getJobID());
         while (isSpinning);
         currentPCB = pcb;
-        cpuState = currentPCB.getState();
-        cache = cpuState.getCache();
-        isRunningProcess = true;
+        synchronized (currentPCB) {
+            cpuState = currentPCB.getState();
+            cache = cpuState.getCache();
+            isRunningProcess = true;
+        }
     }
     
     private void initializeCPU() {
@@ -95,53 +96,57 @@ public class CPU extends Thread{
         
         // Main Loop
         while(isSpinning) {
-            // Get instruction from memory
+            // Get instruction from com.kennesaw.memory
             long instr = fetch(cpuState.getPc());
-            
+
             // Increment the PC
             cpuState.incrementPc();
-            
+
             // Decode the instruction
             decode(instr);
             Instruction instruction = cpuState.getInstruction();
-            
+
             // Execute the instruction
-            switch (instruction.getFormat()) {
-                case 0:
-                    executeArithmetic(instruction.getOpcode(), instruction.getReg1(), instruction.getReg2(),
-                            instruction.getDestReg());
-                    break;
-                case 1:
-                    if (instruction.getOpcode() == 0x02) ioInstructs++;
-                    executeConditionBranch(instruction.getOpcode(), instruction.getbReg(), instruction.getDestReg(),
-                            instruction.getAddr());
-                    break;
-                case 2:
-                    executeUnconditionalJump(instruction.getOpcode(), instruction.getAddr());
-                    break;
-                case 3:
-                    executeIO(instruction.getOpcode(), instruction.getReg1(), instruction.getReg2(),
-                            instruction.getAddr());
-                    ioInstructs++;
-                    break;
+            synchronized (mmu) {
+                switch (instruction.getFormat()) {
+                    case 0:
+                        executeArithmetic(instruction.getOpcode(), instruction.getReg1(), instruction.getReg2(),
+                                instruction.getDestReg());
+                        break;
+                    case 1:
+                        if (instruction.getOpcode() == 0x02) ioInstructs++;
+                        executeConditionBranch(instruction.getOpcode(), instruction.getbReg(), instruction.getDestReg(),
+                                instruction.getAddr());
+                        break;
+                    case 2:
+                        executeUnconditionalJump(instruction.getOpcode(), instruction.getAddr());
+                        break;
+                    case 3:
+                        executeIO(instruction.getOpcode(), instruction.getReg1(), instruction.getReg2(),
+                                instruction.getAddr());
+                        ioInstructs++;
+                        break;
+                }
+            }
+
+            if (cpuIsInterupted) {
+                currentPCB.setStatus(PCB.WAITING_STATE);
+                cpuState.decrementPc();
+                currentPCB = null;
+                cpuState = null;
+                cache = null;
+                cpuIsInterupted = false;
+                logMessage("CPU is Interrupted...");
+                return;
             }
         }
-
-        if (cpuIsInterupted) {
-            currentPCB.setStatus(PCB.WAITING_STATE);
-            cpuState.decrementPc();
-            cpuIsInterupted = false;
-        }
-
-        logMessage("Spun CPU with Process #"+(currentPCB.getJobID()+1));
+        logMessage("Finished Process #"+(currentPCB.getJobID()));
         //Analysis.recordCompleteTime(currentPCB.getJobID()-1);
         //Analysis.recordIO(jobId, ioInstructs);
     }
     
     private void exportOutput() {
         logMessage("Exporting output for Job #"+currentPCB.getJobID());
-        int addr = currentPCB.getRAMAddressBegin();
-        int size = currentPCB.getJobSize();
         mmu.writeCacheToRAM(currentPCB);
     }
     
@@ -152,11 +157,13 @@ public class CPU extends Thread{
     }
     
     private void decode(long instructionBin) {
+        if (cpuIsInterupted) return;
         cpuState.setInstruction(instructionBin);
     }
     
     private void executeArithmetic(byte opcode, byte s1, byte s2, byte dr) {
         int acc;
+        if (cpuIsInterupted) return;
         switch (opcode) {
             case 0x04:
                 cpuState.setReg(s1, cpuState.getReg(s2));
@@ -194,17 +201,20 @@ public class CPU extends Thread{
     
     private void executeConditionBranch(byte opcode, byte br, byte dr, int addr) {
         int acc, wordAddr;
+        if (cpuIsInterupted) return;
         switch (opcode) {
             case 0x02:
                 wordAddr = (int) cpuState.getReg(dr) / 4;
                 logicalAddress.convertFromRawAddress(wordAddr);
                 handleInterupt(logicalAddress);
+                if (cpuIsInterupted) return;
                 mmu.writeCache(logicalAddress, cpuState.getReg(br), cache);
                 break;
             case 0x03:
                 wordAddr = (int) cpuState.getReg(br) / 4;
                 logicalAddress.convertFromRawAddress(wordAddr);
                 handleInterupt(logicalAddress);
+                if (cpuIsInterupted) return;
                 long data = mmu.readCache(logicalAddress, cache);
                 cpuState.setReg(dr, data);
                 break;
@@ -249,9 +259,11 @@ public class CPU extends Thread{
     }
     
     private void executeUnconditionalJump(byte opcode, int addr) {
+        if (cpuIsInterupted) return;
         switch (opcode) {
             case 0x12:
                 isSpinning = false;
+                exportOutput();
                 currentPCB.setStatus(PCB.ENDED_STATE);
                 break;
             case 0x14:
@@ -262,12 +274,14 @@ public class CPU extends Thread{
     
     private void executeIO(byte opcode, byte r1, byte r2, int addr) {
         int wordAddr;
+        if (cpuIsInterupted) return;
         switch (opcode) {
             case 0x00:
                 if (addr == 0) wordAddr = (int) cpuState.getReg(r2) / 4;
                 else wordAddr = addr / 4;
                 logicalAddress.convertFromRawAddress(wordAddr);
                 handleInterupt(logicalAddress);
+                if (cpuIsInterupted) return;
                 cpuState.setReg(r1, mmu.readCache(logicalAddress,cache));
                 break;
             case 0x01:
@@ -275,6 +289,7 @@ public class CPU extends Thread{
                 else wordAddr = (int) cpuState.getReg(r2) / 4;
                 logicalAddress.convertFromRawAddress(wordAddr);
                 handleInterupt(logicalAddress);
+                if (cpuIsInterupted) return;
                 mmu.writeCache(logicalAddress, cpuState.getReg(r1), cache);
                 break;
         }
@@ -292,9 +307,5 @@ public class CPU extends Thread{
         return "\nCPU:" +
                 "\n\n" +
                 cpuState.toString();
-    }
-    
-    private void logMessage(String message) {
-        if (DEBUG_MODE) System.out.println("DEBUG | CPU "+cpuId+" | "+message);
     }
 }

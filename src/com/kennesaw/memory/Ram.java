@@ -1,8 +1,6 @@
-package memory;
+package com.kennesaw.memory;
 
-import com.kennesaw.OS_Module.PageManager;
-
-import java.util.Arrays;
+import com.kennesaw.osmodule.PageManager;
 
 public class Ram {
     
