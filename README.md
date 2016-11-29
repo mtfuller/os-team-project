@@ -10,8 +10,8 @@ My Analysis Contributions:
    - Captured in ShortTermScheduler using the job's page table's length at its life cycle end
 - "Memory Utilization" - I removed this column completely, because I think it's redundant, like we talked about today
 - "# of PF" - recorded in MMU line 32 whenever a job is moved to the pageFaultQueue
-- "Servicing Times" - this adds the net time of (removed from pageFaultQueue - added to pageFaultQueue). 
-   - The start time is recorded in MMU, line 33. The end time is recorded in PageManager, line 69.
+- "Servicing Times" - this adds the net time of (removed from pageFaultQueue - added to pageFaultQueue) and keeps a running total for each time a job has a servicing time. 
+   - The recordPageFaultComplete is recorded in PageManager, line 69. The recordPageFaultStart is recorded in MMU, line 33.
 - When the metrics are printed, the jobs are now printed in their sorted order.
    
 Let me know if I've misunderstood any of these metrics or if I can help with anything else.
