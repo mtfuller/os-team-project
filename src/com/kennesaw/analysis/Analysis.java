@@ -1,5 +1,8 @@
 package com.kennesaw.analysis;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -172,6 +175,79 @@ public class Analysis {
         avgComplete = totalComplete/size1;
         String avg_complete = df.format(avgComplete/1000000.0000);
         System.out.println("Average Complete Time: " + avg_complete + " ms");
+    }
+
+    public synchronized  static void calculateAnalysisToFile() throws IOException {
+        FileWriter fileWriter = new FileWriter(new File("simulationData.csv"));
+        //subtracts createTime/completeTime by waitTime
+        ArrayList<Long> realWait = new ArrayList<>();
+        ArrayList<Long> realComplete = new ArrayList<>();
+        ArrayList<Long> realPageFaultTime = new ArrayList<>();
+        ArrayList<Long> realCPUSpinningTime = new ArrayList<>();
+        for(int i = 0; i < 30; i++){
+            realWait.add(waitTimes.get(i) - createTimes.get(i));
+            realComplete.add(completeTimes.get(i) - createTimes.get(i));
+            realPageFaultTime.add(pageFaultRunningTotals.get(i));
+            realCPUSpinningTime.add(cpuSpinningRunningTotals.get(i));
+        }
+
+        //printout into table format all arraylists must have same size to work
+        fileWriter.write(
+                String.format("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,\n",
+                        "JobID", "Wait Times", "Complete Times",
+                        "# of IO", "CPU ID", "CPU Space",
+                        "Ram Space Used", "# of PF", "Servicing Times for Paging", "CPU Running Times")
+        );
+
+        for(int i = 0; i < 30; i ++) {
+            DecimalFormat df = new DecimalFormat("#.####");
+            String real_wait = df.format(realWait.get(i)/1000000.00);
+            String real_complete = df.format(realComplete.get(i)/1000000.0000);
+            String real_PageFault = df.format(realPageFaultTime.get(i)/1000000.0000);
+            String real_CPUSpinning = df.format(realCPUSpinningTime.get(i)/1000000.0000);
+
+            DecimalFormat dfCpu = new DecimalFormat("#.###");
+            String prctCPU = dfCpu.format(cpuSpace.get(i));
+            String prctRam = dfCpu.format(ramSpace1.get(i));
+            fileWriter.write(
+                    String.format("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,\n",
+                            jobID1.get(i),
+                            real_wait,
+                            real_complete,
+                            io.get(i),
+                            cpuID1.get(i),
+                            prctCPU,
+                            ((ramSpace1.get(i) / 256)*100),
+                            numOFPageFaults.get(i),
+                            real_PageFault,
+                            real_CPUSpinning)
+            );
+        }
+
+        fileWriter.write("\n");
+
+        //calc avg wait
+        long totalWait =0;
+        int size = realWait.size();
+        long avgWait = 0;
+        for(int i = 0; i < 30; i++) totalWait += realWait.get(i);
+        avgWait = totalWait/size;
+        DecimalFormat df = new DecimalFormat("#.####");
+        String avg_wait = df.format(avgWait/1000000.00);
+        fileWriter.write("Average Wait Time (ms), ");
+        fileWriter.write(avg_wait+"\n");
+
+        //calc avg complete
+        long totalComplete = 0;
+        int size1 = completeTimes.size();
+        long avgComplete = 0;
+        for(int i = 0; i < 30; i++) totalComplete += realComplete.get(i);
+        avgComplete = totalComplete/size1;
+        String avg_complete = df.format(avgComplete/1000000.0000);
+        fileWriter.write("Average Complete Time (ms), ");
+        fileWriter.write(avg_complete+"\n");
+
+        fileWriter.close();
     }
 
 }
