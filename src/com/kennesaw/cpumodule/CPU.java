@@ -44,14 +44,14 @@ public class CPU extends DebuggableThread{
         while(isRunning) {
             if (isRunningProcess) {
                 synchronized (this) {
-                    logMessage("Running Job #" + currentPCB.getJobID());
+//                    logMessage("Running Job #" + currentPCB.getJobID());
                     if (!CACHE_ONLY) initializeCPU();
                     runProcess();
                     isRunningProcess = false;
                 }
             }
         }
-        logMessage("CPU is finished!!!");
+//        logMessage("CPU is finished!!!");
     }
     
     public synchronized boolean isRunningProcess() {
@@ -63,7 +63,7 @@ public class CPU extends DebuggableThread{
     }
     
     public synchronized void runPCB(PCB pcb) {
-        logMessage("Setting pcb to PCB #"+pcb.getJobID());
+//        logMessage("Setting pcb to PCB #"+pcb.getJobID());
         while (isSpinning);
         currentPCB = pcb;
         synchronized (currentPCB) {
@@ -136,17 +136,17 @@ public class CPU extends DebuggableThread{
                 cpuState = null;
                 cache = null;
                 cpuIsInterupted = false;
-                logMessage("CPU is Interrupted...");
+//                logMessage("CPU is Interrupted...");
                 return;
             }
         }
-        logMessage("Finished Process #"+(currentPCB.getJobID()));
-        //Analysis.recordCompleteTime(currentPCB.getJobID()-1);
-        //Analysis.recordIO(jobId, ioInstructs);
+//        logMessage("Finished Process #"+(currentPCB.getJobID()));
+//        Analysis.recordCompleteTime(currentPCB.getJobID()-1);
+//        Analysis.recordIO(jobId, ioInstructs);
     }
     
     private void exportOutput() {
-        logMessage("Exporting output for Job #"+currentPCB.getJobID());
+//        logMessage("Exporting output for Job #"+currentPCB.getJobID());
         mmu.writeCacheToRAM(currentPCB);
     }
     

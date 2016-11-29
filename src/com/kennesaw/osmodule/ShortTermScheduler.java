@@ -6,6 +6,7 @@ package com.kennesaw.osmodule;
 
 import java.util.ArrayList;
 
+import com.kennesaw.analysis.Analysis;
 import com.kennesaw.cpumodule.CPU;
 import com.kennesaw.cpumodule.DmaChannel;
 import com.kennesaw.cpumodule.MMU;
@@ -63,13 +64,14 @@ public class ShortTermScheduler extends DebuggableModule {
                 while (cpuBank.get(cpuIndex).isRunningProcess()) ;
                 synchronized (simKernel) {
                     if (nextJob.getStatus() == "Ready") {
-                        // Analysis.recordWaitTime(nextJob.getJobID()-1);
                         cpuBank.get(cpuIndex).runPCB(nextJob);
                         nextJob.setStatus(PCB.RUNNING_STATE);
                     } else if (nextJob.getStatus() == "Waiting") {
                         if (!simKernel.ioQueue.contains(nextJob) && !simKernel.pageFaultQueue.contains(nextJob))
                             nextJob.setStatus(PCB.READY_STATE);
                     } else if (nextJob.getStatus() == "Ended") {
+                        Analysis.recordRamSpace(nextJob.getJobID(), nextJob.getPageTable().getNumberOfPages());
+                        Analysis.recordCompleteTime(nextJob.getJobID());
                         pageManager.cleanPageTable(nextJob);
                         simKernel.pcbQueue.remove(nextJob);
                     }

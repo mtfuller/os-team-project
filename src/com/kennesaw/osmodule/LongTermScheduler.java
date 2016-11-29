@@ -1,5 +1,6 @@
 package com.kennesaw.osmodule;
 
+import com.kennesaw.analysis.Analysis;
 import com.kennesaw.memory.*;
 
 /**
@@ -33,6 +34,7 @@ public class LongTermScheduler {
                 ramPageCounter++;
             }
             simKernel.getPCB(i).setStatus(1);
+            Analysis.recordWaitTime(simKernel.getPCB(i).getJobID());
         }
     }
 }

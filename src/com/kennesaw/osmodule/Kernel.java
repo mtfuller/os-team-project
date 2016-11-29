@@ -1,5 +1,7 @@
 package com.kennesaw.osmodule;
 
+import com.kennesaw.analysis.Analysis;
+
 import java.util.ArrayList;
 
 /**

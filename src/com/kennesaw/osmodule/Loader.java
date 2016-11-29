@@ -43,7 +43,7 @@ public class Loader {
                 new_PCB = new PCB(Integer.parseInt(lineSplitter[2], 16), Integer.parseInt(lineSplitter[3], 16), Integer.parseInt(lineSplitter[4], 16));
                 new_PCB.setDiskAddressBegin(simDisk.getNextFreePage());
                 new_PCB.setStatus(0);
-                Analysis.recordNumOFJobs(new_PCB.getJobID()-1);
+//                Analysis.recordNumOFJobs(new_PCB.getJobID()-1);
                 Analysis.recordCreateTime(new_PCB.getJobID()-1);
                 simKernel.addPCB(currentPCB, new_PCB);
                 // Establish PCB's buffers as sets of Pages
@@ -80,7 +80,6 @@ public class Loader {
                     looper = 0;
                 }
                 // Write to Disk, incrementing the pointer to the next free page after 4 lines are written
-                // System.out.println(simDisk.getNextFreePage() + "  " + looper + "  " + (looper%4) + "  " + newJob);
                 simDisk.writeDisk(simDisk.getNextFreePage(), (looper%4), toHex);
                 looper++;
             }
