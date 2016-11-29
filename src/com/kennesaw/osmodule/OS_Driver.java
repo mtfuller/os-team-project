@@ -61,7 +61,7 @@ public class OS_Driver {
             numberOfCPUs = "1";
         } else {
             System.out.println("\n" + (int)(Math.pow(2, cpus)) + " CPUs were created.");
-            numberOfCPUs = Double.toString(cpus);
+            numberOfCPUs = Integer.toString((int)(Math.pow(2, cpus)));
         }
         
         // Sorts the PCBs with the specified algorithm

@@ -293,7 +293,6 @@ public class Analysis {
         for(int i = 0; i < 30; i++) totalCPUSpin += realCPUSpinningTime.get(i);
         avgCPUSpin = totalCPUSpin/size3;
         String avg_CPUSpin = df.format(avgCPUSpin/1000000.0000);
-        System.out.println("Average CPU Spinning Time: " + avg_CPUSpin + " ms");
         fileWriter.write("Average CPU Spinning Time (ms), ");
         fileWriter.write(avg_CPUSpin+"\n");
 
