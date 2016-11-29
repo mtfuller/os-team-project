@@ -125,10 +125,10 @@ public class Analysis {
         }
 
         //printout into table format all arraylists must have same size to work
-        System.out.println(String.format("%5s    | %5s    |%5s |%8s |%9s      | %9s       |%9s |%9s |%9s |%9s",
+        System.out.println(String.format("%5s    | %5s    |%5s |%8s |%9s      | %9s   |%9s |%9s |%9s |%9s",
                 "JobID", "  Wait Times", "Complete Times",
                 "  # of IO ", "CPUID", "CPU Space",
-                " Ram Space Used ", "# of PF", "Servicing Times for Paging", "CPU Running Times"));
+                " Ram Space", "# of PF", "Paging Svc.", "CPU Running Times"));
         System.out.println("==============================================================");
         for(int i = 0; i < 30; i ++) {
             DecimalFormat df = new DecimalFormat("#.####");
@@ -139,16 +139,17 @@ public class Analysis {
 
             DecimalFormat dfCpu = new DecimalFormat("#.###");
             String prctCPU = dfCpu.format(cpuSpace.get(i));
-            String prctRam = dfCpu.format(ramSpace1.get(i));
-            System.out.println(String.format("%5s      |  %9s ms    | %9s ms       |    %5s       | %9s         | %9s           | %9s%%       |%9s    | %9s ms | %9s ms",
+            DecimalFormat dfRAM = new DecimalFormat("#.##");
+            String prctRam = dfRAM.format((ramSpace1.get(i) / 256)*100);
+            System.out.println(String.format("%5s      |  %9s ms    | %9s ms       |    %5s       | %9s         | %9s      |%9s%%      |%9s      | %9s ms | %9s ms",
                     jobID1.get(i),
                     real_wait,
                     real_complete,
                     io.get(i),
                     cpuID1.get(i),
                     prctCPU,
-//                    prctRam,
-                    ((ramSpace1.get(i) / 256)*100),
+                    prctRam,
+//                    ((ramSpace1.get(i) / 256)*100),
                     numOFPageFaults.get(i),
                     real_PageFault,
                     real_CPUSpinning)
@@ -175,6 +176,25 @@ public class Analysis {
         avgComplete = totalComplete/size1;
         String avg_complete = df.format(avgComplete/1000000.0000);
         System.out.println("Average Complete Time: " + avg_complete + " ms");
+    
+        //calc avg page svc times
+        long totalPageSvc = 0;
+        int size2 = pageFaultRunningTotals.size();
+        long avgPageSvc = 0;
+        for(int i = 0; i < 30; i++) totalPageSvc += realPageFaultTime.get(i);
+        avgPageSvc = totalPageSvc/size2;
+        String avg_pageFaults = df.format(avgPageSvc/1000000.0000);
+        System.out.println("Average Page Servicing Time: " + avg_pageFaults + " ms");
+    
+        //calc avg CPU spinning times
+        long totalCPUSpin = 0;
+        int size3 = completeTimes.size();
+        long avgCPUSpin = 0;
+        for(int i = 0; i < 30; i++) totalCPUSpin += realCPUSpinningTime.get(i);
+        avgCPUSpin = totalCPUSpin/size3;
+        String avg_CPUSpin = df.format(avgCPUSpin/1000000.0000);
+        System.out.println("Average CPU Spinning Time: " + avg_CPUSpin + " ms");
+        
     }
 
     public synchronized  static void calculateAnalysisToFile() throws IOException {
