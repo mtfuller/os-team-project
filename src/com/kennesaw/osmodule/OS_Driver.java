@@ -18,6 +18,8 @@ public class OS_Driver {
     Ram simRAM = new Ram(256);
     PageManager pgMgr = new PageManager(simKernel, simRAM, simDisk);
     Loader simLoader;
+    public String numberOfCPUs = "X";
+    public String sortingMethod = "XXX";
     
     // Ask user how many CPUs should be created
     Frame frame = new Frame();
@@ -56,13 +58,16 @@ public class OS_Driver {
         // Create the CPUs
         if ((int)cpus == 0) {
             System.out.println("\nOne CPU was created.");
+            numberOfCPUs = "1";
         } else {
             System.out.println("\n" + (int)(Math.pow(2, cpus)) + " CPUs were created.");
+            numberOfCPUs = Double.toString(cpus);
         }
         
         // Sorts the PCBs with the specified algorithm
         if (sorting == 1) {
             simKernel.sortPriority();
+            sortingMethod = "Priority";
             System.out.print("PCBs were sorted based on their priority.\nJobs in order are: ");
             for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
                 System.out.print(simKernel.getPCB(i).getJobID()+ "   ");
@@ -73,6 +78,7 @@ public class OS_Driver {
             System.out.println();
         } else if (sorting == 2) {
             simKernel.sortSJF();
+            sortingMethod = "SJF";
             System.out.print("\nPCBs were sorted based on their job length.\nJobs in order are: ");
             for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
                 System.out.print(simKernel.getPCB(i).getJobID()+ "   ");
@@ -82,6 +88,7 @@ public class OS_Driver {
             }
             System.out.println();
         } else {
+            sortingMethod = "FIFO";
             System.out.print("PCBs were left in FIFO order.\nJobs in order are: ");
             for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
                 System.out.print(simKernel.getPCB(i).getJobID()+ "   ");

@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by willw on 10/19/2016.
@@ -197,8 +198,16 @@ public class Analysis {
         
     }
 
-    public synchronized  static void calculateAnalysisToFile() throws IOException {
+    public synchronized  static void calculateAnalysisToFile(String method, String cpus) throws IOException {
         FileWriter fileWriter = new FileWriter(new File("simulationData.csv"));
+
+        Date todaysDate = new Date();
+        fileWriter.write("Virtual Machine Simulation - CS 3502 Operating Systems - Team Project\n");
+        fileWriter.write("Timestamp:, "+todaysDate.toString()+"\n");
+        fileWriter.write("Sorting Method:, "+method+"\n");
+        fileWriter.write("Number of CPUs:, "+cpus+"\n");
+
+
         //subtracts createTime/completeTime by waitTime
         ArrayList<Long> realWait = new ArrayList<>();
         ArrayList<Long> realComplete = new ArrayList<>();
@@ -266,6 +275,27 @@ public class Analysis {
         String avg_complete = df.format(avgComplete/1000000.0000);
         fileWriter.write("Average Complete Time (ms), ");
         fileWriter.write(avg_complete+"\n");
+
+        //calc avg page svc times
+        long totalPageSvc = 0;
+        int size2 = pageFaultRunningTotals.size();
+        long avgPageSvc = 0;
+        for(int i = 0; i < 30; i++) totalPageSvc += realPageFaultTime.get(i);
+        avgPageSvc = totalPageSvc/size2;
+        String avg_pageFaults = df.format(avgPageSvc/1000000.0000);
+        fileWriter.write("Average Page Servicing Time (ms), ");
+        fileWriter.write(avg_pageFaults+"\n");
+
+        //calc avg CPU spinning times
+        long totalCPUSpin = 0;
+        int size3 = completeTimes.size();
+        long avgCPUSpin = 0;
+        for(int i = 0; i < 30; i++) totalCPUSpin += realCPUSpinningTime.get(i);
+        avgCPUSpin = totalCPUSpin/size3;
+        String avg_CPUSpin = df.format(avgCPUSpin/1000000.0000);
+        System.out.println("Average CPU Spinning Time: " + avg_CPUSpin + " ms");
+        fileWriter.write("Average CPU Spinning Time (ms), ");
+        fileWriter.write(avg_CPUSpin+"\n");
 
         fileWriter.close();
     }

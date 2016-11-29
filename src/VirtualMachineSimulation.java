@@ -22,7 +22,7 @@ public class VirtualMachineSimulation {
         System.out.println("Overall Program Running Time: " + estimatedTime/1000000 + " ms");
         System.out.println();
         Analysis.calctoString();
-        Analysis.calculateAnalysisToFile();
+        Analysis.calculateAnalysisToFile(simDriver.sortingMethod, simDriver.numberOfCPUs);
     }
     
 }
