@@ -44,7 +44,7 @@ public class Loader {
                 new_PCB.setDiskAddressBegin(simDisk.getNextFreePage());
                 new_PCB.setStatus(0);
 //                Analysis.recordNumOFJobs(new_PCB.getJobID()-1);
-                Analysis.recordCreateTime(new_PCB.getJobID()-1);
+//                Analysis.recordCreateTime(new_PCB.getIndexInAnalysis());
                 simKernel.addPCB(currentPCB, new_PCB);
                 // Establish PCB's buffers as sets of Pages
             } else if (line.contains("Data")) {

@@ -34,7 +34,7 @@ public class LongTermScheduler {
                 ramPageCounter++;
             }
             simKernel.getPCB(i).setStatus(1);
-            Analysis.recordWaitTime(simKernel.getPCB(i).getJobID());
+            Analysis.recordWaitTime(simKernel.getPCB(i).getIndexInAnalysis());
         }
     }
 }

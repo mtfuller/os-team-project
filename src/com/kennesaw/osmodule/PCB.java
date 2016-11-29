@@ -32,6 +32,7 @@ public class PCB {
     private ArrayList<Page> outputBuffer;
     private ArrayList<Page> tempBuffer;
     private CpuState state;
+    private int indexInAnalysis;
     
     public String[] currentState = { "New", "Ready", "Waiting", "Running", "Ended" };
     
@@ -48,6 +49,7 @@ public class PCB {
         inputBuffer = new ArrayList<>();
         outputBuffer = new ArrayList<>();
         tempBuffer = new ArrayList<>();
+        indexInAnalysis = 0;
     }
     
     public synchronized int getJobID() {
@@ -154,6 +156,14 @@ public class PCB {
     
     public void setState(CpuState state) {
         this.state = state;
+    }
+    
+    public int getIndexInAnalysis() {
+        return indexInAnalysis;
+    }
+    
+    public void setIndexInAnalysis(int correctIndex) {
+        this.indexInAnalysis = correctIndex;
     }
     
     @Override

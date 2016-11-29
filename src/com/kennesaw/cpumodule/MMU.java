@@ -6,6 +6,7 @@ import com.kennesaw.osmodule.PCB;
 import com.kennesaw.osmodule.PageTable;
 import com.kennesaw.memory.Ram;
 import com.kennesaw.util.DebuggableModule;
+import com.sun.xml.internal.bind.v2.model.annotation.AnnotationSource;
 
 /**
  * Created by Thomas on 11/13/2016.
@@ -29,12 +30,13 @@ public class MMU extends DebuggableModule {
                 if (!pcb.getPageTable().getValid(pageNumber)) {
                     // PAGE FAULT
                     kernel.addToPageFaultQueue(pcb, logicalAddress.getPageNumber());
-                    Analysis.recordNumOFPageFaults(pcb.getJobID());
-                    Analysis.recordPageFaultStart(pcb.getJobID());
+                    Analysis.recordNumOFPageFaults(pcb.getIndexInAnalysis());
+                    Analysis.recordPageFaultStart(pcb.getIndexInAnalysis());
+                    Analysis.recordCPUSpinningComplete(pcb.getIndexInAnalysis());
                 } else {
                     // I/O Request
                     kernel.addToioQueueQueue(pcb, logicalAddress.getPageNumber());
-                    Analysis.recordIO(pcb.getJobID());
+                    Analysis.recordIO(pcb.getIndexInAnalysis());
                 }
                 pcb.setStatus(PCB.WAITING_STATE);
                 isInterrupt = true;

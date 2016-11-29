@@ -84,7 +84,7 @@ public class CPU extends DebuggableThread{
             int addr = currentPCB.getRAMAddressBegin();
             int size = currentPCB.getJobSize();
             double used = (double) size / cache.getCacheSize();
-            Analysis.recordCPU((currentPCB.getJobID() - 1), cpuId, used);
+            Analysis.recordCPU(currentPCB.getIndexInAnalysis(), cpuId, used);
         }
     }
     

@@ -66,7 +66,9 @@ public class OS_Driver {
             System.out.print("PCBs were sorted based on their priority.\nJobs in order are: ");
             for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
                 System.out.print(simKernel.getPCB(i).getJobID()+ "   ");
-                Analysis.recordNumOFJobs(simKernel.getPCB(i).getJobID()-1);
+                Analysis.recordNumOFJobs(simKernel.getPCB(i).getJobID());
+                simKernel.getPCB(i).setIndexInAnalysis(i);
+                Analysis.recordCreateTime(simKernel.getPCB(i).getIndexInAnalysis());
             }
             System.out.println();
         } else if (sorting == 2) {
@@ -74,14 +76,18 @@ public class OS_Driver {
             System.out.print("\nPCBs were sorted based on their job length.\nJobs in order are: ");
             for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
                 System.out.print(simKernel.getPCB(i).getJobID()+ "   ");
-                Analysis.recordNumOFJobs(simKernel.getPCB(i).getJobID()-1);
+                Analysis.recordNumOFJobs(simKernel.getPCB(i).getJobID());
+                simKernel.getPCB(i).setIndexInAnalysis(i);
+                Analysis.recordCreateTime(simKernel.getPCB(i).getIndexInAnalysis());
             }
             System.out.println();
         } else {
             System.out.print("PCBs were left in FIFO order.\nJobs in order are: ");
             for (int i = 0; i < simKernel.pcbQueue.size(); i++) {
                 System.out.print(simKernel.getPCB(i).getJobID()+ "   ");
-                Analysis.recordNumOFJobs(simKernel.getPCB(i).getJobID()-1);
+                Analysis.recordNumOFJobs(simKernel.getPCB(i).getJobID());
+                simKernel.getPCB(i).setIndexInAnalysis(i);
+                Analysis.recordCreateTime(simKernel.getPCB(i).getIndexInAnalysis());
             }
             System.out.println();
         }

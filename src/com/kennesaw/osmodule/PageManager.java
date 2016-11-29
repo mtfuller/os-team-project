@@ -66,7 +66,7 @@ public class PageManager extends Thread {
                     removePageFromPool(pageIndex);
                 }
                 simKernel.removeFromPageFaultQueue(currentPCB);
-                Analysis.recordPageFaultComplete(currentPCB.getJobID());
+                Analysis.recordPageFaultComplete(currentPCB.getIndexInAnalysis());
             }
         }
     }

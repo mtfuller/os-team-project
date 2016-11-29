@@ -65,13 +65,14 @@ public class ShortTermScheduler extends DebuggableModule {
                 synchronized (simKernel) {
                     if (nextJob.getStatus() == "Ready") {
                         cpuBank.get(cpuIndex).runPCB(nextJob);
+                        Analysis.recordCPUSpinningStart(nextJob.getIndexInAnalysis());
                         nextJob.setStatus(PCB.RUNNING_STATE);
                     } else if (nextJob.getStatus() == "Waiting") {
                         if (!simKernel.ioQueue.contains(nextJob) && !simKernel.pageFaultQueue.contains(nextJob))
                             nextJob.setStatus(PCB.READY_STATE);
                     } else if (nextJob.getStatus() == "Ended") {
-                        Analysis.recordRamSpace(nextJob.getJobID(), nextJob.getPageTable().getNumberOfPages());
-                        Analysis.recordCompleteTime(nextJob.getJobID());
+                        Analysis.recordRamSpace(nextJob.getIndexInAnalysis(), nextJob.getPageTable().getNumberOfPages());
+                        Analysis.recordCompleteTime(nextJob.getIndexInAnalysis());
                         pageManager.cleanPageTable(nextJob);
                         simKernel.pcbQueue.remove(nextJob);
                     }
