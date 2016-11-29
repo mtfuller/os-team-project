@@ -24,6 +24,10 @@ public class PageTable {
         return pageSpan;
     }
     
+    public int getNumberOfPages() {
+        return pageSpan.length;
+    }
+    
     public synchronized int getPage(int pageNum) {
         return pageSpan[pageNum];
     }

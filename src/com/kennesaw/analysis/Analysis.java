@@ -19,6 +19,7 @@ public class Analysis {
     private static ArrayList<Integer> numOFPageFaults = new ArrayList<>();
     private static ArrayList<Long> pageFaultStart = new ArrayList<>();
     private static ArrayList<Long> pageFaultComplete = new ArrayList<>();
+    private static ArrayList<Long> pageFaultRunningTotals = new ArrayList<>();
 
     public static void initializeDataTables() {
         for (int i = 0; i < 30; i++) {
@@ -34,6 +35,7 @@ public class Analysis {
             numOFPageFaults.add(0);
             pageFaultStart.add(0L);
             pageFaultComplete.add(0L);
+            pageFaultRunningTotals.add(0L);
         }
     }
 
@@ -43,22 +45,20 @@ public class Analysis {
 
     public static void recordCreateTime(int jobID){
         createTimes.set(jobID, System.nanoTime());
-
     }
 
     public static void recordWaitTime(int jobID){
-        waitTimes.set(jobID,System.nanoTime());
-
-
+        waitTimes.set(jobID - 1, System.nanoTime());
     }
 
     public static void recordCompleteTime(int jobID){
-        completeTimes.set(jobID, System.nanoTime());
-
+        completeTimes.set(jobID - 1, System.nanoTime());
     }
 
-    public static void recordIO(int jobID, int numOFIO){
-        io.set(jobID, numOFIO);
+    public static void recordIO(int jobID){
+        int tempIO;
+        tempIO = io.get(jobID - 1);
+        io.set(jobID - 1, (tempIO + 1));
     }
 
     public static void recordCPU(int jobID, int cpuID, double cacheUsedSize){
@@ -67,20 +67,30 @@ public class Analysis {
     }
 
     public static void recordRamSpace(int jobID, double ramSpace){
-        ramSpace1.set(jobID, ramSpace);
+        ramSpace1.set(jobID - 1, ramSpace);
     }
-    public static void recordMemoryUtilization(int jobID, int pageUsed){ memoryUtilization.set(jobID,pageUsed);
-
+    
+    public static void recordMemoryUtilization(int jobID, int pageUsed){
+        memoryUtilization.set(jobID - 1, pageUsed);
     }
-    public static void recordNumOFPageFaults(int jobID, int numOfPageFaults){ numOFPageFaults.set(jobID,numOfPageFaults);
-
+    
+    public static void recordNumOFPageFaults(int jobID){
+        int tempPF;
+        tempPF = numOFPageFaults.get(jobID - 1);
+        numOFPageFaults.set(jobID - 1, (tempPF + 1));
     }
+    
     public static void recordPageFaultStart(int jobID){
-        pageFaultStart.set(jobID,System.nanoTime());
+        pageFaultStart.set(jobID - 1,System.nanoTime());
     }
+    
     public static void recordPageFaultComplete(int jobID){
-        pageFaultComplete.set(jobID,System.nanoTime());
+        pageFaultComplete.set(jobID - 1,System.nanoTime());
+        long totalTimeSoFar;
+        totalTimeSoFar = (pageFaultRunningTotals.get(jobID - 1) + (pageFaultComplete.get(jobID - 1) - pageFaultStart.get(jobID - 1)));
+        pageFaultRunningTotals.set(jobID - 1, totalTimeSoFar);
     }
+    
     public static void calctoString() {
         //subtracts createTime/completeTime by waitTime
         ArrayList<Long> realWait = new ArrayList<>();
@@ -88,13 +98,16 @@ public class Analysis {
         ArrayList<Long> realPageFaultTime = new ArrayList<>();
         for(int i = 0; i < 30; i++){
             realWait.add(waitTimes.get(i) - createTimes.get(i));
-            realComplete.add(completeTimes.get(i) - waitTimes.get(i));
-            realPageFaultTime.add(pageFaultComplete.get(i) - pageFaultStart.get(i));
+            realComplete.add(completeTimes.get(i) - createTimes.get(i));
+            realPageFaultTime.add(pageFaultRunningTotals.get(i));
         }
 
         //printout into table format all arraylists must have same size to work
-        System.out.println(String.format("%5s    | %5s      |%5s  |%9s   |%9s      | %9s       |%9s |%9s |%9s |%9s", "JobID",
-                "Wait Times", "    Complete Times", "Number of IO", "CPUID", "CPU Space", " Ram Space Used ", " Memory Utilization", "Number of PF", "Servicing Times for Paging"));
+        System.out.println(String.format("%5s    | %5s    |%5s |%8s |%9s      | %9s       |%9s |%9s |%9s",
+                "JobID", "  Wait Times", "Complete Times",
+                "  # of IO ", "CPUID", "CPU Space",
+                " Ram Space Used ", "Number of PF", "Servicing Times for Paging"));
+        System.out.println("=========================================================================");
         for(int i = 0; i < 30; i ++) {
             DecimalFormat df = new DecimalFormat("#.####");
             String real_wait = df.format(realWait.get(i)/1000000.00);
@@ -104,15 +117,15 @@ public class Analysis {
             DecimalFormat dfCpu = new DecimalFormat("#.###");
             String prctCPU = dfCpu.format(cpuSpace.get(i));
             String prctRam = dfCpu.format(ramSpace1.get(i));
-            System.out.println(String.format("%5s    | %9s ms    | %9s ms       | %9s     | %9s     | %9s       | %9s       |  %9s         |%9s    | %9s ms",
+            System.out.println(String.format("%5s      |  %9s ms    | %9s ms       |    %5s       | %9s         | %9s           | %9s%%       |%9s    | %9s ms",
                     jobID1.get(i),
                     real_wait,
                     real_complete,
                     io.get(i),
                     cpuID1.get(i),
                     prctCPU,
-                    prctRam,
-                    memoryUtilization.get(i),
+//                    prctRam,
+                    ((ramSpace1.get(i) / 256)*100),
                     numOFPageFaults.get(i),
                     real_PageFault)
             );
@@ -124,7 +137,7 @@ public class Analysis {
         long avgWait = 0;
         for(int i = 0; i < 30; i++) totalWait += realWait.get(i);
         avgWait = totalWait/size;
-        System.out.println("====================");
+        System.out.println("=========================================================================");
         System.out.println();
         DecimalFormat df = new DecimalFormat("#.####");
         String avg_wait = df.format(avgWait/1000000.00);

@@ -1,5 +1,6 @@
 package com.kennesaw.osmodule;
 
+import com.kennesaw.analysis.Analysis;
 import com.kennesaw.memory.Disk;
 import com.kennesaw.memory.Ram;
 
@@ -64,6 +65,8 @@ public class PageManager extends Thread {
                     currentPCB.getPageTable().writePageTable(logicalIndex, pageIndex);
                     removePageFromPool(pageIndex);
                 }
+                simKernel.removeFromPageFaultQueue(currentPCB);
+                Analysis.recordPageFaultComplete(currentPCB.getJobID());
             }
         }
     }

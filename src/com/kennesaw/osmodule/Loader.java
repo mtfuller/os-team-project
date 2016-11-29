@@ -80,7 +80,6 @@ public class Loader {
                     looper = 0;
                 }
                 // Write to Disk, incrementing the pointer to the next free page after 4 lines are written
-                // System.out.println(simDisk.getNextFreePage() + "  " + looper + "  " + (looper%4) + "  " + newJob);
                 simDisk.writeDisk(simDisk.getNextFreePage(), (looper%4), toHex);
                 looper++;
             }
