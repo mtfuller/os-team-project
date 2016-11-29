@@ -29,6 +29,7 @@ public class MMU extends DebuggableModule {
                 if (!pcb.getPageTable().getValid(pageNumber)) {
                     // PAGE FAULT
                     kernel.addToPageFaultQueue(pcb, logicalAddress.getPageNumber());
+                    Analysis.recordNumOFPageFaults(pcb.getJobID());
                     Analysis.recordPageFaultStart(pcb.getJobID());
                 } else {
                     // I/O Request

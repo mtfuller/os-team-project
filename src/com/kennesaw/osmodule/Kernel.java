@@ -72,8 +72,6 @@ public class Kernel {
     
     public synchronized void addToPageFaultQueue(PCB pcb, Integer integer) {
         pageFaultQueue.addPageToPCB(pcb, integer);
-        Analysis.recordNumOFPageFaults(pcb.getJobID());
-        Analysis.recordPageFaultStart(pcb.getJobID());
     }
     
     public synchronized PCB getJobFromPageFaultQueue() {
@@ -86,7 +84,6 @@ public class Kernel {
     
     public synchronized void removeFromPageFaultQueue(PCB pcb) {
         pageFaultQueue.removeFromQueue(pcb);
-        Analysis.recordPageFaultComplete(pcb.getJobID());
     }
     
     public synchronized void addToioQueueQueue(PCB pcb, Integer integer) {

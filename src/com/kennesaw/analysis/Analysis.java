@@ -106,7 +106,7 @@ public class Analysis {
         System.out.println(String.format("%5s    | %5s    |%5s |%8s |%9s      | %9s       |%9s |%9s |%9s",
                 "JobID", "  Wait Times", "Complete Times",
                 "  # of IO ", "CPUID", "CPU Space",
-                " Ram Space Used ", "Number of PF", "Servicing Times for Paging"));
+                " Ram Space Used ", "# of PF", "Servicing Times for Paging"));
         System.out.println("=========================================================================");
         for(int i = 0; i < 30; i ++) {
             DecimalFormat df = new DecimalFormat("#.####");
