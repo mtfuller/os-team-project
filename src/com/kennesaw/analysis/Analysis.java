@@ -23,7 +23,7 @@ public class Analysis {
 
     public static void initializeDataTables() {
         for (int i = 0; i < 30; i++) {
-            jobID1.add(0);
+//            jobID1.add(0);
             createTimes.add(0L);
             waitTimes.add(0L);
             completeTimes.add(0L);
@@ -40,7 +40,7 @@ public class Analysis {
     }
 
     public static void recordNumOFJobs(int jobID){
-        jobID1.set(jobID,jobID+1);
+        jobID1.add(jobID+1);
     }
 
     public static void recordCreateTime(int jobID){
@@ -107,7 +107,7 @@ public class Analysis {
                 "JobID", "  Wait Times", "Complete Times",
                 "  # of IO ", "CPUID", "CPU Space",
                 " Ram Space Used ", "# of PF", "Servicing Times for Paging"));
-        System.out.println("=========================================================================");
+        System.out.println("==============================================================");
         for(int i = 0; i < 30; i ++) {
             DecimalFormat df = new DecimalFormat("#.####");
             String real_wait = df.format(realWait.get(i)/1000000.00);
@@ -137,7 +137,7 @@ public class Analysis {
         long avgWait = 0;
         for(int i = 0; i < 30; i++) totalWait += realWait.get(i);
         avgWait = totalWait/size;
-        System.out.println("=========================================================================");
+        System.out.println("==============================================================");
         System.out.println();
         DecimalFormat df = new DecimalFormat("#.####");
         String avg_wait = df.format(avgWait/1000000.00);
