@@ -12,5 +12,6 @@ My Analysis Contributions:
 - "# of PF" - recorded in MMU line 32 whenever a job is moved to the pageFaultQueue
 - "Servicing Times" - this adds the net time of (removed from pageFaultQueue - added to pageFaultQueue). 
    - The start time is recorded in MMU, line 33. The end time is recorded in PageManager, line 69.
+- When the metrics are printed, the jobs are now printed in their sorted order.
    
 Let me know if I've misunderstood any of these metrics or if I can help with anything else.
